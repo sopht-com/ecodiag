@@ -3,7 +3,7 @@ image: alpine:latest
 pages:
   stage: deploy
   script:
-  - cp -R src public
+  - assemble_ecodiag.sh
   artifacts:
     paths:
     - public
