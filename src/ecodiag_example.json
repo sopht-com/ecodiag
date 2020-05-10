@@ -1,0 +1,29 @@
+{
+  "devices": [
+    {"desktop/powerful":          15},
+    {"precision_tower_5xxx":       2},
+    {"precision_tower_3xxx":{"nb": 1, "lifetime": 6}},
+
+    {"laptop":                     1},
+    {"laptop/precision_5xxx":      1},
+    {"macbook_pro_13":             1},
+    {"macbook_pro_15":       {"nb":1, "lifetime": 4}},
+    {"macbook_pro_15":       {"nb":2, "lifetime": 7}},
+
+    {"screen_24to31":             25},
+    {"screen_32toinf":             3},
+
+    {"videoprojector":             1}
+
+    /* ... */
+  ],
+
+  /* optional - currently ignored */
+  "clusters": {
+    "plafrim": {"percentage": 2} 
+  },
+
+  /* optional - currently ignored */
+  "working_days": 210
+}
+

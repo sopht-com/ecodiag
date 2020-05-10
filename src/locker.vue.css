@@ -1,0 +1,24 @@
+
+input[type=checkbox].locker {
+  display:none;
+}
+
+input[type=checkbox].locker + label
+{
+  background: url("icons/lock_icon.png") left bottom no-repeat;
+  background-size: 11px 14px;
+
+  height: 15px;
+  width: 11px;
+  margin-left: -4px;
+  display:inline-block;
+  padding: 0px;
+  margin-top:  0px;
+  margin-right:6px;
+}
+ 
+ input[type=checkbox].locker:checked + label
+{
+  background: url("icons/unlock_icon.png") left bottom no-repeat;
+  background-size: 11px 14px;
+}
