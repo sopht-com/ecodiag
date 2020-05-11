@@ -6,6 +6,8 @@ if [ ! -e public ]; then
   mkdir public
 fi
 
+mkdir -p $TARGET
+
 ls -R public/
 
 cp -R src/ $TARGET
