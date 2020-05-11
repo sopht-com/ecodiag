@@ -6,6 +6,15 @@ function assemble {
   mkdir -p $TARGET
   cp -R src/ $TARGET
 
+  echo "source:"
+  ls src/
+
+  echo ""
+  echo "target:"
+  ls -lR $TARGET
+  echo ""
+  echo ""
+
   VERHASH=`git rev-parse --short HEAD`
   VERDATE=`git log -1 --pretty=format:"%ci" | cut -f 1 -d " "`
 
