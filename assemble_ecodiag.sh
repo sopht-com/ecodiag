@@ -1,11 +1,12 @@
 #!/bin/bash
 
-mkdir -p public
 
 function assemble {
   TARGET=$1
 
-  cp -R src/ $TARGET
+  mkdir -p $TARGET
+
+  cp -R src/* $TARGET/
 
   echo "source:"
   ls src/
