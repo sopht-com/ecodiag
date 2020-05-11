@@ -1,5 +1,14 @@
 #!/bin/bash
 
+function sedi {
+
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    sed -i $@
+  else
+    sed -i "" $@
+  fi
+
+}
 
 function assemble {
   TARGET=$1
@@ -23,14 +32,16 @@ function assemble {
   echo "VERHASH: $VERHASH"
   echo "VERDATE: $VERDATE"
 
-  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    sed -i 's/\%version_hash\%/'$VERHASH'/g' $TARGET/index.html
-    sed -i 's/\%version_date\%/'$VERDATE'/g' $TARGET/index.html
-  else
-    sed -i "" 's/\%version_hash\%/'$VERHASH'/g' $TARGET/index.html
-    sed -i "" 's/\%version_date\%/'$VERDATE'/g' $TARGET/index.html
-  fi
+  
 
+  sedi 's/\%version_hash\%/'$VERHASH'/g' $TARGET/index.html
+  sedi 's/\%version_date\%/'$VERDATE'/g' $TARGET/index.html
+  sedi 's/deps\/vue.js/deps\/vue.min.js/g' $TARGET/index.html
+  sedi 's/deps\/vue-i18n.js/deps\/vue-i18n.min.js/g' $TARGET/index.html
+
+  rm $TARGET/deps/vue.js
+  rm $TARGET/deps/vue-i18n.js
+  
   grep "EcoDiag version" $TARGET/index.html
 }
 
