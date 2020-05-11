@@ -1,28 +1,35 @@
 #!/bin/bash
 
-TARGET=$1
+function assemble {
+  TARGET=$1
 
-if [ ! -e public ]; then
-  mkdir public
-fi
+  mkdir -p $TARGET
+  cp -R src/ $TARGET
 
-mkdir -p $TARGET
+  VERHASH=`git rev-parse --short HEAD`
+  VERDATE=`git log -1 --pretty=format:"%ci" | cut -f 1 -d " "`
 
-ls -R public/
+  echo "VERHASH: $VERHASH"
+  echo "VERDATE: $VERDATE"
 
-cp -R src/ $TARGET
-VERHASH=`git rev-parse --short HEAD`
-VERDATE=`git log -1 --pretty=format:"%ci" | cut -f 1 -d " "`
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    sed -i 's/\%version_hash\%/'$VERHASH'/g' $TARGET/index.html
+    sed -i 's/\%version_date\%/'$VERDATE'/g' $TARGET/index.html
+  else
+    sed -i "" 's/\%version_hash\%/'$VERHASH'/g' $TARGET/index.html
+    sed -i "" 's/\%version_date\%/'$VERDATE'/g' $TARGET/index.html
+  fi
 
-echo "VERHASH: $VERHASH"
-echo "VERDATE: $VERDATE"
+  grep "EcoDiag version" $TARGET/index.html
+}
 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  sed -i 's/\%version_hash\%/'$VERHASH'/g' $TARGET/index.html
-  sed -i 's/\%version_date\%/'$VERDATE'/g' $TARGET/index.html
-else
-  sed -i "" 's/\%version_hash\%/'$VERHASH'/g' $TARGET/index.html
-  sed -i "" 's/\%version_date\%/'$VERDATE'/g' $TARGET/index.html
-fi
+REV=`cat stable_version.txt`
 
-grep "EcoDiag version" $TARGET/index.html
+assemble public/head
+
+git clone . tmp
+cd tmp
+git checkout $REV
+assemble ../public
+cd ..
+rm -rf tmp

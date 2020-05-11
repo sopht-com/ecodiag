@@ -3,21 +3,10 @@ image: alpine:latest
 pages:
   stage: deploy
   script:
-  - ./assemble_ecodiag.sh public
+  - ./assemble_ecodiag.sh
   artifacts:
     paths:
     - public
   only:
   - master
-  when: manual
 
-pages-head:
-  stage: deploy
-  script:
-  - ./assemble_ecodiag.sh public/head
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
-  
