@@ -55,35 +55,3 @@ const pSBC=(p,c0,c1,l)=>{
     else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
 }
 
-function tr(word) {
-  r = {
-    'desktop':'PC fixe',
-    'laptop':'laptop',
-    'screen':'écran',
-    'screen_upto23': 'jusqu\'à 23"',
-    'screen_24to31': '24"-31"',
-    'screen_32toinf': '32" et plus',
-    'printer':'imprimante',
-    'laser_lt_40kg': 'laser à poser (<40kg)', 
-    'office_40_99kg': 'laser A3 (40-99kg)',
-    'office_ge_100kg': 'laser A3 (>100kg)',
-    'pad':'tablette',
-    'smartphone':'smartphone',
-    'printer':'imprimante',
-    'ipphone': 'téléphone IP',
-    'keyboard': 'clavier',
-    'mouse': 'souris',
-    'videoprojector': 'vidéo projecteur',
-    'projector_portable': 'transportable',
-    'projector_room': 'pour salle',
-    'projector_large': 'pour amphi',
-    'server': 'serveur',
-    'computingserver': 'serveur de calcul',
-    'ecodiag_avg_PC': 'moyenne fixe (UC)',
-    'avg_WS': 'moyenne station de travail',
-    'ecodiag_avg_laptop': 'moyenne',
-  }[word];
-  if(!r)
-    return word;
-  return r;
-}

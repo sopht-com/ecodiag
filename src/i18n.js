@@ -21,9 +21,7 @@ const messages = {
     labels: {
       fabrication:"fabrication nl and transport nl (actual vs objective)",
       use:"electricity nl consumption nl (use)",
-      'desktop':'desktop',
-      'screen':'screen',
-      'laptop':'laptop',
+      'default':'default',
       'other':'other',
     },
     message: {
@@ -51,13 +49,34 @@ const messages = {
     labels: {
       fabrication:"fabrication nl et transport nl (actuel vs objectif)",
       use:"consommation nl électrique nl (usage)",
-      'desktop':'PC',
-      'screen':'écran',
-      'laptop':'laptop',
+      'default':'défaut',
       'other':'autre',
     },
     message: {
       lifetime_saving: "Économies réalisables par l'augmentation de la durée de vie de mes équipements : <span class=\"value\">{amount}</span> kg.CO2e par an."
+    }
+  }
+}
+
+function add_label(k,d) {
+  if(d.label_en)
+    messages.en.labels[k] = d.label_en;
+  else if(d.label)
+    messages.en.labels[k] = d.label;
+  
+  if(d.label_fr)
+    messages.fr.labels[k] = d.label_fr;
+  else if(d.label)
+    messages.fr.labels[k] = d.label;
+}
+
+// populate with labels from devices.js 
+for(var t in devices) {
+  var d = devices[t];
+  add_label(t,d);
+  if(d.models) {
+    for(var m in d.models ) {
+      add_label(m,d.models[m]);
     }
   }
 }

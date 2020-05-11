@@ -42,7 +42,7 @@ Vue.component('device-table', {
 
         <td>
           <select v-if="devices[item.type].models" v-model="item.model">
-            <option>{{tr('default')}}</option>
+            <option value="default">{{$t('labels.default')}}</option>
             <option v-for="m in Object.keys(devices[item.type].models)" :value="m">
               {{tr(m)}}
             </option>
@@ -73,6 +73,12 @@ Vue.component('device-table', {
   </div>
   `,
   methods:{
+    tr(l) {
+      var key = 'labels.'+l;
+      if(this.$te(key))
+        return this.$t(key);
+      return l;
+    },
     get_default_model: function(type) {
       if(devices[type].models) {
         var res = {
@@ -101,7 +107,6 @@ Vue.component('device-table', {
     return {
       // import global data and functions:
       devices:devices,
-      tr:tr,
       toFixed:toFixed,
       get_device_factor:get_device_factor,
       get_device_attribute:get_device_attribute,
