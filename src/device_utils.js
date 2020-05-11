@@ -40,6 +40,13 @@ function get_device_factor(type,model) {
   return factor;
 }
 
+function get_yearly_consumption(item) {
+  if(item.yearly_consumption)
+    return item.yearly_consumption;
+  else
+    return get_device_attribute(item.type,item.model,'yearly_consumption');
+}
+
 // returns the attribute "attr" from a type/model pair
 // - model is optional 
 function get_device_attribute(type,model,attr) {
@@ -56,9 +63,10 @@ function get_device_attribute(type,model,attr) {
 
 function consolidate_device_item(type,model,item) {
   return {
-    nb:       item.nb ? item.nb : item,
-    lifetime: item.lifetime ? item.lifetime : get_device_attribute(type,model,'duration'),
-    usage:    item.usage    ? item.usage    : get_device_attribute(type,model,'usage')
+    nb:                 item.nb                 ? item.nb                 : item,
+    lifetime:           item.lifetime           ? item.lifetime           : get_device_attribute(type,model,'duration'),
+    yearly_consumption: item.yearly_consumption ? item.yearly_consumption : get_device_attribute(type,model,'yearly_consumption'),
+    usage:              item.usage              ? item.usage              : get_device_attribute(type,model,'usage')
   };
 }
 

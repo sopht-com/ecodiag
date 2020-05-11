@@ -16,6 +16,8 @@ Vue.component('device-table', {
         <th class="transparent" colspan="4"></th>
         <th colspan="2">{{$t('words.lifetime')}}</th> 
         <th class="transparent"></th>
+        <th>{{$t('words.use')}}</th>
+        <th class="transparent"></th>
         <th colspan="2">kgCO2e/{{$t('words.year')}}</th>
       </tr>
       <tr>
@@ -25,6 +27,8 @@ Vue.component('device-table', {
         <th class="transparent"></th>
         <th>{{$t('words.actual')}}</th>
         <th>{{$t('words.objective')}}</th>
+        <th class="transparent"></th>
+        <th><span style="font-size:85%">kWh/{{$t('words.year')}}/{{$t('words.unit')}}</span></th>
         <th class="transparent"></th>
         <th>{{$t('words.fabrication')}}</th>
         <th>{{$t('words.use')}}</th>
@@ -41,7 +45,7 @@ Vue.component('device-table', {
         </td>
 
         <td>
-          <select v-if="devices[item.type].models" v-model="item.model">
+          <select v-if="devices[item.type].models" v-model="item.model" @change="item_model_changed(item)">
             <option value="default">{{$t('labels.default')}}</option>
             <option v-for="m in Object.keys(devices[item.type].models)" :value="m">
               {{tr(m)}}
@@ -62,10 +66,16 @@ Vue.component('device-table', {
         </td>
         <td class="transparent"></td>
         <td>
+          <locked>
+            <input v-model="item.yearly_consumption" type="number" min="0" max="999999" size="5" step="1" style="text-align: right;" disabled />
+          </locked>
+        </td>
+        <td class="transparent"></td>
+        <td>
           <span class="unit">{{ toFixed(item.nb * get_device_factor(item.type,item.model) / item.lifetime,0) }}</span>
         </td>
         <td>
-          <span class="unit">{{ toFixed(item.nb * get_device_attribute(item.type,item.model,'yearly_consumption') * conv.to_CO2.elec , 1) }}</span>
+          <span class="unit">{{ toFixed(item.nb * get_yearly_consumption(item) * conv.to_CO2.elec , 1) }}</span>
         </td>
       </tr>
         
@@ -99,8 +109,12 @@ Vue.component('device-table', {
     },
     item_type_changed: function(item) {
       item.model      = this.get_default_model(item.type);
+      this.item_model_changed(item);
+    },
+    item_model_changed: function(item) {
       item.lifetime   = get_device_attribute(item.type,item.model,'duration');
-      item.lifetime2  = item.lifetime*1.5
+      item.lifetime2  = item.lifetime*1.5;
+      item.yearly_consumption = get_device_attribute(item.type,item.model,'yearly_consumption');
     },
   },
   data() {
@@ -110,6 +124,7 @@ Vue.component('device-table', {
       toFixed:toFixed,
       get_device_factor:get_device_factor,
       get_device_attribute:get_device_attribute,
+      get_yearly_consumption:get_yearly_consumption,
       conv:conv,
     }
   }

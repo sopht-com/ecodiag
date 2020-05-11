@@ -12,6 +12,7 @@ const messages = {
       use: 'use',
       coal: 'coal',
       solar_panel: 'solar panel',
+      unit: 'unit',
     },
     title:{
       device_list: 'Devices',
@@ -40,6 +41,7 @@ const messages = {
       quantity: 'quantité',
       use: 'usage',
       solar_panel: 'panneau photovoltaïque',
+      unit: 'unité',
     },
     title:{
       device_list: 'Équipement',

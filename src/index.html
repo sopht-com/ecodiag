@@ -234,7 +234,7 @@ var vm = new Vue({ i18n, data: {
 
     total_elec_kWh: function(suffix) {
       return this.devices_list.reduce(function(res,item){
-        return res + item.nb * get_device_attribute(item.type,item.model,'yearly_consumption');
+        return res + item.nb * get_yearly_consumption(item);
       }, 0);
     },
     
@@ -271,7 +271,7 @@ var vm = new Vue({ i18n, data: {
         var key = type_renamer(item.type);
         var grey1 = item.nb * get_device_factor(item.type,item.model)/item.lifetime;
         var grey2 = item.nb * get_device_factor(item.type,item.model)/item.lifetime2;
-        var use   = item.nb * get_device_attribute(item.type,item.model,'yearly_consumption') * this.conv.to_CO2.elec;
+        var use   = item.nb * get_yearly_consumption(item) * this.conv.to_CO2.elec;
 
         greydata1.find(x => x.key==key).val += grey1;
         greydata2.find(x => x.key==key).val += grey2;
