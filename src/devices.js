@@ -218,7 +218,9 @@ var devices = {
   },
 
   wifihub: {
-    grey_CO2:           10, // ecodiag
+    label_fr:           'borne wifi',
+    label_en:           'wifi hub',
+    grey_CO2:           10, // ecodiag, https://www.ece.nus.edu.sg/stfpage/bsikdar/papers/tce_bs_12.pdf
     power_consumption:   70/(24*365), // to match yearly_consumption
     duration:            6,
     yearly_consumption: 70, // ecodiag
