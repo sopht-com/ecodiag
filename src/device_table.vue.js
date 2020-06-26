@@ -53,21 +53,21 @@ Vue.component('device-table', {
           </select>
         </td>
 
-        <td><input v-model="item.nb" type="number" min="0" max="99999" size="5" step="1" /></td>
+        <td><input v-model="item.nb" type="number" min="0" max="99999" style="width:3.5em" step="1" /></td>
         <td class="transparent"></td>
         <td>
-          <input v-model="item.lifetime"  type="number" min="0.5"   max="99" size="3" step="0.5"
+          <input v-model="item.lifetime"  type="number" min="0.5"   max="99" style="width:3em" step="0.5"
             @change="function() {if(!item.lifetime_unlocked) item['lifetime2'] = item.lifetime*1.5;}"  />
         </td>
         <td>
           <locked :onchange="function(x) { item['lifetime_unlocked']=x;}">
-            <input v-model="item.lifetime2" type="number" min="0.5" max="99" size="3" step="0.5" disabled />
+            <input v-model="item.lifetime2" type="number" min="0.5" max="99" style="width:3em" step="0.5" disabled />
           </locked>
         </td>
         <td class="transparent"></td>
         <td>
           <locked>
-            <input v-model="item.yearly_consumption" type="number" min="0" max="999999" size="5" step="1" style="text-align: right;" disabled />
+            <input v-model="item.yearly_consumption" type="number" min="0" max="999999" style="width:3.5em" step="1" style="text-align: right;" disabled />
           </locked>
         </td>
         <td class="transparent"></td>
