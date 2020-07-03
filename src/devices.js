@@ -22,11 +22,11 @@ var devices = {
       basic:                {grey_CO2: 250, yearly_consumption: 189 /* ecodiag*/},
       basic_with_screen:    350,
       ecodiag_avg_PC:       {
-        label_fr: 'moyenne fixe (UC)',
+        label_fr: 'PC fixe (moy.)',
         label_en: 'tower (average)',
         grey_CO2: 300, yearly_consumption: 189 /* ecodiag */, duration: 4},
       avg_WS:               {
-        label_fr: 'moyenne station de travail',
+        label_fr: 'station de travail (moy.)',
         label_en: 'workstation (average)',
         grey_CO2: 630 /* avg MacPro & Dell Precision */, yearly_consumption: 770 /* ecodiag */, duration: 5},
       powerful:             {grey_CO2: 500, yearly_consumption: 770},
