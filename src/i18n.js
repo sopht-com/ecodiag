@@ -13,6 +13,7 @@ const messages = {
       coal: 'coal',
       solar_panel: 'solar panel',
       unit: 'unit',
+      stdev: 'standard deviation',
     },
     title:{
       device_list: 'Devices',
@@ -21,6 +22,9 @@ const messages = {
     },
     labels: {
       fabrication:"fabrication nl and transport nl (actual vs objective)",
+      fabrication_actual:"fabrication nl and transport nl (actual)",
+      fabrication_objective:"fabrication nl and transport nl (objective)",
+      fabrication_uncertainty:"fabrication nl and transport nl (mean + nl uncertainty nl bounds)",
       use:"electricity nl consumption nl (use)",
       'default':'default',
       'other':'other',
@@ -42,6 +46,7 @@ const messages = {
       use: 'usage',
       solar_panel: 'panneau photovoltaïque',
       unit: 'unité',
+      stdev: 'écart type',
     },
     title:{
       device_list: 'Équipement',
@@ -50,6 +55,9 @@ const messages = {
     },
     labels: {
       fabrication:"fabrication nl et transport nl (actuel vs objectif)",
+      fabrication_actual:"fabrication nl et transport nl (actuel)",
+      fabrication_objective:"fabrication nl et transport nl (objectif)",
+      fabrication_uncertainty:"fabrication nl et transport nl (moyenne + nl bornes nl d'incertitudes)",
       use:"consommation nl électrique nl (usage)",
       'default':'défaut',
       'other':'autre',

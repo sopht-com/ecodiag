@@ -1,4 +1,9 @@
 
+var params = {
+  default_uncertainty: 30,
+  lifetime_uncertainty: 1
+};
+
 // returns "type/model" unless model is null or "default" in which case we simply return type
 function make_device_name(type,model) {
   if(model && model!="" && model!="default")
@@ -28,16 +33,33 @@ function device_name_to_type_model(name) {
 // returns grey CO2 factor from a type/model pair
 // - model is optional
 function get_device_factor(type,model) {
-  var factor = conv.to_CO2[type];
-  if(!factor)
-    factor = devices[type].grey_CO2;
-  if(model && model!='default'){
-    if(devices[type].models[model].grey_CO2)
-      factor = devices[type].models[model].grey_CO2;
+  function getmean(el) {
+    if(el.mean)
+      return el.mean;
     else
-      factor = devices[type].models[model];
+      return el;
   }
-  return factor;
+  function getstd(el) {
+    if(el.std)
+      return el.std;
+    else
+      return params.default_uncertainty/100; // default is 30%
+  }
+  var mean = conv.to_CO2[type];
+  var device_CO2 = devices[type].grey_CO2;
+  var std = getstd(device_CO2);
+  if(!mean)
+    mean = getmean(device_CO2);
+  if(model && model!='default'){
+    var model_CO2;
+    if(devices[type].models[model].grey_CO2)
+      model_CO2 = devices[type].models[model].grey_CO2;
+    else
+      model_CO2 = devices[type].models[model];
+      mean = getmean(model_CO2);
+    std = getstd(model_CO2);
+  }
+  return {mean:mean,std:std};
 }
 
 function get_yearly_consumption(item) {
@@ -104,3 +126,51 @@ function unpack_device_list(d) {
   });
   return res;
 }
+
+function LogNormalFromMeanAndRelStdev(mean,relative_stdev) {
+  var si2 = Math.log(Math.pow(relative_stdev,2)+1);
+  return LogNormal(Math.log(mean)-0.5*si2, Math.sqrt(si2));
+}
+
+var _a = ((8*(Math.PI - 3)) / ((3*Math.PI)*(4 - Math.PI)));
+
+function my_erfinv( x )
+{
+  var z = 0;
+  var a = 0.147;                                                   
+  var sign_x;
+  if(0==x) {
+    sign_x = 0;
+  } else if(x>0){
+    sign_x = 1;
+  } else {
+    sign_x = -1;
+  }
+
+  if(0 != x) {
+    var tmp1 = Math.log(1-x*x);
+    var tmp2 = tmp1 / 2 + (2/(Math.PI * a));
+    z = Math.sqrt(Math.sqrt((tmp2*tmp2) - tmp1/a) - tmp2) * sign_x;
+  }
+  return z;
+}
+
+function LogNormal(mu,sigma) {
+  this.mu = mu;
+  this.sigma = sigma;
+
+  this.pdf = function(x) {
+    return Math.exp(-Math.pow(Math.log(x)-mu,2)/(2*sigma*sigma))/(x*sigma*Math.sqrt(2*Math.pi));
+  }
+  
+  this.cdf = function(x) {
+    return 0.5*0.5*Math.erf((Math.log(x)-mu)/(Math.sqrt(2)*sigma));
+  }
+  
+  this.inv = function(p) {
+    return Math.exp(mu+Math.sqrt(2*sigma*sigma) * my_erfinv(2*p-1));
+  }
+
+  return this;
+}
+

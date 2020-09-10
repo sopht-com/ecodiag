@@ -72,7 +72,7 @@ Vue.component('device-table', {
         </td>
         <td class="transparent"></td>
         <td>
-          <span class="unit">{{ toFixed(item.nb * get_device_factor(item.type,item.model) / item.lifetime,0) }}</span>
+          <span class="unit">{{ toFixed(item.nb * get_device_factor(item.type,item.model).mean / item.lifetime,0) }}</span>
         </td>
         <td>
           <span class="unit">{{ toFixed(item.nb * get_yearly_consumption(item) * conv.to_CO2.elec , 1) }}</span>

@@ -6,38 +6,42 @@
 // - model variants providing specific CO2
 
 
+function hypot(vals) {
+  return Math.sqrt(vals.reduce((r,v)=>r+v*v, 0));
+}
+
 // see Referenciel_Ecodiag.ods
 var devices = {
 
   desktop:{
     label_fr:           "PC fixe",
     label_en:           "desktop",
-    grey_CO2:           350,
+    grey_CO2:           {mean:350,std:hypot([0.3,0.72])},
     power_consumption:  0.2,  // kW     (seems to be reasonable regarding DELL's CO2 sheets)
     duration:           4,    // years,
     usage:              365,
     yearly_consumption: 300, /* au pif entre ecodiag PC et ecodiag WS */
 
     models: {
-      basic:                {grey_CO2: 250, yearly_consumption: 189 /* ecodiag*/},
+      basic:                {grey_CO2: {mean:250,std:hypot([0.3,0.12 /*semble faible*/])}, yearly_consumption: 189 /* ecodiag*/},
       basic_with_screen:    350,
       ecodiag_avg_PC:       {
         label_fr: 'PC fixe (moy.)',
         label_en: 'tower (average)',
-        grey_CO2: 300, yearly_consumption: 189 /* ecodiag */, duration: 4},
+        grey_CO2: {mean:300,std:hypot([0.3,0.2])}, yearly_consumption: 189 /* ecodiag */, duration: 4},
       avg_WS:               {
         label_fr: 'station de travail (moy.)',
         label_en: 'workstation (average)',
-        grey_CO2: 630 /* avg MacPro & Dell Precision */, yearly_consumption: 770 /* ecodiag */, duration: 5},
+        grey_CO2: {mean:600,std:hypot([0.3,0.27])} /* avg MacPro & Dell Precision */, yearly_consumption: 770 /* ecodiag */, duration: 5},
       powerful:             {grey_CO2: 500, yearly_consumption: 770},
 
-      optiplex_micro:       {grey_CO2: 210, yearly_consumption:  45 /* DELL */ },
-      optiplex_small:       {grey_CO2: 260, yearly_consumption:  90 /* DELL */ },
-      optiplex_tower:       {grey_CO2: 280, yearly_consumption: 110 /* DELL */ },
+      optiplex_micro:       {grey_CO2: {mean:174,std:hypot([0.3,0.07])}, yearly_consumption:  45 /* DELL */ },
+      optiplex_small:       {grey_CO2: {mean:240,std:hypot([0.3,0.07])}, yearly_consumption:  90 /* DELL */ },
+      optiplex_tower:       {grey_CO2: {mean:260,std:hypot([0.3,0.12])}, yearly_consumption: 110 /* DELL */ },
 
-      precision_tower_3xxx: {grey_CO2: 365, yearly_consumption: 150 /* DELL */ },
-      precision_tower_5xxx: {grey_CO2: 500, yearly_consumption: 440 /* DELL */ },
-      precision_tower_7xxx: {grey_CO2: 700, yearly_consumption: 760 /* DELL */ },
+      precision_tower_3xxx: {grey_CO2: {mean:322,std:hypot([0.3,0.15])}, yearly_consumption: 150 /* DELL */ },
+      precision_tower_5xxx: {grey_CO2: {mean:475,std:hypot([0.3,0.03])}, yearly_consumption: 440 /* DELL */ },
+      precision_tower_7xxx: {grey_CO2: {mean:646,std:hypot([0.3,0.06])}, yearly_consumption: 760 /* DELL */ },
 
       mac_mini:             270,
       imac_21:              290,
