@@ -338,10 +338,8 @@ var vm = new Vue({ i18n, data: {
             infs[key][i] += inf;
             sups[key][i] += sup;
           }
-        } else {
-          
         }
-        var use   = item.nb * get_yearly_consumption(item) * this.conv.to_CO2.elec;
+        var use = item.nb * get_yearly_consumption(item) * this.conv.to_CO2.elec;
 
         greydata1.find(x => x.key==key).val += grey1;
         greydata2.find(x => x.key==key).val += grey2;
@@ -352,95 +350,20 @@ var vm = new Vue({ i18n, data: {
       if(this.uncertainty) {
         // console.log(greydata1);
         
-        if(1) {
-          greydata1.widthPercent  = 0.7;
-          greydata1.offsetPercent = 0;
-          greydata2.widthPercent  = 0.25;
-          greydata2.offsetPercent = 0.75;
-          //greydata2.dim = 0.2;
+        greydata1.widthPercent  = 0.7;
+        greydata1.offsetPercent = 0;
+        greydata2.widthPercent  = 0.25;
+        greydata2.offsetPercent = 0.75;
+        //greydata2.dim = 0.2;
 
-          greydata1.uncertainty = {inf:infs.total[1], sup:sups.total[1], mean:means.total};
+        greydata1.uncertainty = {inf:infs.total[1], sup:sups.total[1], mean:means.total};
 
-          var alldata = [greydata1, greydata2];
-          return [
-            {key:'grey', label:this.$t('labels.fabrication'), data:alldata },
-            {key:'use',  label:this.$t('labels.use'), data:[usedata]}
-            // clusters: process_cluster_list(user_param.clusters),
-          ];
-        } else if(1) {
-          var alldata = [];
-          main_categories.forEach(function(cat) {
-            var total_inf = infs[cat];
-            var total_sup = sups[cat];
-            var total_mean = means[cat];
-            console.log(total_inf);
-            console.log(total_sup);
-            var s = (total_sup[up.length-1] - total_inf[up.length-1])/2;
-            total_inf[up.length-1] = total_mean-s;
-            total_sup[up.length-1] = total_mean+s;
-            var greydata = [];
-            var prev = 0;
-            var labels = ["",up[0]+"%",up[1]+"%",up[2]+"%","moyenne"];
-            for(var i=0; i<up.length; ++i) {
-              var el = { key:"grey_"+i,label:labels[i],val:total_inf[i]-prev};
-              prev = total_inf[i];
-              greydata.push(el);
-            }
-            for(var i=up.length-1; i>=0; --i) {
-              var el = { key:"grey_"+(i+1),label:labels[i+1],val:total_sup[i]-prev};
-              prev = total_sup[i];
-              greydata.push(el);
-            }
-            alldata.push(greydata);
-          });
-          console.log(alldata);
-          return [
-            {key:'grey_uncertainty', label:this.$t('labels.fabrication_uncertainty'), data:alldata },
-            {key:'use',  label:this.$t('labels.use'), data:[usedata]}
-            // clusters: process_cluster_list(user_param.clusters),
-          ];
-            
-        } else {
-          var alldata = new Array(up.length*2-1);
-          var w = [0.28,0.16,0.12,0.08]
-          var sum_offset = 0;
-          for(var j=0; j<alldata.length; ++j) {
-            alldata[j] = [];
-            var dist = Math.abs(j-up.length+1);
-            alldata[j].dim = dist*0.15;
-            alldata[j].widthPercent = w[dist];
-            alldata[j].offsetPercent   = sum_offset;
-            sum_offset += w[dist];
-          }
-          console.log(alldata);
-          main_categories.forEach(function(cat) {
-            if(cat!='total') {
-              var cat_inf = infs[cat];
-              var cat_sup = sups[cat];
-              var cat_mean = means[cat];
-              var j = 0;
-              var labels = ["",up[0]+"%",up[1]+"%",up[2]+"%","moyenne"];
-              for(var i=0; i<up.length; ++i) {
-                var el = { key:cat,label:labels[i],val:cat_inf[i]};
-                alldata[j].push(el);
-                j++;
-              }
-              for(var i=up.length-2; i>=0; --i) {
-                var el = { key:cat,label:labels[i+1],val:cat_sup[i]};
-                alldata[j].push(el);
-                j++;
-              }
-            }});
-            console.log(alldata)
-
-          //greydata3.dim = greydata2.dim = 0.5;
-          return [
-            {key:'grey_multi', label:this.$t('labels.fabrication_actual'), data:alldata },
-            {key:'grey_multi', label:this.$t('labels.fabrication_objective'), data:clone_obj(alldata) },
-            {key:'use',  label:this.$t('labels.use'), data:[usedata]}
-            // clusters: process_cluster_list(user_param.clusters),
-          ];
-        }
+        var alldata = [greydata1, greydata2];
+        return [
+          {key:'grey', label:this.$t('labels.fabrication'), data:alldata },
+          {key:'use',  label:this.$t('labels.use'), data:[usedata]}
+          // clusters: process_cluster_list(user_param.clusters),
+        ];
       } else {
         greydata2.dim = 0.5;
         return [
