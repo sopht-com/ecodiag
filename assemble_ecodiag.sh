@@ -51,6 +51,8 @@ assemble public/head
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
+git branch -f master origin/master
+git branch -f uncertainty origin/uncertainty
 git checkout master
 git clone . tmp
 cd tmp
