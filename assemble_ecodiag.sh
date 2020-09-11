@@ -53,5 +53,7 @@ git clone . tmp
 cd tmp
 git checkout $REV
 assemble ../public
+git checkout uncertainty
+assemble ../public/uncertainty
 cd ..
 rm -rf tmp
