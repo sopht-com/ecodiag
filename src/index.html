@@ -96,6 +96,12 @@
             <ml fr="(consommation électrique)">(electricity consumption)</ml>.
         </p>
 
+        <p class="whatif" v-show="uncertainty" style="padding-left:1em">
+          <ml fr="Fabrication et transport, intervalle :">Production and transport, range:</ml>
+          [<span class="value">{{toFixed(grey_inf,0)}}</span> - <span class="value">{{toFixed(grey_sup,0)}}</span>]
+          kgCO2e/{{$t('words.year')}}.
+        </p>
+
         <p class="whatif" v-html="$t('message.lifetime_saving', {amount: toFixed(total_grey_CO2()-total_grey_CO2('2')) } )">
         </p>
 
@@ -253,6 +259,8 @@ var vm = new Vue({ i18n, data: {
     equiv_selected:'coal',
     uncertainty:false,
     uncertainty_percent:71, // this reproduces the standard deviation with a symmetric range around the mean
+    grey_inf:0,
+    grey_sup:0,
     
     total_grey_CO2: function(suffix) {
       var lifetime_att = (suffix &&suffix==2) ? 'lifetime2' : 'lifetime';
@@ -355,6 +363,10 @@ var vm = new Vue({ i18n, data: {
         greydata2.widthPercent  = 0.25;
         greydata2.offsetPercent = 0.75;
         //greydata2.dim = 0.2;
+
+        // cache inf/sup range:
+        this.grey_inf = infs.total[1];
+        this.grey_sup = sups.total[1];
 
         greydata1.uncertainty = {inf:infs.total[1], sup:sups.total[1], mean:means.total};
 
