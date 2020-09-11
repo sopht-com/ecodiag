@@ -49,8 +49,8 @@ REV=`cat stable_version.txt`
 
 assemble public/head
 
-git branch -f master origin/master
-git branch -f uncertainty origin/uncertainty
+git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+git fetch origin
 git checkout master
 git clone . tmp
 cd tmp
