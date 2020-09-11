@@ -49,6 +49,7 @@ REV=`cat stable_version.txt`
 
 assemble public/head
 
+git branch -f uncertainty origin/uncertainty
 git clone . tmp
 cd tmp
 git checkout $REV
