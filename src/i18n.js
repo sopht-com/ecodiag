@@ -17,7 +17,7 @@ const messages = {
     },
     title:{
       device_list: 'Devices',
-      data: 'Data',
+      data: 'Options',
       about: 'About',
     },
     labels: {
@@ -50,7 +50,7 @@ const messages = {
     },
     title:{
       device_list: 'Équipement',
-      data: 'Données',
+      data: 'Options',
       about: 'À propos',
     },
     labels: {
