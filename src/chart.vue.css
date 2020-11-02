@@ -46,3 +46,22 @@ div.tooltip {
 .tooltip-enter, .tooltip-leave-to  {
   opacity: 0;
 }
+
+.errorbar line {
+  stroke: black;
+  stroke-width:2;
+  /* transition: x1 0.5s ease-in-out, x2 0.5s ease-in-out; */
+  transition: all 0.5s ease-in-out; 
+}
+
+.errorbar rect {
+  stroke: black;
+  stroke-width:0;
+  color: black;
+}
+
+.errorbar circle {
+  stroke: black;
+  transition: cx 0.5s ease-in-out;
+  /* stroke-width:2; */
+}

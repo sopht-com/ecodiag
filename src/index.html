@@ -59,7 +59,7 @@
   <tab name="Ecodiag" :selected="true" button-style="margin-left:52px">
 
     <chart :plotdata="plotdata"></chart>
-
+    
     <tabs>
 
       <tab :name="$t('title.device_list')" :selected="true">
@@ -90,6 +90,12 @@
             <ml fr="(consommation électrique)">(electricity consumption)</ml>.
         </p>
 
+        <p class="whatif" v-show="uncertainty" style="padding-left:1em">
+          <ml fr="Fabrication et transport, intervalle :">Production and transport, range:</ml>
+          [<span class="value">{{toFixed(grey_inf,0)}}</span> - <span class="value">{{toFixed(grey_sup,0)}}</span>]
+          kgCO2e/{{$t('words.year')}}.
+        </p>
+
         <p class="whatif" v-html="$t('message.lifetime_saving', {amount: toFixed(total_grey_CO2()-total_grey_CO2('2')) } )">
         </p>
 
@@ -118,6 +124,28 @@
           <tr><td><ml fr="Coût carbone d'1kWh électrique :">Electricity carbon intensity:</ml></td>
               <td><input v-model="conv.to_CO2.elec" type="number" min="0.04" max="2" step="0.002" /> <span class="unit">kgCO<sub>2</sub>e/kWh</span></td>
               <td class="note"></td>
+          </tr>
+
+          <tr>
+            <td><ml fr="Afficher les incertitudes :">Show uncertainty:</ml></td>
+            <td><input type="checkbox" v-model="uncertainty" /> </td>
+            <td></td>
+          </tr>
+          
+          <tr>
+            <td><ml fr="Choix de l'intervalle de confiance :">Reported uncertainty range:</ml></td>
+            <td> <input type="range" min="50" max="95" step="1" v-model="uncertainty_percent" /> <span v-html="uncertainty_percent"></span>%.</td>
+            <td></td>
+          </tr>
+
+          <tr><td><ml fr="Incertitude de fabrication par défaut :">Default fabrication uncertainty:</ml></td>
+            <td>&plusmn;<input v-model="params.default_uncertainty" type="number" min="0" max="100" step="1" size="4" /> <span class="unit">%</span></td>
+            <td class="note">({{$t('words.stdev')}})</td>
+          </tr>
+
+          <tr><td><ml fr="Incertitude de durée de vie :">Lifetime uncertainty:</ml></td>
+            <td>&plusmn;<input v-model="params.lifetime_uncertainty" type="number" min="0" max="10" step="0.5" size="4" /> <span class="unit">{{$t('words.year')}}</span></td>
+            <td class="note">({{$t('words.stdev')}})</td>
           </tr>
 
           <tr class="blank"></tr>
@@ -225,6 +253,7 @@ var vm = new Vue({ i18n, data: {
     
     // import global data and functions
     conv: conv,
+    params: params,
     devices:devices,
     toFixed:toFixed,
 
@@ -232,12 +261,17 @@ var vm = new Vue({ i18n, data: {
       coal: {factor: 1./3., unit:" kg of ", unit_fr:" kg de "},
       solar_panel: {factor: 1./(1000*0.160*0.944*0.9), unit:" m&sup2; of ", unit_fr:" m&sup2; de "}
     },
+
     equiv_selected:'coal',
+    uncertainty:false,
+    uncertainty_percent:71, // this reproduces the standard deviation with a symmetric range around the mean
+    grey_inf:0,
+    grey_sup:0,
     
     total_grey_CO2: function(suffix) {
       var lifetime_att = (suffix &&suffix==2) ? 'lifetime2' : 'lifetime';
       return this.devices_list.reduce(function(res,item){
-        return res + item.nb * get_device_factor(item.type,item.model) / item[lifetime_att];
+        return res + item.nb * get_device_factor(item.type,item.model).mean / item[lifetime_att];
       }, 0);
     },
 
@@ -259,6 +293,10 @@ var vm = new Vue({ i18n, data: {
       },
   },
 
+  mounted() {
+    // this.uncertainty = true;
+  },
+
   computed: {
     plotdata() {
 
@@ -274,24 +312,84 @@ var vm = new Vue({ i18n, data: {
       var tr = this.$t;
       var greydata1 = main_categories.map(function(x) {return {key:x, label: tr('labels.'+x), val:0};});
       var greydata2 = clone_obj(greydata1);
+      // var greydata3 = [];
       var usedata   = clone_obj(greydata1);
+      var compute_uncertainty = this.uncertainty;
+      var uncertainty_percent = this.uncertainty_percent;
+      var up = [95,uncertainty_percent,50,2];
+      var infs = {};
+      var sups = {};
+      var means = {};
+      main_categories.push('total');
+      main_categories.forEach(function(el) {
+        infs[el]=new Array(up.length); infs[el].fill(0);
+        sups[el]=new Array(up.length); sups[el].fill(0);
+        means[el] = 0;
+      });
+      //up.forEach(function(el){greydata3.push(clone_obj(greydata1));});
+      // var total_inf = [0,0,0,0];
+      // var total_sup = [0,0,0,0];
+      // var tmean = 0;
 
       this.devices_list.forEach(function(item) {
         var key = type_renamer(item.type);
-        var grey1 = item.nb * get_device_factor(item.type,item.model)/item.lifetime;
-        var grey2 = item.nb * get_device_factor(item.type,item.model)/item.lifetime2;
-        var use   = item.nb * get_yearly_consumption(item) * this.conv.to_CO2.elec;
+        var device_factor = get_device_factor(item.type,item.model);
+        var grey1 = item.nb * device_factor.mean/item.lifetime;
+        means.total += grey1;
+        means[key] += grey1;
+        var grey2 = item.nb * get_device_factor(item.type,item.model).mean/item.lifetime2;
+        if(compute_uncertainty) {
+          var distrib = LogNormalFromMeanAndRelStdev(device_factor.mean,device_factor.std);
+              // grey2 = item.nb * distrib.inv(0.5-0.5*uncertainty_percent/100)/item.lifetime;
+          // var grey3 = item.nb * distrib.inv(0.5+0.5*uncertainty_percent/100)/item.lifetime;
+          // greydata3.find(x => x.key==key).val += grey3;
+
+          for(var i=0; i<up.length; ++i) {
+            var inf = item.nb * distrib.inv(0.5-0.5*up[i]/100)/item.lifetime;
+            var sup = item.nb * distrib.inv(0.5+0.5*up[i]/100)/item.lifetime;
+            infs.total[i] += inf;
+            sups.total[i] += sup;
+            infs[key][i] += inf;
+            sups[key][i] += sup;
+          }
+        }
+        var use = item.nb * get_yearly_consumption(item) * this.conv.to_CO2.elec;
 
         greydata1.find(x => x.key==key).val += grey1;
         greydata2.find(x => x.key==key).val += grey2;
+        
         usedata  .find(x => x.key==key).val += use;
       });
 
-      return [
-        {key:'grey', label:this.$t('labels.fabrication'), data:[greydata1, greydata2] },
-        {key:'use',  label:this.$t('labels.use'), data:[usedata]}
-        // clusters: process_cluster_list(user_param.clusters),
-      ];
+      if(this.uncertainty) {
+        // console.log(greydata1);
+        
+        greydata1.widthPercent  = 0.7;
+        greydata1.offsetPercent = 0;
+        greydata2.widthPercent  = 0.25;
+        greydata2.offsetPercent = 0.75;
+        //greydata2.dim = 0.2;
+
+        // cache inf/sup range:
+        this.grey_inf = infs.total[1];
+        this.grey_sup = sups.total[1];
+
+        greydata1.uncertainty = {inf:infs.total[1], sup:sups.total[1], mean:means.total};
+
+        var alldata = [greydata1, greydata2];
+        return [
+          {key:'grey', label:this.$t('labels.fabrication'), data:alldata },
+          {key:'use',  label:this.$t('labels.use'), data:[usedata]}
+          // clusters: process_cluster_list(user_param.clusters),
+        ];
+      } else {
+        greydata2.dim = 0.5;
+        return [
+          {key:'grey', label:this.$t('labels.fabrication'), data:[greydata1, greydata2] },
+          {key:'use',  label:this.$t('labels.use'), data:[usedata]}
+          // clusters: process_cluster_list(user_param.clusters),
+        ];
+      }
     }
   },
 

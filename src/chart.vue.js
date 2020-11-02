@@ -16,6 +16,16 @@ Vue.component('chart', {
   :height='height'
   :width='width'
 >
+  <!--
+  <marker id="err" viewBox="-1 -1 1 2"
+    refX="0" refY="0" 
+    markerUnits="strokeWidth"
+    markerWidth="2" markerHeight="12"
+    orient="auto">
+    <line x1="0" x2="0" y1="-1" y2="1" stroke="black" />
+  </marker>
+  -->
+
   <g :transform="translate(margin.left,margin.top)">
     <g class="y axis" >
     </g>
@@ -26,10 +36,10 @@ Vue.component('chart', {
       <g class="subcategory" v-for="(sub,k2) in cat.data">
           <rect v-for="(item, i) in sub"
                 :x="x(item.sum-item.val)"
-                :y="y(cat.label) + k2*y.bandwidth()/cat.data.length"
+                :y="compute_y(cat,sub,k2) "
                 :width="x(item.sum)-x(item.sum-item.val)"
-                :height="y.bandwidth()/cat.data.length"
-                :fill="type2color(item.key, {dim: k2==0 ? 0 : 0.5 , contrast: 1, group_name:cat.key})"
+                :height="compute_height(cat,sub)"
+                :fill="type2color(item.key, {dim: sub.dim ? sub.dim : 0, contrast: 1, group_name:cat.key})"
                 stroke="white" stroke-width="0"
                 :id="'rect_'+k1+10*k2+100*i"
                 :key="k1+10*k2+100*i"
@@ -37,6 +47,30 @@ Vue.component('chart', {
                 @mouseout="tooltip.show=false"
                 @mousemove="tooltip.style = {left:($event.pageX+2)+'px', top:($event.pageY+5)+'px'}"
           />
+          <g v-if="sub.uncertainty" class="errorbar">
+            <circle :cx="x(sub.uncertainty.mean)" :cy="compute_y(cat,sub,k2) + compute_height(cat,sub)/2" r="4" />
+            <!-- <line :x1="x(sub.uncertainty.inf)" :x2="x(sub.uncertainty.sup)"
+                  :y1="compute_y(cat,sub,k2) + compute_height(cat,sub)/2"
+                  :y2="compute_y(cat,sub,k2) + compute_height(cat,sub)/2"
+                  marker-start="url(#err)"
+                  marker-end="url(#err)" /> -->
+            <!-- here we use a rect instead of a line because line's x1,x2 properties are not animatable through css transitions-->
+            <rect :x="x(sub.uncertainty.inf)"
+                  :y="compute_y(cat,sub,k2) + compute_height(cat,sub)/2 - 1"
+                  height="2px"
+                  :width="x(sub.uncertainty.sup) - x(sub.uncertainty.inf)"
+                  />
+            <rect :x="x(sub.uncertainty.inf)"
+                  :y="compute_y(cat,sub,k2) + compute_height(cat,sub)/2 - 4"
+                  height="8px"
+                  width="2px"
+                  />
+            <rect :x="x(sub.uncertainty.sup)"
+                  :y="compute_y(cat,sub,k2) + compute_height(cat,sub)/2 - 4"
+                  height="8px"
+                  width="2px"
+                  />
+          </g>
       </g>
     </g>
   </g>
@@ -45,6 +79,13 @@ Vue.component('chart', {
     `,
 
   methods: {
+
+    compute_y(cat,sub,k) {
+      return this.y(cat.label) + this.y.bandwidth()*(sub.widthPercent?sub.offsetPercent:k/cat.data.length);
+    },
+    compute_height(cat,sub) {
+      return this.y.bandwidth()*(sub.widthPercent?sub.widthPercent:1.0/cat.data.length);
+    },
 
     // a simple hack to enable :transform="translate(...)" within the template
     translate(x,y) {
@@ -72,7 +113,24 @@ Vue.component('chart', {
 
       var color;
 
-      if(opt.group_name=='grey') {
+      if(opt.group_name=='grey_multi') {
+        color = {
+          'desktop':    pSBC( 0  *contrast_factor, 'rgb(102, 153, 0)',false,false),
+          'screen':     pSBC( 0  *contrast_factor, 'rgb(204, 51, 0)',false,false),
+          'laptop':     pSBC( 0  *contrast_factor, 'rgb(255, 204, 0)',false,false),
+          'other':      pSBC( 0  *contrast_factor, 'rgb(204, 51, 153)',false,false)}
+        [t];
+        if(!color)
+          color = pSBC( 0.3*contrast_factor, grey_color,false,false);
+      } else if(opt.group_name=='grey_uncertainty') {
+        color = {
+          'grey_0':    "rgba(255,255,255,0)",
+          'grey_1':    pSBC( 0.3*contrast_factor, grey_color,false,false),
+          'grey_2':    pSBC( 0.1*contrast_factor, grey_color,false,false),
+          'grey_3':    pSBC(-0.1*contrast_factor, grey_color,false,false),
+          'grey_4':    pSBC(-0.6*contrast_factor, grey_color,false,false)}
+        [t];
+      } else if(opt.group_name=='grey') {
         color = {
           'printer':    pSBC(-0.1*contrast_factor, grey_color,false,false),
           'desktop':    pSBC( 0  *contrast_factor, grey_color,false,false),
@@ -119,8 +177,8 @@ Vue.component('chart', {
     plotdata: function dataChanged() {
       var prev_upper_bound = this.cur_upper_bound;
       this.cur_upper_bound = this.vmax;
+      this.setup_axis();
       if(prev_upper_bound!=this.cur_upper_bound) {
-        this.setup_axis();
         setTimeout(this.trigger_rendering, 500);
       } else {
         this.trigger_rendering();
@@ -156,7 +214,7 @@ Vue.component('chart', {
       var upper_bound_list = [1, 10, 20, 30, 40, 50, 80, 100, 150, 200, 300, 400, 500, 800, 1000, 1500, 2000, 3000, 4000, 5000, 8000, 10000, 15000, 20000, 30000, 40000, 50000, 80000, 100000, 150000, 200000, 300000, 400000, 500000];
       var max_val = this.output.reduce(
                             (r0,e0) => e0.data.reduce(
-                              (r1,e1) => Math.max(r1,e1[e1.length-1].sum), r0), 0);
+                              (r1,e1) => Math.max(r1,e1.uncertainty ? e1.uncertainty.sup : e1[e1.length-1].sum), r0), 0);
       var ideal_upper_bound = upper_bound_list.filter(e => e>=max_val)[0];
 
       if(max_val>this.cur_upper_bound)

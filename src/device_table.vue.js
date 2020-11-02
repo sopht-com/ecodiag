@@ -67,12 +67,12 @@ Vue.component('device-table', {
         <td class="transparent"></td>
         <td>
           <locked>
-            <input v-model="item.yearly_consumption" type="number" min="0" max="999999" style="width:3.5em" step="1" style="text-align: right;" disabled />
+            <input v-model="item.yearly_consumption" type="number" min="0" max="999999" style="width:3.5em;text-align: right;" step="1" disabled />
           </locked>
         </td>
         <td class="transparent"></td>
         <td>
-          <span class="unit">{{ toFixed(item.nb * get_device_factor(item.type,item.model) / item.lifetime,0) }}</span>
+          <span class="unit">{{ toFixed(item.nb * get_device_factor(item.type,item.model).mean / item.lifetime,0) }}</span>
         </td>
         <td>
           <span class="unit">{{ toFixed(item.nb * get_yearly_consumption(item) * conv.to_CO2.elec , 1) }}</span>
