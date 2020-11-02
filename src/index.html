@@ -59,12 +59,6 @@
   <tab name="Ecodiag" :selected="true" button-style="margin-left:52px">
 
     <chart :plotdata="plotdata"></chart>
-
-    <div>
-      <input type="checkbox" v-model="uncertainty" /> afficher les incertitudes
-      pour un intervalle de confiance de <input type="range" min="50" max="95" step="1" v-model="uncertainty_percent" />
-      <span v-html="uncertainty_percent"></span>%.
-    </div>
     
     <tabs>
 
@@ -130,6 +124,18 @@
           <tr><td><ml fr="Coût carbone d'1kWh électrique :">Electricity carbon intensity:</ml></td>
               <td><input v-model="conv.to_CO2.elec" type="number" min="0.04" max="2" step="0.002" /> <span class="unit">kgCO<sub>2</sub>e/kWh</span></td>
               <td class="note"></td>
+          </tr>
+
+          <tr>
+            <td><ml fr="Afficher les incertitudes :">Show uncertainty:</ml></td>
+            <td><input type="checkbox" v-model="uncertainty" /> </td>
+            <td></td>
+          </tr>
+          
+          <tr>
+            <td><ml fr="Choix de l'intervalle de confiance :">Reported uncertainty range:</ml></td>
+            <td> <input type="range" min="50" max="95" step="1" v-model="uncertainty_percent" /> <span v-html="uncertainty_percent"></span>%.</td>
+            <td></td>
           </tr>
 
           <tr><td><ml fr="Incertitude de fabrication par défaut :">Default fabrication uncertainty:</ml></td>
