@@ -67,7 +67,7 @@ Vue.component('device-table', {
         <td class="transparent"></td>
         <td>
           <locked>
-            <input v-model="item.yearly_consumption" type="number" min="0" max="999999" style="width:3.5em" step="1" style="text-align: right;" disabled />
+            <input v-model="item.yearly_consumption" type="number" min="0" max="999999" style="width:3.5em;text-align: right;" step="1" disabled />
           </locked>
         </td>
         <td class="transparent"></td>
