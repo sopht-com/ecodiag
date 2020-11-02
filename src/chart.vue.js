@@ -16,13 +16,15 @@ Vue.component('chart', {
   :height='height'
   :width='width'
 >
-  <marker id="err" viewBox="-1 -2 1 2"
+  <!--
+  <marker id="err" viewBox="-1 -1 1 2"
     refX="0" refY="0" 
     markerUnits="strokeWidth"
     markerWidth="2" markerHeight="12"
     orient="auto">
     <line x1="0" x2="0" y1="-1" y2="1" stroke="black" />
   </marker>
+  -->
 
   <g :transform="translate(margin.left,margin.top)">
     <g class="y axis" >
@@ -47,11 +49,27 @@ Vue.component('chart', {
           />
           <g v-if="sub.uncertainty" class="errorbar">
             <circle :cx="x(sub.uncertainty.mean)" :cy="compute_y(cat,sub,k2) + compute_height(cat,sub)/2" r="4" />
-            <line :x1="x(sub.uncertainty.inf)" :x2="x(sub.uncertainty.sup)"
+            <!-- <line :x1="x(sub.uncertainty.inf)" :x2="x(sub.uncertainty.sup)"
                   :y1="compute_y(cat,sub,k2) + compute_height(cat,sub)/2"
                   :y2="compute_y(cat,sub,k2) + compute_height(cat,sub)/2"
                   marker-start="url(#err)"
-                  marker-end="url(#err)" />
+                  marker-end="url(#err)" /> -->
+            <!-- here we use a rect instead of a line because line's x1,x2 properties are not animatable through css transitions-->
+            <rect :x="x(sub.uncertainty.inf)"
+                  :y="compute_y(cat,sub,k2) + compute_height(cat,sub)/2 - 1"
+                  height="2px"
+                  :width="x(sub.uncertainty.sup) - x(sub.uncertainty.inf)"
+                  />
+            <rect :x="x(sub.uncertainty.inf)"
+                  :y="compute_y(cat,sub,k2) + compute_height(cat,sub)/2 - 4"
+                  height="8px"
+                  width="2px"
+                  />
+            <rect :x="x(sub.uncertainty.sup)"
+                  :y="compute_y(cat,sub,k2) + compute_height(cat,sub)/2 - 4"
+                  height="8px"
+                  width="2px"
+                  />
           </g>
       </g>
     </g>
