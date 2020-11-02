@@ -214,7 +214,7 @@ Vue.component('chart', {
       var upper_bound_list = [1, 10, 20, 30, 40, 50, 80, 100, 150, 200, 300, 400, 500, 800, 1000, 1500, 2000, 3000, 4000, 5000, 8000, 10000, 15000, 20000, 30000, 40000, 50000, 80000, 100000, 150000, 200000, 300000, 400000, 500000];
       var max_val = this.output.reduce(
                             (r0,e0) => e0.data.reduce(
-                              (r1,e1) => Math.max(r1,e1[e1.length-1].sum), r0), 0);
+                              (r1,e1) => Math.max(r1,e1.uncertainty ? e1.uncertainty.sup : e1[e1.length-1].sum), r0), 0);
       var ideal_upper_bound = upper_bound_list.filter(e => e>=max_val)[0];
 
       if(max_val>this.cur_upper_bound)
