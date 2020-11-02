@@ -65,24 +65,80 @@ var devices = {
     yearly_consumption: 48,     // ecodiag, match 0.025 kW * 9h * 220j :)
 
     models: {
-      basic:              300,
+      //basic:              300,
       ecodiag_avg_laptop: {
         label_fr:           "moyenne",
         label_en:           "average",
-        grey_CO2: 210, yearly_consumption: 48, duration: 3},
-      powerful:           400,
+        grey_CO2: {mean:270,std:hypot([0.2,0.34])}, yearly_consumption: 48, duration: 3},
 
-      latitude_3xxx:      300,
-      latitude_5xxx:      410,
-      latitude_72xx:      355,
-      latitude_73xx:      335,
-      latitude_74xx:      415,
-      precision_5xxx:     345,
-      precision_3xxx:     335,
-      macbook_air:        190,
-      macbook_pro_13:     250,
-      macbook_pro_15:     360,
-      macbook_pro_16:     360,
+      // powerful:           400,
+
+      avg_laptop_13: {
+        label_fr:           "moyenne 13\"",
+        label_en:           "average 13\"",
+        grey_CO2: {mean:250,std:hypot([0.2 /* arbitrary */, 0.44])}},
+
+      avg_laptop_15: {
+        label_fr:           "moyenne 14-15\"",
+        label_en:           "average 14-15\"",
+        grey_CO2: {mean:294,std:hypot([0.2 /* arbitrary */, 0.37])}},
+
+      avg_laptop_17: {
+        label_fr:           "moyenne 17\"",
+        label_en:           "average 17\"",
+        grey_CO2: {mean:365,std:hypot([0.2 /* arbitrary */, 0.18 /* ! low number of samples (3) */])}},
+
+      
+      latitude_3xxx:     {
+        label: "latitude 3xxx",
+        grey_CO2: {mean:220,std:hypot([0.2 /* arbitrary */, 0.13])}},
+
+      latitude_5xxx:     {
+        label: "latitude 5xxx",
+        grey_CO2: {mean:300,std:hypot([0.2 /* arbitrary */, 0.21])}},
+
+      latitude_7xxx:     {
+        label: "latitude 7xxx",
+        grey_CO2: {mean:264,std:hypot([0.2 /* arbitrary */, 0.33])}},
+
+      // latitude_72xx:      355,
+      // latitude_73xx:      335,
+      // latitude_74xx:      415,
+
+      precision_3xxx:     {
+        label: "precision 3xxx",
+        grey_CO2: {mean:266,std:hypot([0.2 /* arbitrary */, 0.06])}},
+      
+      precision_5xxx:     {
+        label: "precision 5xxx",
+        grey_CO2: {mean:280,std:hypot([0.2 /* arbitrary */, 0.03])}},
+
+      precision_7xxx:     {
+        label: "precision 7xxx",
+        grey_CO2: {mean:304,std:hypot([0.2 /* arbitrary */, 0.09])}},
+        
+
+      macbook_air:        {
+        label: "MacBook air",
+        grey_CO2: {mean:250,std:hypot([0.2 /* arbitrary */, 0.47])}},
+      macbook_air_preretina:        {
+        label: "MacBook air pre-retina",
+        grey_CO2: {mean:310,std:hypot([0.2 /* arbitrary */, 0.08])}},
+      macbook_air_retina:        {
+        label: "MacBook air retina",
+        grey_CO2: {mean:176,std:hypot([0.2 /* arbitrary */, 0.11])}},
+      
+      macbook_pro_13:     {
+        label: "MacBook pro 13\"",
+        grey_CO2: {mean:256,std:hypot([0.2 /* arbitrary */, 0.34])}},
+      
+      macbook_pro_15:   {
+        label: "MacBook pro 15\"",
+        grey_CO2: {mean:330,std:hypot([0.2 /* arbitrary */, 0.18])}},
+      
+      // macbook_pro_16:  {
+      //   label: "MacBook pro 16\"",
+      //   grey_CO2: {mean:330,std:hypot([0.2 /* arbitrary */, 0.18])}},
     }
   },
 
