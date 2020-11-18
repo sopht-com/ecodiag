@@ -129,24 +129,25 @@
           <tr>
             <td><ml fr="Afficher les incertitudes :">Show uncertainty:</ml></td>
             <td><input type="checkbox" v-model="uncertainty" /> </td>
-            <td></td>
+            <td>en béta test</td>
           </tr>
           
-          <tr>
+          <tr v-show="uncertainty">
             <td><ml fr="Choix de l'intervalle de confiance :">Reported uncertainty range:</ml></td>
             <td> <input type="range" min="50" max="95" step="1" v-model="uncertainty_percent" /> <span v-html="uncertainty_percent"></span>%.</td>
             <td></td>
           </tr>
 
-          <tr><td><ml fr="Incertitude de fabrication par défaut :">Default fabrication uncertainty:</ml></td>
+          <tr v-show="uncertainty">
+            <td><ml fr="Incertitude de fabrication par défaut :">Default fabrication uncertainty:</ml></td>
             <td>&plusmn;<input v-model="params.default_uncertainty" type="number" min="0" max="100" step="1" size="4" /> <span class="unit">%</span></td>
             <td class="note">({{$t('words.stdev')}})</td>
           </tr>
 
-          <tr><td><ml fr="Incertitude de durée de vie :">Lifetime uncertainty:</ml></td>
+          <!-- <tr><td><ml fr="Incertitude de durée de vie :">Lifetime uncertainty:</ml></td>
             <td>&plusmn;<input v-model="params.lifetime_uncertainty" type="number" min="0" max="10" step="0.5" size="4" /> <span class="unit">{{$t('words.year')}}</span></td>
             <td class="note">({{$t('words.stdev')}})</td>
-          </tr>
+          </tr> -->
 
           <tr class="blank"></tr>
 
