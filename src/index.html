@@ -362,13 +362,15 @@ var vm = new Vue({ i18n, data: {
         usedata  .find(x => x.key==key).val += use;
       });
 
+      greydata1.widthPercent  = 0.7;
+      greydata1.offsetPercent = 0;
+      greydata2.widthPercent  = 0.25;
+      greydata2.offsetPercent = 0.75;
+        
       if(this.uncertainty) {
         // console.log(greydata1);
         
-        greydata1.widthPercent  = 0.7;
-        greydata1.offsetPercent = 0;
-        greydata2.widthPercent  = 0.25;
-        greydata2.offsetPercent = 0.75;
+        
         //greydata2.dim = 0.2;
 
         // cache inf/sup range:
@@ -384,7 +386,7 @@ var vm = new Vue({ i18n, data: {
           // clusters: process_cluster_list(user_param.clusters),
         ];
       } else {
-        greydata2.dim = 0.5;
+        // greydata2.dim = 0.5;
         return [
           {key:'grey', label:this.$t('labels.fabrication'), data:[greydata1, greydata2] },
           {key:'use',  label:this.$t('labels.use'), data:[usedata]}
