@@ -55,13 +55,14 @@ var devices = {
 
 
   // ecodiag: 210
+
   laptop:{
     label_fr:           "laptop",
     label_en:           "laptop",
-    grey_CO2:           350,
     power_consumption:  0.025,  // kW
     duration:           4,      // years
     usage:              9,
+    grey_CO2:           260,
     yearly_consumption: 48,     // ecodiag, match 0.025 kW * 9h * 220j :)
 
     models: {
@@ -69,9 +70,8 @@ var devices = {
       ecodiag_avg_laptop: {
         label_fr:           "moyenne",
         label_en:           "average",
-        grey_CO2: {mean:270,std:hypot([0.2,0.34])}, yearly_consumption: 48, duration: 3},
-
       // powerful:           400,
+        grey_CO2: {mean:260,std:hypot([0.2,0.56])}, yearly_consumption: 48, lifetime: 3},
 
       avg_laptop_13: {
         label_fr:           "moyenne 13\"",
