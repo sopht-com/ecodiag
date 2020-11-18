@@ -23,8 +23,8 @@ var devices = {
     yearly_consumption: 300, /* au pif entre ecodiag PC et ecodiag WS */
 
     models: {
-      basic:                {grey_CO2: {mean:250,std:hypot([0.3,0.12 /*semble faible*/])}, yearly_consumption: 189 /* ecodiag*/},
-      basic_with_screen:    350,
+      // basic:                {grey_CO2: {mean:250,std:hypot([0.3,0.12 /*semble faible*/])}, yearly_consumption: 189 /* ecodiag*/},
+      // basic_with_screen:    350,
       ecodiag_avg_PC:       {
         label_fr: 'PC fixe (moy.)',
         label_en: 'tower (average)',
@@ -33,7 +33,7 @@ var devices = {
         label_fr: 'station de travail (moy.)',
         label_en: 'workstation (average)',
         grey_CO2: {mean:600,std:hypot([0.3,0.27])} /* avg MacPro & Dell Precision */, yearly_consumption: 770 /* ecodiag */, duration: 5},
-      powerful:             {grey_CO2: 500, yearly_consumption: 770},
+      // powerful:             {grey_CO2: 500, yearly_consumption: 770},
 
       optiplex_micro:       {grey_CO2: {mean:174,std:hypot([0.3,0.07])}, yearly_consumption:  45 /* DELL */ },
       optiplex_small:       {grey_CO2: {mean:240,std:hypot([0.3,0.07])}, yearly_consumption:  90 /* DELL */ },
@@ -49,7 +49,7 @@ var devices = {
       imac_27_retina:       450,
       imac_pro:             700,
       mac_pro:              900,
-      mac_pro_all_options: 2300,
+      // mac_pro_all_options: 2300,
     }
   },
 
