@@ -148,19 +148,19 @@ tr.blank {
   background-color: white;
 }
 
-tr.score0 {
+.score0 {
   background-color: #e08585;
 }
 tr.score0:hover {
   background-color: #efc2c2;
 }
-tr.score1 {
+.score1 {
   background-color: #ecbf93;
 }
 tr.score1:hover {
   background-color: #f4d9be;
 }
-tr.score2 {
+.score2 {
   background-color: #c1dd88;
 }
 tr.score2:hover {
