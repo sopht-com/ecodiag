@@ -16,6 +16,7 @@ var devices = {
   desktop:{
     label_fr:           "PC fixe",
     label_en:           "desktop",
+    regex:              /(pc.*fix|desktop|poste.*fix|ordinateur|computer|fixe|tour|tower)/i,
     grey_CO2:           {mean:350,std:hypot([0.3,0.72])},
     power_consumption:  0.2,  // kW     (seems to be reasonable regarding DELL's CO2 sheets)
     duration:           4,    // years,
@@ -32,23 +33,24 @@ var devices = {
       avg_WS:               {
         label_fr: 'station de travail (moy.)',
         label_en: 'workstation (average)',
+        regex:    /station/i,
         grey_CO2: {mean:600,std:hypot([0.3,0.27])} /* avg MacPro & Dell Precision */, yearly_consumption: 770 /* ecodiag */, duration: 5},
       // powerful:             {grey_CO2: 500, yearly_consumption: 770},
 
-      optiplex_micro:       {grey_CO2: {mean:174,std:hypot([0.3,0.07])}, yearly_consumption:  45 /* DELL */ },
-      optiplex_small:       {grey_CO2: {mean:240,std:hypot([0.3,0.07])}, yearly_consumption:  90 /* DELL */ },
-      optiplex_tower:       {grey_CO2: {mean:260,std:hypot([0.3,0.12])}, yearly_consumption: 110 /* DELL */ },
+      optiplex_micro:       {regex: /optiplex.*micro/i,grey_CO2: {mean:174,std:hypot([0.3,0.07])}, yearly_consumption:  45 /* DELL */ },
+      optiplex_small:       {regex: /optiplex.*small/i,grey_CO2: {mean:240,std:hypot([0.3,0.07])}, yearly_consumption:  90 /* DELL */ },
+      optiplex_tower:       {regex: /optiplex.*(tower|tour)/i,grey_CO2: {mean:260,std:hypot([0.3,0.12])}, yearly_consumption: 110 /* DELL */ },
 
-      precision_tower_3xxx: {grey_CO2: {mean:322,std:hypot([0.3,0.15])}, yearly_consumption: 150 /* DELL */ },
-      precision_tower_5xxx: {grey_CO2: {mean:475,std:hypot([0.3,0.03])}, yearly_consumption: 440 /* DELL */ },
-      precision_tower_7xxx: {grey_CO2: {mean:646,std:hypot([0.3,0.06])}, yearly_consumption: 760 /* DELL */ },
+      precision_tower_3xxx: {regex: /pr.cision.*3\d{3}/i,grey_CO2: {mean:322,std:hypot([0.3,0.15])}, yearly_consumption: 150 /* DELL */ },
+      precision_tower_5xxx: {regex: /pr.cision.*5\d{3}/i,grey_CO2: {mean:475,std:hypot([0.3,0.03])}, yearly_consumption: 440 /* DELL */ },
+      precision_tower_7xxx: {regex: /pr.cision.*7\d{3}/i,grey_CO2: {mean:646,std:hypot([0.3,0.06])}, yearly_consumption: 760 /* DELL */ },
 
-      mac_mini:             270,
-      imac_21:              290,
-      imac_21_retina:       300,
-      imac_27_retina:       450,
-      imac_pro:             700,
-      mac_pro:              900,
+      mac_mini:             {regex: /mac.*mini/i,grey_CO2: 270},
+      imac_21:              {regex: /imac.*21/i,grey_CO2: 290},
+      imac_21_retina:       {regex: /imac.*21/i,grey_CO2: 300},
+      imac_27_retina:       {regex: /imac.*27/i,grey_CO2: 450},
+      imac_pro:             {regex: /imac.*pro/i,grey_CO2: 700},
+      mac_pro:              {regex: /mac(?!.*book).*pro/i,grey_CO2: 900},
       // mac_pro_all_options: 2300,
     }
   },
@@ -59,6 +61,7 @@ var devices = {
   laptop:{
     label_fr:           "laptop",
     label_en:           "laptop",
+    regex:              /(laptop|portable|notebook)/i,
     power_consumption:  0.025,  // kW
     duration:           4,      // years
     usage:              9,
@@ -76,29 +79,35 @@ var devices = {
       avg_laptop_13: {
         label_fr:           "moyenne 13\"",
         label_en:           "average 13\"",
+        regex: /13(\.?\d*\"|.*pouce|.*inch)/i,
         grey_CO2: {mean:250,std:hypot([0.2 /* arbitrary */, 0.44])}},
 
       avg_laptop_15: {
         label_fr:           "moyenne 14-15\"",
         label_en:           "average 14-15\"",
+        regex: /15(\.?\d*\"|.*pouce|.*inch)/i,
         grey_CO2: {mean:294,std:hypot([0.2 /* arbitrary */, 0.37])}},
 
       avg_laptop_17: {
         label_fr:           "moyenne 17\"",
         label_en:           "average 17\"",
+        regex: /17(\.?\d*\"|.*pouce|.*inch)/i,
         grey_CO2: {mean:365,std:hypot([0.2 /* arbitrary */, 0.18 /* ! low number of samples (3) */])}},
 
       
       latitude_3xxx:     {
         label: "latitude 3xxx",
+        regex: /latitude.*3\d{3}/i,
         grey_CO2: {mean:220,std:hypot([0.2 /* arbitrary */, 0.13])}},
 
       latitude_5xxx:     {
         label: "latitude 5xxx",
+        regex: /latitude.*5\d{3}/i,
         grey_CO2: {mean:300,std:hypot([0.2 /* arbitrary */, 0.21])}},
 
       latitude_7xxx:     {
         label: "latitude 7xxx",
+        regex: /latitude.*7\d{3}/i,
         grey_CO2: {mean:264,std:hypot([0.2 /* arbitrary */, 0.33])}},
 
       // latitude_72xx:      355,
@@ -107,33 +116,41 @@ var devices = {
 
       precision_3xxx:     {
         label: "precision 3xxx",
+        regex: /pr.cision(?!.*tower.*).*3\d{3}/i,
         grey_CO2: {mean:266,std:hypot([0.2 /* arbitrary */, 0.06])}},
       
       precision_5xxx:     {
         label: "precision 5xxx",
+        regex: /pr.cision(?!.*tower.*).*5\d{3}/i,
         grey_CO2: {mean:280,std:hypot([0.2 /* arbitrary */, 0.03])}},
 
       precision_7xxx:     {
         label: "precision 7xxx",
+        regex: /pr.cision(?!.*tower.*).*7\d{3}/i,
         grey_CO2: {mean:304,std:hypot([0.2 /* arbitrary */, 0.09])}},
         
 
       macbook_air:        {
         label: "MacBook air",
+        regex: /macbook.*air/i,
         grey_CO2: {mean:250,std:hypot([0.2 /* arbitrary */, 0.47])}},
       macbook_air_preretina:        {
         label: "MacBook air pre-retina",
+        regex: /macbook.*air/i,
         grey_CO2: {mean:310,std:hypot([0.2 /* arbitrary */, 0.08])}},
       macbook_air_retina:        {
         label: "MacBook air retina",
+        regex: /macbook.*air.*retina/i,
         grey_CO2: {mean:176,std:hypot([0.2 /* arbitrary */, 0.11])}},
       
       macbook_pro_13:     {
         label: "MacBook pro 13\"",
+        regex: /macbook.*pro.*13/i,
         grey_CO2: {mean:256,std:hypot([0.2 /* arbitrary */, 0.34])}},
       
       macbook_pro_15:   {
         label: "MacBook pro 15\"",
+        regex: /macbook.*pro.*(15|16)/i,
         grey_CO2: {mean:330,std:hypot([0.2 /* arbitrary */, 0.18])}},
       
       // macbook_pro_16:  {
@@ -146,6 +163,7 @@ var devices = {
   screen:{
     label_fr:           "écran",
     label_en:           "screen",
+    regex: /(.cran|screen)/i,
     grey_CO2:           430,    // based on the average of 9 DELL's 24" monitors (24" monitors are likely the most common)
     power_consumption:  0.035,  // kW (measured on AOC Q3277PQU)
     duration:           5,      // years, ecodiag: 3
@@ -155,13 +173,16 @@ var devices = {
       screen_upto23 : {
         label_fr: 'jusqu\'à 23"',
         label_en: 'up to 23"',
+        regex: /(18|19|20|21|22|23)(\.?\d*\"|.*pouce|.*inch)/i,
         grey_CO2: 350}, // average on DELL's data
       screen_24to31 : {
         label:    '24"-31"',
+        regex: /(24|25|26|27|28|29|30|31)(\.?\d*\"|.*pouce|.*inch)/i,
         grey_CO2: 430}, // average on DELL's data
       screen_32toinf: {
         label_fr:'32" et plus',
         label_en:'32" and larger',
+        regex: /(32|33|34|35|36)(\.?\d*\"|.*pouce|.*inch)/i,
         grey_CO2: 590, yearly_consumption: 110}, // average on DELL's data
     }
   },
@@ -204,6 +225,7 @@ var devices = {
   pad: {
     label_fr:           'tablette',
     label_en:           'pad',
+    regex:              /(tablet|pad)/i,
     grey_CO2:           150,
     power_consumption:  0, // TODO
     duration:           2,  // ecodiag
@@ -215,6 +237,7 @@ var devices = {
   // - [16:40] +/- 50%
   smartphone: {
     label:              'smartphone',
+    regex:              /(smartphone|t.l.phone.*portable|mobile)/i,
     grey_CO2:           63,
     power_consumption:  0,    // TODO
     duration:           1.5,  // TODO
@@ -231,6 +254,7 @@ var devices = {
   printer: {
     label_fr: 'imprimante',
     label_en: 'printer',
+    regex:    /(imprimante|printer)/i,
     grey_CO2: 100,        // TODO  [90:200] http://bilans-ges.ademe.fr/fr/basecarbone/donnees-consulter/liste-element?recherche=imprimante
     power_consumption: 0, // TODO
     duration:          3, // TODO
@@ -290,6 +314,7 @@ var devices = {
   server: {
     label_fr:           'serveur',
     label_en:           'server',
+    regex:              /(server|serveur)/i,
     grey_CO2:           1300,   // ecodiag
     power_consumption:  0,      // TODO
     duration:           5,      // ecodiag
@@ -299,6 +324,7 @@ var devices = {
       computingserver: {
         label_fr: 'noeud de calcul',
         label_en: 'computing node',
+        regex:    /(calcul|comput.*node)/i,
         grey_CO2: 1300 /* ecodiag */, yearly_consumption: 1600 /* ecodiag */, duration: 5 /* ecodiag */}
     }
   },

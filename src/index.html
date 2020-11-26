@@ -25,6 +25,7 @@
   <script src="locker.vue.js"></script>
 
   <script src="device_table.vue.js"></script>
+  <script src="csv_processing.vue.js"></script>
   
   <script src="d3-utils.js"></script>
   <script src="utils.js"></script>
@@ -156,6 +157,12 @@
             <td class="note"></td></tr>
         </table>
 
+      </tab>
+
+      <tab :name="$t('title.csv_import')">
+        <csv-processing :devicelist="devices_list">
+
+        </csv-processing>
       </tab>
 
     </tabs>

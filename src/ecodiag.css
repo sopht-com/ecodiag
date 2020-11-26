@@ -130,7 +130,7 @@ td,th {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
-th , .travel_detail_group_row td{
+th {
   background-color: #d9b38c
 }
 tr {
@@ -143,11 +143,35 @@ tr.highlight {
   background-color: #e6ccb3
 }
 
-.transparent {
-  background-color: white;
-  border-bottom: 1px solid white;
-}
 tr.blank {
   height: 0.7em;
   background-color: white;
+}
+
+tr.score0 {
+  background-color: #e08585;
+}
+tr.score0:hover {
+  background-color: #efc2c2;
+}
+tr.score1 {
+  background-color: #ecbf93;
+}
+tr.score1:hover {
+  background-color: #f4d9be;
+}
+tr.score2 {
+  background-color: #c1dd88;
+}
+tr.score2:hover {
+  background-color: #d6e9af;
+}
+
+.csv_table th {
+  background-color: #bfc8d9;
+}
+
+td.transparent , th.transparent{
+  background-color: white;
+  border-bottom: 1px solid white;
 }

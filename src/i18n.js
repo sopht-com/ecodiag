@@ -14,11 +14,15 @@ const messages = {
       solar_panel: 'solar panel',
       unit: 'unit',
       stdev: 'standard deviation',
+      date: 'date',
+      score: 'score',
+      purchase_year: 'year',
     },
     title:{
       device_list: 'Devices',
       data: 'Options',
       about: 'About',
+      csv_import: 'CSV import'
     },
     labels: {
       fabrication:"fabrication nl and transport nl (actual vs objective)",
@@ -42,16 +46,22 @@ const messages = {
       objective: 'objectif',
       fabrication: 'fabrication',
       model: 'modèle',
+      type: 'type',
+      brand: 'marque',
       quantity: 'quantité',
       use: 'usage',
       solar_panel: 'panneau photovoltaïque',
       unit: 'unité',
       stdev: 'écart type',
+      date: 'date',
+      score: 'score',
+      purchase_year: 'année',
     },
     title:{
       device_list: 'Équipement',
       data: 'Options',
       about: 'À propos',
+      csv_import: 'Importer CSV'
     },
     labels: {
       fabrication:"fabrication nl et transport nl (actuel vs objectif)",

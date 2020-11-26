@@ -139,6 +139,177 @@ function unpack_device_list(d) {
   return res;
 }
 
+function process_csv_raw_item_regex(item,header_map) {
+  var score = 0;
+
+  item['score'] = 0;
+  item['type']  = "";
+  item['model'] = "";
+
+  for(var dev_key in devices) {
+    const dev = devices[dev_key];
+    var dev_score = 0;
+    var mod_score = 0;
+    if(dev.regex && header_map.in_type && item[header_map.in_type]) {
+      if(item[header_map.in_type].search(dev.regex)>=0) {
+        dev_score = 1;
+        // console.log("found "+dev_key+" in "+item[header_map.in_type]);
+      }
+    }
+    if(dev_score>=score) {
+      
+      if(dev_score>0) {
+        // we already found a better match
+        score = dev_score;
+        item['score'] = score;
+        item['type']  = dev_key;
+        item['model'] = get_default_model(dev_key);
+      }
+
+      if(dev.models && header_map.in_model && item[header_map.in_model]) {
+        for(var m_key in dev.models) {
+          const m = dev.models[m_key];
+          if(m.regex) {
+            if(item[header_map.in_model].search(m.regex)>=0) {
+              mod_score = 1;
+              // console.log("found "+m_key+" in "+item[header_map.in_model]);
+            }
+            if(dev_score+mod_score>score) {
+              score = dev_score+mod_score;
+              item['score'] = score;
+              item['type']  = dev_key;
+              item['model'] = m_key;
+              if(score==2)
+                return item;
+              else
+                break;
+            }
+          }
+        }
+      }
+    }
+  }
+    
+  return item;
+}
+
+// Search for brand, type, model, and purchase year columns
+// within csv_data.columns, and store the matches within
+// csv_data['header_map'].{in_brand,in_type,in_model,in_date}
+// -- csv_data is modified in-place --
+function csv_parse_headers(csv_data) {
+  var find_header = function(regex) {
+    for(var k in csv_data.columns) {
+      var name = csv_data.columns[k];
+      if(name.search(regex)>=0)
+        return name;
+    }
+    return null;
+  }
+
+  csv_data['header_map'] = {
+    in_brand: find_header(/(fabricant|brand|marque)/i, ),
+    in_type:  find_header(/(type|cat.gorie|kind)/i),
+    in_model: find_header(/mod.le/i),
+    in_date:  find_header(/date.*(achat|acquisition)/i)
+  };
+}
+
+// For each i,
+//    extract year from:
+//      csv_data[i][csv_data.header_map.in_date]
+//    and store it in:
+//      csv_data[i].year
+// -- csv_data is modified in-place --
+function csv_parse_dates(csv_data) {
+
+  for(var i in csv_data) {
+    var item = csv_data[i];
+    item['year'] = "";
+    if(csv_data.header_map.in_date) {
+      const in_date = item[csv_data.header_map.in_date];
+    
+      if(in_date) {
+        const res = in_date.match(/\d{4}/);
+        if(res && res.length>0)
+          item['year'] = res[0];
+      }
+    }
+  }
+}
+
+// merge rows of csv_data having the exact same key
+// and record the number of items within csv_data[i].nb
+function csv_merge_wrt_keys(csv_data) {
+  // sort items
+  csv_data = csv_data.sort((a,b)=>a.key.localeCompare(b.key));
+
+  // insert while summing up duplicates
+  var new_data = [];
+  for(var i in csv_data) {
+    var item = csv_data[i];
+    if(!('nb' in item)) {
+      item.nb=1;
+    }
+    if(i!=0 && new_data[new_data.length-1].key==item.key) {
+      new_data[new_data.length-1].nb += item.nb;
+    } else {
+      new_data.push(item);
+    }
+  }
+  if(csv_data.columns)
+    new_data.columns = csv_data.columns;
+  if(csv_data.header_map)
+    new_data.header_map = csv_data.header_map;
+  return new_data;
+}
+
+// merge rows of csv_data having the exact same year, brand, type and model,
+// and record the number of items within csv_data[i].nb
+function csv_merge_raw_items(csv_data) {
+  // create keys
+  var ukey = 1000;
+  for(var i in csv_data) {
+    var item = csv_data[i];
+    var key = "";
+    if(item['year']!="") {
+      key = key.concat(item['year']);
+    } else {
+      key = Number.toString(ukey);
+      ukey += 1;
+    }
+    if(csv_data.header_map.in_brand)
+      key = key.concat(item[csv_data.header_map.in_brand]);
+    if(csv_data.header_map.in_type)
+      key = key.concat(item[csv_data.header_map.in_type]);
+    if(csv_data.header_map.in_model)
+      key = key.concat(item[csv_data.header_map.in_model]);
+    item['key'] = key;
+  }
+
+  return csv_merge_wrt_keys(csv_data);
+}
+
+function parse_raw_csv(csv_text) {
+
+  var csv_data = d3.csvParse(csv_text);
+
+  csv_parse_headers(csv_data);
+  // console.log(csv_data['header_map']);
+  csv_parse_dates(csv_data);
+  csv_data = csv_merge_raw_items(csv_data);
+
+  for(var i in csv_data) {
+    var item = csv_data[i];
+    item = process_csv_raw_item_regex(item, csv_data['header_map']);
+  }
+
+  // sort according to scores
+  csv_data = csv_data.sort((a,b)=>a.score-b.score);
+
+  return csv_data;
+}
+
 function LogNormalFromMeanAndRelStdev(mean,relative_stdev) {
   var si2 = Math.log(Math.pow(relative_stdev,2)+1);
   return LogNormal(Math.log(mean)-0.5*si2, Math.sqrt(si2));
