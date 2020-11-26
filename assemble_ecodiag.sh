@@ -52,13 +52,13 @@ assemble public/head
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
 git branch -f master origin/master
-git branch -f uncertainty origin/uncertainty
+git branch -f csv_import origin/csv_import
 git checkout master
 git clone . tmp
 cd tmp
 git checkout $REV
 assemble ../public
-git checkout uncertainty
-assemble ../public/uncertainty
+git checkout csv_import
+assemble ../public/csv_import
 cd ..
 rm -rf tmp
