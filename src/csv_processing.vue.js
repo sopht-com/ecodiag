@@ -63,7 +63,7 @@ Vue.component('csv-processing', {
         </td>
         <td>
           <select v-if="item.type in devices && devices[item.type].models" v-model="item.model" @change="item_model_changed(item)">
-            <option value="default">{{$t('labels.default')}}</option>
+            <option v-if="!(devices[item.type].models && devices[item.type].models.default)" value="default">{{$t('labels.default')}}</option>
             <option v-for="m in Object.keys(devices[item.type].models)" :value="m">
               {{tr(m)}}
             </option>
@@ -123,9 +123,7 @@ Vue.component('csv-processing', {
           copy.push(item);
         }
       }
-      console.log(clone_obj(copy));
       copy = csv_merge_wrt_keys(copy);
-      console.log(clone_obj(copy));
       this.devicelist.splice(0,this.devicelist.length);
       for(var i in copy) {
         var item = copy[i];

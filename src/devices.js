@@ -321,6 +321,9 @@ var devices = {
     yearly_consumption: 850,    // ecodiag
 
     models: {
+      default: {
+        regex: /(poweredge)/i
+      },
       computingserver: {
         label_fr: 'noeud de calcul',
         label_en: 'computing node',

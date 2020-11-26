@@ -46,7 +46,7 @@ Vue.component('device-table', {
 
         <td>
           <select v-if="devices[item.type].models" v-model="item.model" @change="item_model_changed(item)">
-            <option value="default">{{$t('labels.default')}}</option>
+            <option v-if="!(devices[item.type].models && devices[item.type].models.default)" value="default">{{$t('labels.default')}}</option>
             <option v-for="m in Object.keys(devices[item.type].models)" :value="m">
               {{tr(m)}}
             </option>
