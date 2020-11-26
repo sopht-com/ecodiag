@@ -157,8 +157,9 @@ function process_csv_raw_item_regex(item,header_map) {
       }
     }
     if(dev_score>=score) {
+      // otherwise we have no chance to find a better match
       
-      if(dev_score>0) {
+      if(dev_score>0 && score==0) {
         // we already found a better match
         score = dev_score;
         item['score'] = score;

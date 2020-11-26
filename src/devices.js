@@ -26,10 +26,7 @@ var devices = {
     models: {
       // basic:                {grey_CO2: {mean:250,std:hypot([0.3,0.12 /*semble faible*/])}, yearly_consumption: 189 /* ecodiag*/},
       // basic_with_screen:    350,
-      ecodiag_avg_PC:       {
-        label_fr: 'PC fixe (moy.)',
-        label_en: 'tower (average)',
-        grey_CO2: {mean:300,std:hypot([0.3,0.2])}, yearly_consumption: 189 /* ecodiag */, duration: 4},
+      
       avg_WS:               {
         label_fr: 'station de travail (moy.)',
         label_en: 'workstation (average)',
@@ -52,6 +49,13 @@ var devices = {
       imac_pro:             {regex: /imac.*pro/i,grey_CO2: 700},
       mac_pro:              {regex: /mac(?!.*book).*pro/i,grey_CO2: 900},
       // mac_pro_all_options: 2300,
+
+      // last entry to play the role of fallback
+      ecodiag_avg_PC:       {
+        label_fr: 'PC fixe (moy.)',
+        label_en: 'tower (average)',
+        regex:    /(optiplex|imac|pr.cision t|elitedesk)/i,
+        grey_CO2: {mean:300,std:hypot([0.3,0.2])}, yearly_consumption: 189 /* ecodiag */, duration: 4},
     }
   },
 
@@ -61,7 +65,7 @@ var devices = {
   laptop:{
     label_fr:           "laptop",
     label_en:           "laptop",
-    regex:              /(laptop|portable|notebook)/i,
+    regex:              /(laptop|portable|notebook|ordinateur)/i,
     power_consumption:  0.025,  // kW
     duration:           4,      // years
     usage:              9,
@@ -69,12 +73,6 @@ var devices = {
     yearly_consumption: 48,     // ecodiag, match 0.025 kW * 9h * 220j :)
 
     models: {
-      //basic:              300,
-      ecodiag_avg_laptop: {
-        label_fr:           "moyenne",
-        label_en:           "average",
-      // powerful:           400,
-        grey_CO2: {mean:260,std:hypot([0.2,0.56])}, yearly_consumption: 48, lifetime: 3},
 
       avg_laptop_13: {
         label_fr:           "moyenne 13\"",
@@ -156,6 +154,13 @@ var devices = {
       // macbook_pro_16:  {
       //   label: "MacBook pro 16\"",
       //   grey_CO2: {mean:330,std:hypot([0.2 /* arbitrary */, 0.18])}},
+
+      // last entry to play the role of fallback
+      ecodiag_avg_laptop: {
+        label_fr: "moyenne",
+        label_en: "average",
+        regex:    /(latitude|(z.*|elite)book|macbookpro|thinkpad)/i,
+        grey_CO2: {mean:260,std:hypot([0.2,0.56])}, yearly_consumption: 48, lifetime: 3},
     }
   },
 
