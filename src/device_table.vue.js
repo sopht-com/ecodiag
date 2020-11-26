@@ -89,26 +89,13 @@ Vue.component('device-table', {
         return this.$t(key);
       return l;
     },
-    get_default_model: function(type) {
-      if(devices[type].models) {
-        var res = {
-          'desktop': 'ecodiag_avg_PC',
-          'laptop':  'ecodiag_avg_laptop',
-          'printer': 'office_40_99kg'} [type];
-        if(res)
-          return res;
-        return 'default';
-      } else {
-        return undefined;
-      }
-    },
     add_new_item: function(type) {
       var item = {type:type, model:null, nb:1, lifetime: null, lifetime2:null};
       this.item_type_changed(item);
       this.devicelist.push(item);
     },
     item_type_changed: function(item) {
-      item.model      = this.get_default_model(item.type);
+      item.model      = get_default_model(item.type);
       this.item_model_changed(item);
     },
     item_model_changed: function(item) {

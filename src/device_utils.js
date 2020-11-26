@@ -84,14 +84,31 @@ function get_device_attribute(type,model,attr) {
 }
 
 function consolidate_device_item(type,model,item) {
+  const lifetime = item.lifetime ? item.lifetime : get_device_attribute(type,model,'duration');
   return {
+    type: type,
+    model: model,
     nb:                 item.nb                 ? item.nb                 : item,
-    lifetime:           item.lifetime           ? item.lifetime           : get_device_attribute(type,model,'duration'),
+    lifetime:           lifetime,
+    lifetime2:          item.lifetime2          ? item.lifetime2          : lifetime*1.5,
     yearly_consumption: item.yearly_consumption ? item.yearly_consumption : get_device_attribute(type,model,'yearly_consumption'),
     usage:              item.usage              ? item.usage              : get_device_attribute(type,model,'usage')
   };
 }
 
+function get_default_model(type) {
+  if(devices[type].models) {
+    var res = {
+      'desktop': 'ecodiag_avg_PC',
+      'laptop':  'ecodiag_avg_laptop',
+      'printer': 'office_40_99kg'} [type];
+    if(res)
+      return res;
+    return 'default';
+  } else {
+    return undefined;
+  }
+}
 
 function pack_device_list(d) {
   var res = [];
@@ -116,12 +133,7 @@ function unpack_device_list(d) {
     if(type_model.length==2)
       model = type_model[1];
 
-    var item = consolidate_device_item(type,model,item_data);
-    item['type'] = type;
-    item['model'] = model;
-    item['lifetime2'] = item['lifetime']*1.5;
-
-    res.push(item);
+    res.push( consolidate_device_item(type,model,item_data) );
 
   });
   return res;
