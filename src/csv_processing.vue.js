@@ -160,7 +160,7 @@ Vue.component('csv-processing', {
       var copy = [];
       for(var i in this.csvlist) {
         var item = clone_obj(this.csvlist[i]);
-        if( item &&  item.score>0 && selection_predicate(item) ) {
+        if( item &&  item.score>0 && this.selection_predicate(item) ) {
           item.key = item.type.concat(item.model);
           copy.push(item);
         }
