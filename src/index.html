@@ -107,6 +107,8 @@
       <tab :name="$t('title.data')" >
         <table style="width:100%">
 
+          <tr><th style="width:33%"></th><th style="width:30%"></th><th style="width:37%"></th></tr>
+
           <tr><td><ml fr="Importer une liste d'équipements :">Import a device list:</ml></td>
               <td><input type="file" id="import_json_file" @change="import_json_device_list($event.target.files)" /></td>
               <td><span class="note">(voir <a href="ecodiag_example.json">example.json</a>)</span></td></tr>
