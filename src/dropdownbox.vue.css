@@ -1,0 +1,35 @@
+
+.section .title {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 120%;
+}
+
+.section .title:hover {
+  background-color: #555;
+}
+
+.section .body {
+  padding: 0 1em;
+  display: block;
+  overflow: hidden;
+  background-color: #f1f1f1;
+  height:0;
+}
+
+.toggleIcon {
+  font-size: 90%;
+  color: white;
+  float: right;
+  margin-left: 1em;
+  margin-right: 0;
+}
+
+.smooth-enter-active, .smooth-leave-active{
+  transition: height .3s;
+}

@@ -11,25 +11,28 @@ Vue.component('csv-processing', {
       <label>Charger une liste au format CSV :
       </label><input type="file" id="csv_file" @change="load_csv"> <span class="note">(l'affichage de la table peut prendre jusqu'à 1 minute)</span>
     </p>
-    <p>
-      Cet outil s'attend à trouver 4 colonnes ayant des noms ressemblant à :
-      <ul>
-        <li><b>Type</b>, ex. PC fixe, laptop, etc.</li>
-        <li><b>Modèle</b>, ex. Latitude 5280</li>
-        <li><b>Fabricant</b>, ex. DELL, HP, Apple, etc. (optionnel, et non utilisé pour l'instant)</li>
-        <li><b>Date d'achat</b>, à partir de laquelle sera extraite l'année d'achat pour une comptabilisation par flux.</li>
-      </ul>
-      
-    </p>
 
-    <p>
-      Code couleur :
-      <ul>
-        <li class="score0">Item non identifié, il faut donc les identifier à la main !</li>
-        <li class="score1">Item partiellement identifié, c'est à dire que soit le <b>type</b>, soit le <b>modèle</b> a été reconnu.</li>
-        <li class="score2">Item complètement identifié, ce qui n'exclu pas des faux positifs !</li>
-      </ul>
-    </p>
+    <dropdownbox title="Instructions" :show="true">
+      <p>
+        Cet outil s'attend à trouver 4 colonnes ayant des noms ressemblant à :
+        <ul>
+          <li><b>Type</b>, ex. PC fixe, laptop, etc.</li>
+          <li><b>Modèle</b>, ex. Latitude 5280</li>
+          <li><b>Fabricant</b>, ex. DELL, HP, Apple, etc. (optionnel, et non utilisé pour l'instant)</li>
+          <li><b>Date d'achat</b>, à partir de laquelle sera extraite l'année d'achat pour une comptabilisation par flux.</li>
+        </ul>
+        
+      </p>
+
+      <p>
+        Code couleur :
+        <ul>
+          <li class="score0">Item non identifié, il faut donc les identifier à la main !</li>
+          <li class="score1">Item partiellement identifié, c'est à dire que soit le <b>type</b>, soit le <b>modèle</b> a été reconnu.</li>
+          <li class="score2">Item complètement identifié, ce qui n'exclu pas des faux positifs !</li>
+        </ul>
+      </p>
+    </dropdownbox>
 
     <p>
       <label>Envoyer les données valides (items oranges et verts) pour calcul :</label>
