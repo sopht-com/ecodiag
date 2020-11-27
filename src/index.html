@@ -65,7 +65,7 @@
 
       <tab :name="$t('title.device_list')" :selected="true">
       
-        <device-table :devicelist="devices_list"></device-table>
+        <device-table :devicelist="devices_list" :method="method"></device-table>
         <p></p>
 
         <p class="whatif">
@@ -104,8 +104,8 @@
 
 
 
-      <tab :name="$t('title.data')">
-        <table>
+      <tab :name="$t('title.data')" >
+        <table style="width:100%">
 
           <tr><td><ml fr="Importer une liste d'équipements :">Import a device list:</ml></td>
               <td><input type="file" id="import_json_file" @change="import_json_device_list($event.target.files)" /></td>
@@ -127,29 +127,63 @@
               <td class="note"></td>
           </tr>
 
+          <tr class="blank"></tr>
+
           <tr>
             <td><ml fr="Afficher les incertitudes :">Show uncertainty:</ml></td>
             <td><input type="checkbox" v-model="uncertainty" /> </td>
             <td>en béta test</td>
           </tr>
           
-          <tr v-show="uncertainty">
-            <td><ml fr="Choix de l'intervalle de confiance :">Reported uncertainty range:</ml></td>
-            <td> <input type="range" min="50" max="95" step="1" v-model="uncertainty_percent" /> <span v-html="uncertainty_percent"></span>%.</td>
+            <tr v-show="uncertainty">
+              <td><ml fr="Choix de l'intervalle de confiance :">Reported uncertainty range:</ml></td>
+              <td> <input type="range" min="50" max="95" step="1" v-model="uncertainty_percent" /> <span v-html="uncertainty_percent"></span>%.</td>
+              <td></td>
+            </tr>
+
+            <tr v-show="uncertainty">
+              <td><ml fr="Incertitude de fabrication par défaut :">Default fabrication uncertainty:</ml></td>
+              <td>&plusmn;<input v-model="params.default_uncertainty" type="number" min="0" max="100" step="1" size="4" /> <span class="unit">%</span></td>
+              <td class="note">({{$t('words.stdev')}})</td>
+            </tr>
+
+            <!-- <tr v-show="uncertainty"><td><ml fr="Incertitude de durée de vie :">Lifetime uncertainty:</ml></td>
+              <td>&plusmn;<input v-model="params.lifetime_uncertainty" type="number" min="0" max="10" step="0.5" size="4" /> <span class="unit">{{$t('words.year')}}</span></td>
+              <td class="note">({{$t('words.stdev')}})</td>
+            </tr> -->
+
+          <tr class="blank"></tr>
+
+          <tr>
+            <td><ml fr="Méthode de calcul :">Compute method:</ml></td>
+            <td>
+              <select v-model="method">
+                <option v-for="key in method_list" :value="key">
+                  {{key}}
+                </option>
+              </select>
+            </td>
             <td></td>
           </tr>
 
-          <tr v-show="uncertainty">
-            <td><ml fr="Incertitude de fabrication par défaut :">Default fabrication uncertainty:</ml></td>
-            <td>&plusmn;<input v-model="params.default_uncertainty" type="number" min="0" max="100" step="1" size="4" /> <span class="unit">%</span></td>
-            <td class="note">({{$t('words.stdev')}})</td>
-          </tr>
+            <tr v-show="method=='flux'"><td><ml fr="Durée d'amortissement comptable :">Damping factor:</ml></td>
+              <td><input v-model="damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
+              <td class="note">La liste des équipements fournis doit correspondre à la liste des achats des
+                <span v-text="damping_factor"></span> années précédentes, indépendamment de la durée de vie réel des équipements.</td>
+            </tr>
 
-          <!-- <tr><td><ml fr="Incertitude de durée de vie :">Lifetime uncertainty:</ml></td>
-            <td>&plusmn;<input v-model="params.lifetime_uncertainty" type="number" min="0" max="10" step="0.5" size="4" /> <span class="unit">{{$t('words.year')}}</span></td>
-            <td class="note">({{$t('words.stdev')}})</td>
-          </tr> -->
-
+            <tr v-show="method=='flux'"><td><ml fr="Facteur d'extension de la durée de vie :">Lifetime extension factor:</ml></td>
+              <td><input v-model="lifetime_factor" type="number" min="1.1" max="4" step="0.1" /> <span class="unit">années</span></td>
+              <td class="note">
+                <ml fr="Utilisé pour simuler les impacts d'une augmentation de x">
+                  Used to simulate the impacts of increasing by x
+                </ml>
+                <span v-text="lifetime_factor"></span>
+                <ml fr=" de la durée de vie effective des équipements.">
+                   the actual lifetime of each item.
+                </ml></td>
+            </tr>
+          
           <tr class="blank"></tr>
 
           <tr><td><ml fr="Télécharger le fichier de données :">Download data file:</ml></td>
@@ -269,8 +303,13 @@ var vm = new Vue({ i18n, data: {
       coal: {factor: 1./3., unit:" kg of ", unit_fr:" kg de "},
       solar_panel: {factor: 1./(1000*0.160*0.944*0.9), unit:" m&sup2; of ", unit_fr:" m&sup2; de "}
     },
+    equiv_selected: 'coal',
 
-    equiv_selected:'coal',
+    method_list: ['stock','flux'],
+    method: 'stock',
+    damping_factor: 3,      // in years
+    lifetime_factor: 1.5,
+    
     uncertainty:false,
     uncertainty_percent:71, // this reproduces the standard deviation with a symmetric range around the mean
     grey_inf:0,
@@ -339,13 +378,21 @@ var vm = new Vue({ i18n, data: {
       // var total_sup = [0,0,0,0];
       // var tmean = 0;
 
+      var method          = this.method;
+      var damping_factor  = this.damping_factor;
+      var lifetime_factor = this.lifetime_factor;
+
       this.devices_list.forEach(function(item) {
         var key = type_renamer(item.type);
         var device_factor = get_device_factor(item.type,item.model);
-        var grey1 = item.nb * device_factor.mean/item.lifetime;
+        var lt = (method=='stock') ? item.lifetime : damping_factor;
+        // var lt = item.lifetime;
+        var grey1 = item.nb * device_factor.mean/lt;
         means.total += grey1;
         means[key] += grey1;
-        var grey2 = item.nb * get_device_factor(item.type,item.model).mean/item.lifetime2;
+
+        var lt2 = method=='stock' ? item.lifetime2 : (damping_factor*lifetime_factor);
+        var grey2 = item.nb * get_device_factor(item.type,item.model).mean/lt2;
         if(compute_uncertainty) {
           var distrib = LogNormalFromMeanAndRelStdev(device_factor.mean,device_factor.std);
               // grey2 = item.nb * distrib.inv(0.5-0.5*uncertainty_percent/100)/item.lifetime;
@@ -353,8 +400,8 @@ var vm = new Vue({ i18n, data: {
           // greydata3.find(x => x.key==key).val += grey3;
 
           for(var i=0; i<up.length; ++i) {
-            var inf = item.nb * distrib.inv(0.5-0.5*up[i]/100)/item.lifetime;
-            var sup = item.nb * distrib.inv(0.5+0.5*up[i]/100)/item.lifetime;
+            var inf = item.nb * distrib.inv(0.5-0.5*up[i]/100)/lt;
+            var sup = item.nb * distrib.inv(0.5+0.5*up[i]/100)/lt;
             infs.total[i] += inf;
             sups.total[i] += sup;
             infs[key][i] += inf;

@@ -2,6 +2,7 @@ Vue.component('device-table', {
   
   props: {
     'devicelist':Array,
+    'method':String
   },
 
   template: /*html*/`
@@ -14,8 +15,8 @@ Vue.component('device-table', {
 
       <tr>
         <th class="transparent" colspan="4"></th>
-        <th colspan="2">{{$t('words.lifetime')}}</th> 
-        <th class="transparent"></th>
+        <th v-show="method=='stock'" colspan="2">{{$t('words.lifetime')}}</th> 
+        <th v-show="method=='stock'" class="transparent"></th>
         <th>{{$t('words.use')}}</th>
         <th class="transparent"></th>
         <th colspan="2">kgCO2e/{{$t('words.year')}}</th>
@@ -25,9 +26,9 @@ Vue.component('device-table', {
         <th>{{$t('words.model')}}</th>
         <th>{{$t('words.quantity')}}</th>
         <th class="transparent"></th>
-        <th>{{$t('words.actual')}}</th>
-        <th>{{$t('words.objective')}}</th>
-        <th class="transparent"></th>
+        <th v-show="method=='stock'">{{$t('words.actual')}}</th>
+        <th v-show="method=='stock'">{{$t('words.objective')}}</th>
+        <th v-show="method=='stock'" class="transparent"></th>
         <th><span style="font-size:85%">kWh/{{$t('words.year')}}/{{$t('words.unit')}}</span></th>
         <th class="transparent"></th>
         <th>{{$t('words.fabrication')}}</th>
@@ -55,16 +56,16 @@ Vue.component('device-table', {
 
         <td><input v-model="item.nb" type="number" min="0" max="99999" style="width:3.5em" step="1" /></td>
         <td class="transparent"></td>
-        <td>
+        <td v-show="method=='stock'">
           <input v-model="item.lifetime"  type="number" min="0.5"   max="99" style="width:3em" step="0.5"
             @change="function() {if(!item.lifetime_unlocked) item['lifetime2'] = item.lifetime*1.5;}"  />
         </td>
-        <td>
+        <td v-show="method=='stock'">
           <locked :onchange="function(x) { item['lifetime_unlocked']=x;}">
             <input v-model="item.lifetime2" type="number" min="0.5" max="99" style="width:3em" step="0.5" disabled />
           </locked>
         </td>
-        <td class="transparent"></td>
+        <td v-show="method=='stock'" class="transparent"></td>
         <td>
           <locked>
             <input v-model="item.yearly_consumption" type="number" min="0" max="999999" style="width:3.5em;text-align: right;" step="1" disabled />
