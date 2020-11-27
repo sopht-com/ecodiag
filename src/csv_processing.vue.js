@@ -2,6 +2,8 @@ Vue.component('csv-processing', {
   
   props: {
     'devicelist':Array,
+    'method':String,
+    'damping_factor':Number
   },
 
   template: /*html*/`
@@ -19,7 +21,7 @@ Vue.component('csv-processing', {
           <li><b>Type</b>, ex. PC fixe, laptop, etc.</li>
           <li><b>Modèle</b>, ex. Latitude 5280</li>
           <li><b>Fabricant</b>, ex. DELL, HP, Apple, etc. (optionnel, et non utilisé pour l'instant)</li>
-          <li><b>Date d'achat</b>, à partir de laquelle sera extraite l'année d'achat pour une comptabilisation par flux.</li>
+          <li><b>Date d'achat</b>, à partir de laquelle sera extraite l'année d'achat pour une comptabilisation par flux (voir onglet <i>options</i>).</li>
         </ul>
         
       </p>
@@ -36,9 +38,19 @@ Vue.component('csv-processing', {
 
     <p>
       <label>Envoyer les données valides (items oranges et verts) pour calcul :</label>
-      <input type="button" value="GO !" @click="send_to_ecodiag" >
-      <br/>
-      (-> rendez-vous au premier onglet <i>équipement</i>)
+      <input type="button" value="GO !" @click="send_to_ecodiag" > (voir onglet <i>équipement</i> pour le résumé)
+    </p>
+    <p>
+      Lors de l'envoi,
+      <ul>
+        <li>filtrer les équipements sans date : <input v-model="filter_empty_year" type="checkbox"> </li>
+        <li v-show="method=='flux'">filtrer les équipements en dehors de la période d'amortissement (voir onglet <i>options</i>) : <input v-model="filter_damping_period" type="checkbox"> 
+          <ul v-show="filter_damping_period">
+            <li>année du bilan : <input v-model="reference_year" type="number" min="2010" max="2100" step="1"> </li>
+          </ul>
+        </li>
+      </ul>
+
     </p>
     
     <table name="csv_table" class="csv_table">
@@ -141,7 +153,15 @@ Vue.component('csv-processing', {
       var copy = [];
       for(var i in this.csvlist) {
         var item = clone_obj(this.csvlist[i]);
-        if(item && item.score>0) {
+        if(     item
+            &&  item.score>0
+            && ( (!this.filter_empty_year) || item.year!="" )
+            && ( (!(this.method=='flux' && this.filter_damping_period)) || item.year=="" || ( +item.year<=this.reference_year && +item.year>(this.reference_year-this.damping_factor) ) )
+          ) {
+
+            // console.log(this.reference_year-item.year)
+            // console.log(+item.date>(this.reference_year-this.damping_factor))
+
           item.key = item.type.concat(item.model);
           copy.push(item);
         }
@@ -161,6 +181,9 @@ Vue.component('csv-processing', {
       toFixed:toFixed,
       get_device_attribute:get_device_attribute,
       csvlist:[],
+      filter_empty_year: false,
+      filter_damping_period: true,
+      reference_year: 2020,
     }
   },
   // onmount() {

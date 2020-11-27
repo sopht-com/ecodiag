@@ -199,7 +199,7 @@
       </tab>
 
       <tab :name="$t('title.csv_import')">
-        <csv-processing :devicelist="devices_list">
+        <csv-processing :devicelist="devices_list" :method="method" :damping_factor="+damping_factor">
 
         </csv-processing>
       </tab>
@@ -384,8 +384,8 @@ var vm = new Vue({ i18n, data: {
       // var tmean = 0;
 
       var method          = this.method;
-      var damping_factor  = this.damping_factor;
-      var lifetime_factor = this.lifetime_factor;
+      var damping_factor  = +this.damping_factor;
+      var lifetime_factor = +this.lifetime_factor;
 
       this.devices_list.forEach(function(item) {
         var key = type_renamer(item.type);
