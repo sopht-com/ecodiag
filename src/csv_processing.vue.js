@@ -36,21 +36,23 @@ Vue.component('csv-processing', {
       </p>
     </dropdownbox>
 
+    <ul>
+      <li>Filtrer les équipements sans date : <input v-model="filter_empty_year" type="checkbox"> </li>
+      <li v-show="method=='flux'">
+          Filtrer les équipements en dehors de la période d'amortissement (voir onglet <i>options</i>) : <input v-model="filter_damping_period" type="checkbox"> 
+        <ul v-show="filter_damping_period">
+          <li>année du bilan : <input v-model="reference_year" type="number" min="2010" max="2100" step="1"> </li>
+        </ul>
+      </li>
+      <li>Nombre de lignes masqués :
+          <span v-text="csvlist.length-csvlist.filter(d => selection_predicate(d)).length"></span></li>
+      <li>Nombre de lignes valides :
+          <span v-text="csvlist.filter(d => d.score>0 && selection_predicate(d)).length"></span> / <span v-text="csvlist.length"></span></li>
+    </ul>
+
     <p>
       <label>Envoyer les données valides (items oranges et verts) pour calcul :</label>
       <input type="button" value="GO !" @click="send_to_ecodiag" > (voir onglet <i>équipement</i> pour le résumé)
-    </p>
-    <p>
-      Lors de l'envoi,
-      <ul>
-        <li>filtrer les équipements sans date : <input v-model="filter_empty_year" type="checkbox"> </li>
-        <li v-show="method=='flux'">filtrer les équipements en dehors de la période d'amortissement (voir onglet <i>options</i>) : <input v-model="filter_damping_period" type="checkbox"> 
-          <ul v-show="filter_damping_period">
-            <li>année du bilan : <input v-model="reference_year" type="number" min="2010" max="2100" step="1"> </li>
-          </ul>
-        </li>
-      </ul>
-
     </p>
     
     <table name="csv_table" class="csv_table">
@@ -73,7 +75,7 @@ Vue.component('csv-processing', {
         <th>{{$t('words.quantity')}}</th>
       </tr>
 
-      <tr v-for="item in csvlist" :class="'score'.concat(item.score)">
+      <tr v-for="item in csvlist.filter(d => selection_predicate(d))" :class="'score'.concat(item.score)">
         <td>
           <span class="unit">{{ item[csvlist.header_map.in_brand] }}</span>
         </td>
@@ -142,26 +144,23 @@ Vue.component('csv-processing', {
         reader.onload = (function(theFile) {
           return function(e) {
             this.csvlist = parse_raw_csv(e.target.result);
-            // console.log(this.csvlist);
           }.bind(this);
         }.bind(this))(file);
 
         reader.readAsText(file);
       }
     },
+    selection_predicate(item) {
+      return ( (!this.filter_empty_year) || item.year!="" )
+          && ( (!(this.method=='flux' && this.filter_damping_period))
+                || item.year==""
+                || ( +item.year<=this.reference_year && +item.year>(this.reference_year-this.damping_factor) ) );
+    },
     send_to_ecodiag(evt) {
       var copy = [];
       for(var i in this.csvlist) {
         var item = clone_obj(this.csvlist[i]);
-        if(     item
-            &&  item.score>0
-            && ( (!this.filter_empty_year) || item.year!="" )
-            && ( (!(this.method=='flux' && this.filter_damping_period)) || item.year=="" || ( +item.year<=this.reference_year && +item.year>(this.reference_year-this.damping_factor) ) )
-          ) {
-
-            // console.log(this.reference_year-item.year)
-            // console.log(+item.date>(this.reference_year-this.damping_factor))
-
+        if( item &&  item.score>0 && selection_predicate(item) ) {
           item.key = item.type.concat(item.model);
           copy.push(item);
         }
@@ -183,15 +182,8 @@ Vue.component('csv-processing', {
       csvlist:[],
       filter_empty_year: false,
       filter_damping_period: true,
-      reference_year: 2020,
+      reference_year: 2019,
     }
-  },
-  // onmount() {
-      // function handle_team_officeway_csv_file_select(files) {
-        
-      // }
-  
-      // document.getElementById('team_officeway_csv_file').addEventListener('change', function(evt) { return handle_team_officeway_csv_file_select(evt.target.files); }, false);
-  // }
+  }
 
 })
