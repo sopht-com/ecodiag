@@ -175,3 +175,8 @@ td.transparent , th.transparent{
   background-color: white;
   border-bottom: 1px solid white;
 }
+
+th select {
+  background-color: #d9b38c;
+  font-weight: bold;
+}

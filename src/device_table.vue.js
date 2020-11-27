@@ -19,7 +19,13 @@ Vue.component('device-table', {
         <th v-show="method=='stock'" class="transparent"></th>
         <th>{{$t('words.use')}}</th>
         <th class="transparent"></th>
-        <th colspan="2">kgCO2e/{{$t('words.year')}}</th>
+        <th colspan="2">kgCO2e/
+          <select v-model="normalization">
+            <option v-for="key in normalization_list" :value="key">
+              {{$t('words.'+key)}}
+            </option>
+          </select>
+        </th>
       </tr>
       <tr>
         <th class="transparent"></th>
@@ -73,10 +79,16 @@ Vue.component('device-table', {
         </td>
         <td class="transparent"></td>
         <td>
-          <span class="unit">{{ toFixed(item.nb * get_device_factor(item.type,item.model).mean / item.lifetime,0) }}</span>
+          <span class="unit">{{ 
+            (normalization=='year'
+              ? toFixed(item.nb * get_device_factor(item.type,item.model).mean / item.lifetime,0)
+              : toFixed(get_device_factor(item.type,item.model).mean,0)) }}</span>
         </td>
         <td>
-          <span class="unit">{{ toFixed(item.nb * get_yearly_consumption(item) * conv.to_CO2.elec , 1) }}</span>
+          <span class="unit">{{
+            (normalization=='year'
+              ? toFixed(item.nb * get_yearly_consumption(item) * conv.to_CO2.elec , 1)
+              : toFixed(item.lifetime * get_yearly_consumption(item) * conv.to_CO2.elec)) }}</span>
         </td>
       </tr>
         
@@ -114,6 +126,8 @@ Vue.component('device-table', {
       get_device_attribute:get_device_attribute,
       get_yearly_consumption:get_yearly_consumption,
       conv:conv,
+      normalization_list:['year','unit'],
+      normalization:'year',
     }
   }
 
