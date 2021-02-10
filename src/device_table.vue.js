@@ -95,6 +95,7 @@ Vue.component('device-table', {
     </table>
   </div>
   `,
+  mixins: [device_utils],
   methods:{
     tr(l) {
       var key = 'labels.'+l;
@@ -108,13 +109,13 @@ Vue.component('device-table', {
       this.devicelist.push(item);
     },
     item_type_changed: function(item) {
-      item.model      = get_default_model(item.type);
+      item.model      = this.get_default_model(item.type);
       this.item_model_changed(item);
     },
     item_model_changed: function(item) {
-      item.lifetime   = get_device_attribute(item.type,item.model,'duration');
+      item.lifetime   = this.get_device_attribute(item.type,item.model,'duration');
       item.lifetime2  = item.lifetime*1.5;
-      item.yearly_consumption = get_device_attribute(item.type,item.model,'yearly_consumption');
+      item.yearly_consumption = this.get_device_attribute(item.type,item.model,'yearly_consumption');
     },
   },
   data() {
@@ -122,9 +123,9 @@ Vue.component('device-table', {
       // import global data and functions:
       devices:devices,
       toFixed:toFixed,
-      get_device_factor:get_device_factor,
-      get_device_attribute:get_device_attribute,
-      get_yearly_consumption:get_yearly_consumption,
+      // get_device_factor:get_device_factor,
+      // get_device_attribute:get_device_attribute,
+      // get_yearly_consumption:get_yearly_consumption,
       conv:conv,
       normalization_list:['year','unit'],
       normalization:'year',

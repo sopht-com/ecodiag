@@ -117,6 +117,7 @@ Vue.component('csv-processing', {
     </table>
   </div>
   `,
+  mixins: [device_utils],
   methods:{
     tr(l) {
       var key = 'labels.'+l;
@@ -125,15 +126,15 @@ Vue.component('csv-processing', {
       return l;
     },
     item_type_changed: function(item) {
-      item.model      = get_default_model(item.type);
-      item.score=2;
+      item.model = this.get_default_model(item.type);
+      item.score = 2;
       this.item_model_changed(item);
     },
     item_model_changed: function(item) {
-      item.lifetime   = get_device_attribute(item.type,item.model,'duration');
+      item.lifetime   = this.get_device_attribute(item.type,item.model,'duration');
       item.lifetime2  = item.lifetime*1.5;
       item.score=2;
-      item.yearly_consumption = get_device_attribute(item.type,item.model,'yearly_consumption');
+      item.yearly_consumption = this.get_device_attribute(item.type,item.model,'yearly_consumption');
     },
     load_csv: function(evt) {
       var files = evt.target.files;
@@ -143,7 +144,7 @@ Vue.component('csv-processing', {
 
         reader.onload = (function(theFile) {
           return function(e) {
-            this.csvlist = parse_raw_csv(e.target.result);
+            this.csvlist = this.parse_raw_csv(e.target.result);
           }.bind(this);
         }.bind(this))(file);
 
@@ -178,7 +179,6 @@ Vue.component('csv-processing', {
       // import global data and functions:
       devices:devices,
       toFixed:toFixed,
-      get_device_attribute:get_device_attribute,
       csvlist:[],
       filter_empty_year: false,
       filter_damping_period: true,

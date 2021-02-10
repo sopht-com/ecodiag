@@ -12,6 +12,9 @@
   <script src="deps/minify.json.js"></script>
 
   <script src="devices.js"></script>
+  <script src="utils.js"></script>
+  <script src="device_utils.js"></script>
+
   <script src="i18n.js"></script>
   <script src="i18n.vue.js"></script>
   
@@ -31,9 +34,8 @@
   <script src="csv_processing.vue.js"></script>
   
   <script src="d3-utils.js"></script>
-  <script src="utils.js"></script>
   
-  <script src="device_utils.js"></script>
+  
   <!-- <script src="deps/iframeResizer.min.js"></script> -->
   
 </head>
@@ -172,18 +174,18 @@
           </tr>
 
             <tr v-show="method=='flux'"><td><ml fr="Durée d'amortissement comptable :">Damping factor:</ml></td>
-              <td><input v-model="damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
+              <td><input v-model="params.damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
               <td class="note">La liste des équipements fournis doit correspondre à la liste des achats des
-                <span v-text="damping_factor"></span> années précédentes, indépendamment de la durée de vie réel des équipements.</td>
+                <span v-text="params.damping_factor"></span> années précédentes, indépendamment de la durée de vie réel des équipements.</td>
             </tr>
 
             <tr v-show="method=='flux'"><td><ml fr="Facteur d'extension de la durée de vie :">Lifetime extension factor:</ml></td>
-              <td><input v-model="lifetime_factor" type="number" min="1.1" max="4" step="0.1" /> <span class="unit">années</span></td>
+              <td><input v-model="params.lifetime_factor" type="number" min="1.1" max="4" step="0.1" /> <span class="unit">années</span></td>
               <td class="note">
                 <ml fr="Utilisé pour simuler les impacts d'une augmentation de x">
                   Used to simulate the impacts of increasing by x
                 </ml>
-                <span v-text="lifetime_factor"></span>
+                <span v-text="params.lifetime_factor"></span>
                 <ml fr=" de la durée de vie effective des équipements.">
                    the actual lifetime of each item.
                 </ml></td>
@@ -199,7 +201,7 @@
       </tab>
 
       <tab :name="$t('title.csv_import')">
-        <csv-processing :devicelist="devices_list" :method="method" :damping_factor="+damping_factor">
+        <csv-processing :devicelist="devices_list" :method="method" :damping_factor="+params.damping_factor">
 
         </csv-processing>
       </tab>
@@ -300,16 +302,11 @@ const i18n = new VueI18n({
 var vm = new Vue({ i18n, data: {
     langs: ['en','fr'],
 
-    devices_list: unpack_device_list([
-      {'desktop/ecodiag_avg_PC':     0},
-      {'desktop/avg_WS':             0},
-      {'laptop/ecodiag_avg_laptop':  0},
-      {'screen':                     0},
-    ]),
+    devices_list: [],
     
     // import global data and functions
     conv: conv,
-    params: params,
+    //params: params,
     devices:devices,
     toFixed:toFixed,
 
@@ -321,8 +318,6 @@ var vm = new Vue({ i18n, data: {
 
     method_list: ['stock','flux'],
     method: 'stock',
-    damping_factor: 3,      // in years
-    lifetime_factor: 1.5,
     
     uncertainty:false,
     uncertainty_percent:71, // this reproduces the standard deviation with a symmetric range around the mean
@@ -332,14 +327,14 @@ var vm = new Vue({ i18n, data: {
     total_grey_CO2: function(suffix) {
       var lifetime_att = (suffix &&suffix==2) ? 'lifetime2' : 'lifetime';
       return this.devices_list.reduce(function(res,item){
-        return res + item.nb * get_device_factor(item.type,item.model).mean / item[lifetime_att];
-      }, 0);
+        return res + item.nb * this.get_device_factor(item.type,item.model).mean / item[lifetime_att];
+      }.bind(this), 0);
     },
 
     total_elec_kWh: function(suffix) {
       return this.devices_list.reduce(function(res,item){
-        return res + item.nb * get_yearly_consumption(item);
-      }, 0);
+        return res + item.nb * this.get_yearly_consumption(item);
+      }.bind(this), 0);
     },
     
     trAtt: function(obj,key) {
@@ -356,6 +351,13 @@ var vm = new Vue({ i18n, data: {
 
   mounted() {
     // this.uncertainty = true;
+    this.devices_list = 
+      this.unpack_device_list([
+        {'desktop/ecodiag_avg_PC':     0},
+        {'desktop/avg_WS':             0},
+        {'laptop/ecodiag_avg_laptop':  0},
+        {'screen':                     0},
+      ]);
   },
 
   computed: {
@@ -373,11 +375,11 @@ var vm = new Vue({ i18n, data: {
       var tr = this.$t;
       var greydata1 = main_categories.map(function(x) {return {key:x, label: tr('labels.'+x), val:0};});
       var greydata2 = clone_obj(greydata1);
-      // var greydata3 = [];
       var usedata   = clone_obj(greydata1);
-      var compute_uncertainty = this.uncertainty;
       var uncertainty_percent = this.uncertainty_percent;
-      var up = [95,uncertainty_percent,50,2];
+      var up = [];
+      if(this.uncertainty)
+       up = [95,uncertainty_percent,50];
       var infs = {};
       var sups = {};
       var means = {};
@@ -387,48 +389,26 @@ var vm = new Vue({ i18n, data: {
         sups[el]=new Array(up.length); sups[el].fill(0);
         means[el] = 0;
       });
-      //up.forEach(function(el){greydata3.push(clone_obj(greydata1));});
-      // var total_inf = [0,0,0,0];
-      // var total_sup = [0,0,0,0];
-      // var tmean = 0;
-
-      var method          = this.method;
-      var damping_factor  = +this.damping_factor;
-      var lifetime_factor = +this.lifetime_factor;
 
       this.devices_list.forEach(function(item) {
+        const itemCO2 = this.compute_device_co2e(item, this.method, up);
+
         var key = type_renamer(item.type);
-        var device_factor = get_device_factor(item.type,item.model);
-        var lt = (method=='stock') ? item.lifetime : damping_factor;
-        // var lt = item.lifetime;
-        var grey1 = item.nb * device_factor.mean/lt;
-        means.total += grey1;
-        means[key] += grey1;
-
-        var lt2 = method=='stock' ? item.lifetime2 : (damping_factor*lifetime_factor);
-        var grey2 = item.nb * get_device_factor(item.type,item.model).mean/lt2;
-        if(compute_uncertainty) {
-          var distrib = LogNormalFromMeanAndRelStdev(device_factor.mean,device_factor.std);
-              // grey2 = item.nb * distrib.inv(0.5-0.5*uncertainty_percent/100)/item.lifetime;
-          // var grey3 = item.nb * distrib.inv(0.5+0.5*uncertainty_percent/100)/item.lifetime;
-          // greydata3.find(x => x.key==key).val += grey3;
-
+        means.total += itemCO2.grey;
+        means[key] += itemCO2.grey;
+        if(this.uncertainty) {
           for(var i=0; i<up.length; ++i) {
-            var inf = item.nb * distrib.inv(0.5-0.5*up[i]/100)/lt;
-            var sup = item.nb * distrib.inv(0.5+0.5*up[i]/100)/lt;
-            infs.total[i] += inf;
-            sups.total[i] += sup;
-            infs[key][i] += inf;
-            sups[key][i] += sup;
+            infs.total[i] += itemCO2.infs[i];
+            sups.total[i] += itemCO2.sups[i];
+            infs[key][i]  += itemCO2.infs[i];
+            sups[key][i]  += itemCO2.sups[i];
           }
         }
-        var use = item.nb * get_yearly_consumption(item) * this.conv.to_CO2.elec;
-
-        greydata1.find(x => x.key==key).val += grey1;
-        greydata2.find(x => x.key==key).val += grey2;
+        greydata1.find(x => x.key==key).val += itemCO2.grey;
+        greydata2.find(x => x.key==key).val += itemCO2.grey2;
         
-        usedata  .find(x => x.key==key).val += use;
-      });
+        usedata  .find(x => x.key==key).val += itemCO2.use;
+      }.bind(this));
 
       greydata1.widthPercent  = 0.7;
       greydata1.offsetPercent = 0;
@@ -436,11 +416,6 @@ var vm = new Vue({ i18n, data: {
       greydata2.offsetPercent = 0.75;
         
       if(this.uncertainty) {
-        // console.log(greydata1);
-        
-        
-        //greydata2.dim = 0.2;
-
         // cache inf/sup range:
         this.grey_inf = infs.total[1];
         this.grey_sup = sups.total[1];
@@ -451,18 +426,18 @@ var vm = new Vue({ i18n, data: {
         return [
           {key:'grey', label:this.$t('labels.fabrication'), data:alldata },
           {key:'use',  label:this.$t('labels.use'), data:[usedata]}
-          // clusters: process_cluster_list(user_param.clusters),
         ];
       } else {
         // greydata2.dim = 0.5;
         return [
           {key:'grey', label:this.$t('labels.fabrication'), data:[greydata1, greydata2] },
           {key:'use',  label:this.$t('labels.use'), data:[usedata]}
-          // clusters: process_cluster_list(user_param.clusters),
         ];
       }
     }
   },
+
+  mixins: [device_utils],
 
   methods:{
     import_json_device_list(files) {
@@ -483,7 +458,7 @@ var vm = new Vue({ i18n, data: {
               if(imported_data.kWh2CO2)
                 conv.to_CO2.elec = imported_data.kWh2CO2;
               
-              this.devices_list = unpack_device_list(imported_data.devices);
+              this.devices_list = this.unpack_device_list(imported_data.devices);
             }.bind(this);
           }.bind(this))(file);
 
