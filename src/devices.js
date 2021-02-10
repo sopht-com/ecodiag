@@ -159,7 +159,7 @@ var devices = {
       ecodiag_avg_laptop: {
         label_fr: "moyenne",
         label_en: "average",
-        regex:    /(latitude|(z.*|elite)book|macbookpro|thinkpad)/i,
+        regex:    /(latitude|(z.*|elite)book|mac\s?book|thinkpad)/i,
         grey_CO2: {mean:260,std:hypot([0.2,0.56])}, yearly_consumption: 48, lifetime: 3},
     }
   },
