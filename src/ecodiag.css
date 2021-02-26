@@ -114,6 +114,9 @@ input:disabled {
   border: 1px solid #cccccc;
 }
 
+input.year-picker {
+  width: 4em;
+}
 
 /* tables */
 

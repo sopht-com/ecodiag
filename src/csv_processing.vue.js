@@ -23,7 +23,6 @@ Vue.component('csv-processing', {
           <li><b>Fabricant</b>, ex. DELL, HP, Apple, etc. (optionnel, et non utilisé pour l'instant)</li>
           <li><b>Date d'achat</b>, à partir de laquelle sera extraite l'année d'achat pour une comptabilisation par flux (voir onglet <i>options</i>).</li>
         </ul>
-        
       </p>
 
       <p>
@@ -54,71 +53,81 @@ Vue.component('csv-processing', {
       <label>Envoyer les données valides (items oranges et verts) pour calcul :</label>
       <input type="button" value="GO !" @click="send_to_ecodiag" > (voir onglet <i>équipement</i> pour le résumé)
     </p>
-    
-    <table name="csv_table" class="csv_table">
 
-      <tr>
-        <th colspan="4">Entrées utilisateurs</th>
-        <th class="transparent"></th>
-        <th colspan="4">Ecodiag</th>
-        
-      </tr>
-      <tr>
-        <th>{{$t('words.brand')}}</th>
-        <th>{{$t('words.type')}}</th>
-        <th>{{$t('words.model')}}</th>
-        <th>{{$t('words.date')}}</th>
-        <th class="transparent"></th>
-        <th>{{$t('words.type')}}</th>
-        <th>{{$t('words.model')}}</th>
-        <th>{{$t('words.purchase_year')}}</th>
-        <th>{{$t('words.quantity')}}</th>
-      </tr>
+    <div id="csvtable">
+    <b-table
+      v_if="csvlist.length>0"
+      :data="csvdata" 
+      :hoverable="true"
+      :sort-icon="'sui-angle-up'"
+      default-sort="score"
+      :row-class="(row, index) => 'score'.concat(row.score)"
+      paginated
+      per-page="200"
+    >
 
-      <tr v-for="item in csvlist.filter(d => selection_predicate(d))" :class="'score'.concat(item.score)">
-        <td>
-          <span class="unit">{{ item[csvlist.header_map.in_brand] }}</span>
-        </td>
-        <td>
-          <span class="unit">{{ item[csvlist.header_map.in_type] }}</span>
-        </td>
-        <td>
-          <span class="unit">{{ item[csvlist.header_map.in_model] }}</span>
-        </td>
-        <td>
-          <span class="unit">{{ item[csvlist.header_map.in_date] }}</span>
-        </td>
+      <b-table-column :field="csvlist.header_map.in_brand" sortable :label="$t('words.brand')" v-slot="props">
+        <span class="unit">{{ props.row[csvlist.header_map.in_brand] }}</span>
+      </b-table-column>
 
-        <td class="transparent"></td>
+      <b-table-column :field="csvlist.header_map.in_type" sortable :label="$t('words.type')" v-slot="props">
+        <span class="unit">{{ props.row[csvlist.header_map.in_type] }}</span>
+      </b-table-column>
 
-        <td>
-          <select v-model="item.type" @change="item_type_changed(item)">
-            <option v-for="d in Object.keys(devices)" :value="d">
-              {{tr(d)}}
-            </option>
-          </select>
-        </td>
-        <td>
-          <select v-if="item.type in devices && devices[item.type].models" v-model="item.model" @change="item_model_changed(item)">
-            <option v-if="!(devices[item.type].models && devices[item.type].models.default)" value="default">{{$t('labels.default')}}</option>
-            <option v-for="m in Object.keys(devices[item.type].models)" :value="m">
+      <b-table-column :field="csvlist.header_map.in_model" sortable :label="$t('words.model')" v-slot="props">
+        <span class="unit">{{ props.row[csvlist.header_map.in_model] }}</span>
+      </b-table-column>
+
+      <b-table-column :field="csvlist.header_map.in_date" sortable :label="$t('words.date')" v-slot="props">
+        <span class="unit">{{ props.row[csvlist.header_map.in_date] }}</span>
+      </b-table-column>
+
+      <b-table-column field="nb" width="10" cell-class="transparent" header-class="transparent" v-slot="props">
+      <span class="unit"></span>
+      </b-table-column>
+
+      <b-table-column field="type" sortable :label="$t('words.type')" v-slot="props">
+        <b-select v-model="props.row.type" @input="item_type_changed(props.row)" size="is-small">
+          <option v-for="d in Object.keys(devices)" :value="d">
+            {{tr(d)}}
+          </option>
+        </b-select>
+      </b-table-column>
+
+      <b-table-column field="model" sortable :label="$t('words.model')" v-slot="props">
+        <b-select v-if="props.row.type in devices && devices[props.row.type].models" v-model="props.row.model" @input="item_model_changed(props.row)" size="is-small" >
+            <option v-if="!(devices[props.row.type].models && devices[props.row.type].models.default)" value="default">{{$t('labels.default')}}</option>
+            <option v-for="m in Object.keys(devices[props.row.type].models)" :value="m">
               {{tr(m)}}
             </option>
-          </select>
-        </td>
-        <td>
-          <input v-model="item.year" type="number" min="1900" max="2100" style="width:3.5em" step="1" />
-        </td>
-        <td>
-          <span class="unit">{{ item.nb }}</span>
-        </td>
-      </tr>
-        
-    </table>
+        </b-select>
+
+      </b-table-column>
+
+      <b-table-column field="year" sortable :label="$t('words.purchase_year')" numeric v-slot="props">
+        <b-input v-model="props.row.year" type="number" min="1900" max="2100" step="1" size="is-small" custom-class="year-picker" />
+      </b-table-column>
+
+      <b-table-column field="nb" sortable :label="$t('words.quantity')" numeric v-slot="props">
+        <span class="unit">{{ props.row.nb }}</span>
+      </b-table-column>
+
+    </b-table>
+    </div>
+
   </div>
   `,
   mixins: [device_utils],
+  computed: {
+    csvdata: function() {
+      return this.csvlist.filter(d => this.selection_predicate(d))
+    }
+  },
+  updated() {
+    this.add_supheader()
+  },
   methods:{
+    
     tr(l) {
       var key = 'labels.'+l;
       if(this.$te(key))
@@ -150,6 +159,22 @@ Vue.component('csv-processing', {
 
         reader.readAsText(file);
       }
+      
+    },
+    add_supheader() {
+      if(!this.header_added) {
+        var dt = document.getElementById("csvtable")
+        // console.log(dt)
+        var t = dt.getElementsByTagName("table")
+        
+        if(t.length>0) {
+          // console.log(t[0])
+          var thead = t[0].getElementsByTagName('thead')[0]
+          // console.log(thead)
+          this.header_added = true
+          thead.innerHTML = '<tr><th colspan="4">Entrées utilisateurs</th><th class="transparent"></th><th colspan="4">Ecodiag</th></tr>' + thead.innerHTML
+        }
+      }
     },
     selection_predicate(item) {
       return ( (!this.filter_empty_year) || item.year!="" )
@@ -166,23 +191,31 @@ Vue.component('csv-processing', {
           copy.push(item);
         }
       }
-      copy = csv_merge_wrt_keys(copy);
+      copy = this.csv_merge_wrt_keys(copy);
       this.devicelist.splice(0,this.devicelist.length);
       for(var i in copy) {
         var item = copy[i];
-        this.devicelist.push( consolidate_device_item(item.type, item.model, item) );
+        this.devicelist.push( this.consolidate_device_item(item.type, item.model, item) );
       }
     }
   },
   data() {
+    var csv_data = []
+    csv_data['header_map'] = {
+      in_brand: 'Fabricant',
+      in_type: 'Type',
+      in_model: 'Modèle',
+      in_date:  'Date d\'achat'
+    }
     return {
       // import global data and functions:
-      devices:devices,
-      toFixed:toFixed,
-      csvlist:[],
+      devices: devices,
+      toFixed: toFixed,
+      csvlist: csv_data,
       filter_empty_year: false,
       filter_damping_period: true,
       reference_year: 2019,
+      header_added: false
     }
   }
 
