@@ -16,7 +16,7 @@ var devices = {
   desktop:{
     label_fr:           "PC fixe",
     label_en:           "desktop",
-    regex:              /(pc.*fix|desktop|poste.*fix|ordinateur|computer|fixe|tour|tower)/i,
+    regex:              /(pc.*fix|desktop|poste.*fix|ordinateur|computer|fixe|tour|tower|unite centrale)/i,
     grey_CO2:           {mean:350,std:hypot([0.3,0.72])},
     power_consumption:  0.2,  // kW     (seems to be reasonable regarding DELL's CO2 sheets)
     duration:           4,    // years,
@@ -201,6 +201,9 @@ var devices = {
     duration:           7,    // pif
     yearly_consumption: 120   /* = 2h * 200j * 0.3kW */, // ecodiag 1752 pour 500h/an => ça ne colle pas ! y'a un bug !
     usage:              3,    // 3h par jour ouvré
+    
+    regex:              /(videoprojector|videoprojecteur)/i,
+
     models: {
       //                                                                                                          kWh  =  kW  *h*days
       projector_portable: {
@@ -230,7 +233,7 @@ var devices = {
   pad: {
     label_fr:           'tablette',
     label_en:           'pad',
-    regex:              /(tablet|pad)/i,
+    regex:              /(tablet|pad|pda)/i,
     grey_CO2:           150,
     power_consumption:  0, // TODO
     duration:           2,  // ecodiag
@@ -291,6 +294,7 @@ var devices = {
   keyboard: {
     label_fr:           'clavier',
     label_en:           'keyboard',
+    regex:              /(keyboard|clavier).*(azerty|qwerty)/i,
     grey_CO2:           24, // ecodiag => this seems way too high
     power_consumption:   0,
     duration:            4, // ecodiag 3
