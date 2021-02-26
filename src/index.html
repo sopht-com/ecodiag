@@ -469,7 +469,7 @@ var vm = new Vue({ i18n, data: {
     export_json_device_list(e) {
       e.preventDefault();
 
-      var d = {devices: pack_device_list(this.devices_list)};
+      var d = {devices: this.pack_device_list(this.devices_list)};
       if(conv.to_CO2.elec!=default_kWh2CO2) {
         d['kWh2CO2'] = conv.to_CO2.elec;
       }

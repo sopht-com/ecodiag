@@ -64,7 +64,7 @@
     },
 
     get_yearly_consumption (item) {
-      if (item.yearly_consumption) { return item.yearly_consumption } else { return get_device_attribute(item.type, item.model, 'yearly_consumption') }
+      if (item.yearly_consumption) { return item.yearly_consumption } else { return this.get_device_attribute(item.type, item.model, 'yearly_consumption') }
     },
 
     // returns the attribute "attr" from a type/model pair
@@ -144,7 +144,7 @@
         var item = {}
         item[this.make_device_name(x.type, x.model)] = { nb: x.nb, lifetime: x.lifetime }
         res.push(item)
-      })
+      }.bind(this))
       return res
     },
 
