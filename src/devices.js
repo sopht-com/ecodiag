@@ -341,4 +341,30 @@ var devices = {
     }
   },
 
+  harddrive: {
+    label_fr:           'disque dur',
+    label_en:           'harddrive',
+    regex:              /disque dur (interne|externe)/i,
+    grey_CO2:           {mean:10,std:0.1},
+                        // based on DEEL/HP sheets for HDD
+                        // the footprint of SSD is much higher
+    duration:            4,
+    yearly_consumption:  0,
+  },
+
+  gpu: {
+    label_fr:           'GPU puissant',
+    label_en:           'powefull GPU',
+    regex:              /carte graphique/i,
+    grey_CO2:           {mean:80,std:hypot([0.3,0.5])},
+                            // It highly depends on the GPU, but assuming only powerful GPU's are counted,
+                            // and provided that on average the footprint of a motherboard is about 113 kgCO2e
+                            // this choice seems reasonable.
+                            // Uncertainties:
+                            //  - 30% for the LCA
+                            //  - 50% for the variation across GPUs
+    duration:            4,
+    yearly_consumption:  0,
+  },
+
 };
