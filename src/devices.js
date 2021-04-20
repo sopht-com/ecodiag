@@ -365,6 +365,11 @@ var devices = {
                             //  - 50% for the variation across GPUs
     duration:            4,
     yearly_consumption:  0,
+    models: {
+      default: {
+        regex: /(carte graphique|\Wgtx\W|\Wrtx\W|\Wquadro\W|\Wtitan\W|\Wgeforce\W|\Wgpu\W)/i
+      }
+    }
   },
 
 };
