@@ -334,27 +334,28 @@ var vm = new Vue({ i18n, data: {
     grey_sup:0,
     
     total_grey_CO2: function(suffix) {
-      var lifetime_att = (suffix &&suffix==2) ? 'lifetime2' : 'lifetime';
+      var att = (suffix &&suffix==2) ? 'grey2' : 'grey'
       return this.devices_list.reduce(function(res,item){
-        return res + item.nb * this.get_device_factor(item.type,item.model).mean / item[lifetime_att];
-      }.bind(this), 0);
+        const itemCO2 = this.compute_device_co2e(item, this.method)
+        return res + itemCO2[att]
+      }.bind(this), 0)
     },
 
     total_elec_kWh: function(suffix) {
       return this.devices_list.reduce(function(res,item){
-        return res + item.nb * this.get_yearly_consumption(item);
-      }.bind(this), 0);
+        return res + item.nb * this.get_yearly_consumption(item)
+      }.bind(this), 0)
     },
     
     trAtt: function(obj,key) {
-        var suffix = "_"+i18n.locale;
-        var r = obj[key+suffix];
+        var suffix = "_"+i18n.locale
+        var r = obj[key+suffix]
         if(!r) {
-          r = obj[key];
-          var rbis = messages[i18n.locale].words[r];
-          if(rbis) {console.log('found ' + rbis); r = rbis;}
+          r = obj[key]
+          var rbis = messages[i18n.locale].words[r]
+          if(rbis) {console.log('found ' + rbis); r = rbis}
         }
-        return r;
+        return r
       },
   },
 
