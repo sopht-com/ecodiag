@@ -154,19 +154,19 @@ tr.blank {
 .score0 {
   background-color: #e08585;
 }
-tr.score0:hover {
+.table.is-hoverable tbody tr.score0:hover {
   background-color: #efc2c2;
 }
 .score1 {
   background-color: #ecbf93;
 }
-tr.score1:hover {
+.table.is-hoverable tbody tr.score1:hover {
   background-color: #f4d9be;
 }
 .score2 {
   background-color: #c1dd88;
 }
-tr.score2:hover {
+.table.is-hoverable tbody tr.score2:hover {
   background-color: #d6e9af;
 }
 
