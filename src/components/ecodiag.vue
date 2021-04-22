@@ -277,7 +277,7 @@ export default {
       equiv_selected: 'coal',
 
       method_list: ['stock','flux'],
-      method: 'stock',
+      method: 'flux',
       
       uncertainty:false,
       uncertainty_percent:71, // this reproduces the standard deviation with a symmetric range around the mean
