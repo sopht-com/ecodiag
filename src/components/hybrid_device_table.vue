@@ -158,7 +158,7 @@
       custom-detail-row
       detail-key="id"
       show-detail-icon
-      :custom-row-key="(row, index) => row.id"
+      custom-row-key="id"
       :opened-detailed="devicelist.filter(e => e.score===0).map(e => e.id)"
       :sort-icon="'sui-angle-up'"
       default-sortXXX="status"
