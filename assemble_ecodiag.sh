@@ -53,6 +53,7 @@ git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
 git branch -f master origin/master
 git branch -f csv_import origin/csv_import
+git branch -f csv_import origin/buefy
 git checkout master
 git clone . tmp
 cd tmp
