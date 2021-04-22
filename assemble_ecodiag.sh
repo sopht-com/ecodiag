@@ -60,5 +60,14 @@ git checkout $REV
 assemble ../public
 git checkout csv_import
 assemble ../public/csv_import
+
+git checkout buefy
+npm ci
+npm run build
+# mv public public-vue # GitLab Pages hooks on the public folder
+mv dist ../public/buefy # rename the dist folder (result of npm run build)
+# optionally, you can activate gzip support with the following line:
+# find ../public/buefy -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
+
 cd ..
 rm -rf tmp
