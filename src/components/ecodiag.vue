@@ -351,6 +351,8 @@ export default {
       greydata1.offsetPercent = 0;
       greydata2.widthPercent  = 0.25;
       greydata2.offsetPercent = 0.75;
+
+      let res = []
         
       if(this.uncertainty) {
         // cache inf/sup range:
@@ -362,17 +364,15 @@ export default {
         greydata1.uncertainty = {inf:infs.total[1], sup:sups.total[1], mean:means.total};
 
         var alldata = [greydata1, greydata2];
-        return [
-          {key:'grey', label:this.$t('labels.fabrication'), data:alldata },
-          {key:'use',  label:this.$t('labels.use'), data:[usedata]}
-        ];
+        res.push({key:'grey', label:this.$t('labels.fabrication'), data:alldata })
       } else {
         // greydata2.dim = 0.5;
-        return [
-          {key:'grey', label:this.$t('labels.fabrication'), data:[greydata1, greydata2] },
-          {key:'use',  label:this.$t('labels.use'), data:[usedata]}
-        ];
+        res.push({key:'grey', label:this.$t('labels.fabrication'), data:[greydata1, greydata2] })
       }
+      if (this.method !== 'flux') {
+        res.push({key:'use',  label:this.$t('labels.use'), data:[usedata]})
+      }
+      return res
     }
   },
 
