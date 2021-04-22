@@ -1,4 +1,6 @@
 
+/* eslint-disable */
+
 // this file provides details information for some devices
 // - default power consumption
 // - typical lifetime (=duration)
@@ -11,7 +13,7 @@ function hypot(vals) {
 }
 
 // see Referenciel_Ecodiag.ods
-var devices = {
+export const devices = {
 
   desktop:{
     label_fr:           "PC fixe",

@@ -1,14 +1,6 @@
 
-Vue.component('dropdownbox', {
-  
-  props: {
-    title: String,
-    title_en: String,
-    show:{type:Boolean,default: false}
-  },
-
-  template: /*html*/`
-    <div class="section">
+<template>
+  <div class="section">
     <div class="title" v-on:click="toggle">
       <ml :en="title_en">{{ title }}</ml>
       <span class="toggleIcon" id="toggleIcon">{{toggleIcon}}</span>
@@ -18,7 +10,18 @@ Vue.component('dropdownbox', {
         <slot></slot>
       </div>
     </transition>
-  </div>`,
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'dropdownbox',
+  
+  props: {
+    title: String,
+    title_en: String,
+    show:{type:Boolean,default: false}
+  },
 
   methods: {
 
@@ -28,10 +31,10 @@ Vue.component('dropdownbox', {
     },
 
     before_enter: function() {
-      var body = this.$refs['body'];
-      body.style.display = 'block';
-      const height = body.scrollHeight;
-      body.style.display = 'none';
+      var body = this.$refs['body']
+      body.style.display = 'block'
+      const height = body.scrollHeight
+      body.style.display = 'none'
       body.style.height = height + 'px'
     },
 
@@ -41,17 +44,17 @@ Vue.component('dropdownbox', {
     },
 
     before_leave: function() {
-      var body = this.$refs['body'];
-      body.style.height = body.scrollHeight + 'px';
+      var body = this.$refs['body']
+      body.style.height = body.scrollHeight + 'px'
       // force recomputation of initial height for the transition
-      hackHeight = window.getComputedStyle(body).height;
+      hackHeight = window.getComputedStyle(body).height
       body.style.height = 0
     }
 
   },
   mounted() {
     if(this.show) {
-      this.toggle();
+      this.toggle()
     }
   },
   data() {
@@ -61,5 +64,43 @@ Vue.component('dropdownbox', {
       hackHeight:0
     }
   }
-})
+}
 
+</script>
+
+<style scoped>
+.section .title {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 120%;
+}
+
+.section .title:hover {
+  background-color: #555;
+}
+
+.section .body {
+  padding: 0 1em;
+  display: block;
+  overflow: hidden;
+  background-color: #f1f1f1;
+  height:0;
+}
+
+.toggleIcon {
+  font-size: 90%;
+  color: white;
+  float: right;
+  margin-left: 1em;
+  margin-right: 0;
+}
+
+.smooth-enter-active, .smooth-leave-active{
+  transition: height .3s;
+}
+</style>

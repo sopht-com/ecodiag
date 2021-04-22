@@ -1,39 +1,43 @@
 
+import * as d3 from "d3-selection"
+import { device_utils } from './device_utils'
 
-var d3_insert_line_breaks = function(d) {
-  var el = d3.select(this);
+export var d3_insert_line_breaks = function(d) {
+  var el = d3.select(this)
   if(d && d.data)
   {
-    d = d.value>1 ? tr(d.data.type) : "";
+    d = d.value>1 ? device_utils.methods.tr_label(d.data.type) : ""
   } else if(!d) {
-    d = el.text();
+    d = el.text()
   }
-  var words = d.split(' nl ');
-  el.text('');
+  var words = d.split(' nl ')
+  el.text('')
 
   for (var i = 0; i < words.length; i++) {
-      var tspan = el.append('tspan').text(words[i]);
+      var tspan = el.append('tspan').text(words[i])
       if (i > 0) {
-          tspan.attr('dy', 10);
+          tspan.attr('dy', 10)
           if(el.attr('x')) {
-            tspan.attr('x', Number(el.attr('x')));
+            tspan.attr('x', Number(el.attr('x')))
           }
           else {
 
             tspan.attr('x', 0);
           }
       } else if(el.attr('x')) {
-          tspan.attr('dy', -3 - (words.length-2)*5);
+          tspan.attr('dy', -3 - (words.length-2)*5)
       }
   }
-};
+}
 
+
+var pSBCr = undefined
 
 // https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
-const pSBC=(p,c0,c1,l)=>{
+export var pSBC=function(p,c0,c1,l){
     let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
     if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
-    if(!this.pSBCr)this.pSBCr=(d)=>{
+    if(!pSBCr)pSBCr=(d)=>{
         let n=d.length,x={};
         if(n>9){
             [r,g,b,a]=d=d.split(","),n=d.length;
@@ -46,7 +50,7 @@ const pSBC=(p,c0,c1,l)=>{
             if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;
             else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1
         }return x};
-    h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=this.pSBCr(c0),P=p<0,t=c1&&c1!="c"?this.pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
+    h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=pSBCr(c0),P=p<0,t=c1&&c1!="c"?pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
     if(!f||!t)return null;
     if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);
     else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
