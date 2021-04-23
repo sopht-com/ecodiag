@@ -4,6 +4,8 @@ pages:
   stage: deploy
   script:
   - ls *
+  - git status
+  - npm install
   - sh assemble_ecodiag.sh
   artifacts:
     paths:
