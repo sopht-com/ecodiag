@@ -198,6 +198,25 @@
         </button>
       </b-table-column>
 
+      <b-table-column field="grey" sortable numeric width="8rem">
+        <template v-slot:header="{}">
+          <!-- {{$t('words.fabrication')}}<br/> -->
+          <div class="is-size-7">kgCO2e/
+          <select v-model="normalization" class="is-size-7">
+            <option v-for="key in normalization_list" :key="key" :value="key">
+              {{$t('words.'+key)}}
+            </option>
+          </select>
+          </div>
+          <b-tooltip label="fabrication + transport + fin de vie" append-to-body>
+          hors usage
+          </b-tooltip>
+        </template>
+        <template v-slot="props">
+          {{props.row.grey}}
+        </template>
+      </b-table-column>
+
       <template slot="detail" slot-scope="props">
         <tr v-if="props.row.item.csvdata && filemap.length>0" :class="'ed-detail score'.concat(props.row.score)">
           <td></td>
@@ -270,7 +289,8 @@ export default {
             item: e,
             nb: e.nb,
             score: e.score,
-            status: self.compute_status(e) }
+            status: self.compute_status(e),
+            grey: self.compute_grey(e) }
           return res
         })
     },
@@ -298,6 +318,13 @@ export default {
   },
 
   methods: {
+
+    compute_grey: function (item) {
+      let factor = this.get_device_factor(item.type,item.model).mean
+      return (this.normalization === 'year'
+              ? Math.round(item.nb * factor / (this.method=='stock' ? item.lifetime : this.params.damping_factor), 0)
+              : Math.round(factor, 0))
+    },
 
     count_items: function (filter) {
       return this.devicelist.filter(e => e.score >= 0 && filter(e)).reduce((r, e) => r + e.nb, 0)
@@ -483,6 +510,8 @@ export default {
       screen_lifetime: 7,
       nb_users_actual: 0,
       nb_screens_per_user: 1,
+      normalization_list: ['year', 'unit'],
+      normalization: 'year',
       status: {
         user_ko: 2,
         user_ok: 4,
