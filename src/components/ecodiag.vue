@@ -239,6 +239,20 @@
   EcoDiag version %version_date%-<a href="https://gitlab.inria.fr/guenneba/ecodiag/-/commit/%version_hash%">%version_hash%</a> - un service <a href="https://ecoinfo.cnrs.fr/">ecoinfo</a>.
 </p>
 
+<b-modal
+  v-model="isMethodPickerActive"
+  has-modal-card
+  trap-focus
+  :destroy-on-hide="true"
+  :can-cancel="[]"
+  aria-role="dialog"
+  aria-label="Methode de calcul"
+  aria-modal>
+  <template #default="props">
+    <method-picker @close="props.close" @selected="e => method=e"></method-picker>
+  </template>
+</b-modal>
+
 </div>
 </template>
 
@@ -257,7 +271,8 @@ export default {
     'tabs': () => import('@/components/tabs.vue'),
     'tab': () => import('@/components/tab.vue'),
     'device-table': () => import('@/components/hybrid_device_table.vue'),
-    'chart': () => import('@/components/chart.vue')
+    'chart': () => import('@/components/chart.vue'),
+    'method-picker': () => import('@/components/method_picker.vue')
   },
 
   mixins: [device_utils],
@@ -277,7 +292,8 @@ export default {
       equiv_selected: 'coal',
 
       method_list: ['stock','flux'],
-      method: 'flux',
+      method: undefined,
+      isMethodPickerActive: true,
       
       uncertainty:false,
       uncertainty_percent:71, // this reproduces the standard deviation with a symmetric range around the mean
