@@ -4,7 +4,7 @@ pages:
   stage: deploy
   script:
   - ls *
-  - bash assemble_ecodiag.sh
+  - sh assemble_ecodiag.sh
   artifacts:
     paths:
     - public
