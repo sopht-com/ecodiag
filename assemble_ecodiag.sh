@@ -63,6 +63,7 @@ git checkout csv_import
 assemble ../public/csv_import
 
 git checkout buefy
+export NODE_ENV=production
 npm ci
 npm install
 npm run build
