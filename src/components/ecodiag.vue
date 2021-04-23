@@ -50,8 +50,8 @@
             <ml fr="(consommation électrique)">(electricity consumption)</ml>.
         </p>
         <p class="whatif" v-if="method === 'flux'">
-          <ml fr="Total CO2e (fabrication et transport) :">Total CO2e (production and transport):</ml>
-          <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e + total_grey_CO2(),0)}}</span> kgCO2e}}
+          <ml fr="Total CO2e (fabrication et transport) : ">Total CO2e (production and transport): </ml> 
+          <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e + total_grey_CO2(),0)}}</span> kgCO2e
         </p>
 
         <p class="whatif" v-show="uncertainty" style="padding-left:1em">
