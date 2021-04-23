@@ -247,7 +247,7 @@
 var default_kWh2CO2 = 0.084;
 
 import { device_utils } from '../device_utils'
-// import { device_utils } from '../device_utils'
+import { devices } from '../devices'
 
 export default {
   name: 'ecodiag',
@@ -268,11 +268,7 @@ export default {
 
       devices_list: [],
       
-      // import global data and functions
-      // conv: conv,
-      //params: params,
-      // devices:devices,
-      // toFixed:toFixed,
+      devices:devices,
 
       equiv_data: {
         coal: {factor: 1./3., unit:" kg of ", unit_fr:" kg de "},
@@ -313,8 +309,15 @@ export default {
           return 'other';
       }
 
-      var tr = this.$t.bind(this);
-      var greydata1 = main_categories.map(function(x) {return {key:x, label: tr('labels.'+x), val:0};});
+      var self = this
+      var tr = function(x) {
+        if (x in self.devices) {
+          return self.tr_label(self.devices[x])
+        } else {
+          return self.$t('labels.'+x)
+        }
+      }
+      var greydata1 = main_categories.map(function(x) {return {key:x, label: tr(x), val:0};})
       var greydata2 = this.clone_obj(greydata1);
       var usedata   = this.clone_obj(greydata1);
       var uncertainty_percent = this.uncertainty_percent;
