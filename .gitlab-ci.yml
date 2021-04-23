@@ -3,9 +3,6 @@ image: node:latest
 pages:
   stage: deploy
   script:
-  - ls *
-  - npm install
-  - git status
   - bash assemble_ecodiag.sh
   artifacts:
     paths:
