@@ -1,11 +1,11 @@
-image: alpine:latest
+image: node:latest
 
 pages:
   stage: deploy
   script:
   - ls *
-  - git status
   - npm install
+  - git status
   - sh assemble_ecodiag.sh
   artifacts:
     paths:
