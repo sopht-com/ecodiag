@@ -63,10 +63,9 @@ git checkout csv_import
 assemble ../public/csv_import
 
 git checkout buefy
-export NODE_ENV=production
-npm ci
 npm install
-npm run build
+npm ci
+NODE_ENV=production npm run build
 # mv public public-vue # GitLab Pages hooks on the public folder
 mv dist ../public/buefy # rename the dist folder (result of npm run build)
 # optionally, you can activate gzip support with the following line:
