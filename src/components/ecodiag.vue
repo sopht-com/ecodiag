@@ -27,7 +27,7 @@
         <device-table :devicelist="devices_list" :method="method"></device-table>
         <p></p>
 
-        <p class="whatif">
+        <p class="whatif" v-if="method === 'stock'">
           <ml fr="Bilan consommation électrique :">Total electricity consumption:</ml>
           <span class="value">{{toFixed(total_elec_kWh(),0)}}</span> kWh/{{$t('words.year')}},
           <ml fr="soit l'équivalent de la production de">which is equivalent to the production of</ml>
@@ -41,13 +41,17 @@
           </select>.
         </p>
 
-        <p class="whatif">
+        <p class="whatif" v-if="method === 'stock'">
           <ml fr="Total CO2e annuel :">Total yearly CO2e:</ml>
           <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e + total_grey_CO2(),0)}}</span> kgCO2e/{{$t('words.year')}}
             = <span class="value">{{toFixed(total_grey_CO2(),0)}}</span>
-            <ml fr="(fabrication et transport)">(production and transport)</ml>
+            <ml fr="(fabrication et transport)">(production and transport)</ml>            
             + <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e,0)}}</span>
             <ml fr="(consommation électrique)">(electricity consumption)</ml>.
+        </p>
+        <p class="whatif" v-if="method === 'flux'">
+          <ml fr="Total CO2e (fabrication et transport) :">Total CO2e (production and transport):</ml>
+          <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e + total_grey_CO2(),0)}}</span> kgCO2e}}
         </p>
 
         <p class="whatif" v-show="uncertainty" style="padding-left:1em">
@@ -127,7 +131,7 @@
             <td></td>
           </tr>
 
-            <tr v-show="method=='flux'"><td><ml fr="Durée d'amortissement comptable :">Damping factor:</ml></td>
+            <tr v-show="method=='flux'"><td><ml fr="Durée d'amortissement :">Damping factor:</ml></td>
               <td><input v-model="params.damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
               <td class="note">La liste des équipements fournis doit correspondre à la liste des achats des
                 <span v-text="params.damping_factor"></span> années précédentes, indépendamment de la durée de vie réel des équipements.</td>
