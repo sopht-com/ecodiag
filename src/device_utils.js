@@ -94,6 +94,9 @@ export const device_utils = {
       let getstd = function (el) {
         if (el.std) { return el.std } else { return this.params.default_uncertainty / 100 } // default is 30%
       }.bind(this)
+      if (!(type in devices)) {
+        return {mean: 0, std: 0}
+      }
       
       let device_CO2 = devices[type].grey_CO2
       let mean = getmean(device_CO2)
@@ -213,7 +216,7 @@ export const device_utils = {
       const greyCO2 = item.nb * device_factor.mean / lt
 
       const lt_bis = method == 'stock' ? item.lifetime2 : (+this.params.damping_factor * (+this.params.lifetime_factor))
-      const greyCO2_bis = item.nb * this.get_device_factor(item.type, item.model).mean / lt_bis
+      const greyCO2_bis = item.nb * device_factor.mean / lt_bis
 
       let infs = []
       let sups = []
