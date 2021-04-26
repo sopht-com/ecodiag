@@ -273,7 +273,6 @@ export default {
   props: {
     'devicelist': Array,
     'method': { type: String, default: 'flux' },
-    'damping_factor': { type: Number, default: 1 },
     'nb_users': Number,
     'reference_year': { type: Number, default: 2020 },
     'optionalColumns': { type: Array, default: () => [] }
@@ -353,7 +352,7 @@ export default {
         return round(this.count_items_of_file(0, e => this.year_ok(e.year) && e.type === 'desktop') * this.nb_screens_per_desktop +
                      this.count_items_of_file(0, e => this.year_ok(e.year) && e.type === 'laptop') * this.nb_screens_per_laptop)
       } else if (method === 'from_nb_users') {
-        return round(this.nb_users_actual * this.nb_screens_per_user / this.screen_lifetime * this.damping_factor)
+        return round(this.nb_users_actual * this.nb_screens_per_user / this.screen_lifetime * this.params.damping_factor)
       } else {
         return this.count_items(e => e.type === 'screen')
       }
@@ -462,7 +461,7 @@ export default {
     },
 
     year_ok (y) {
-      return (this.includes_empty_year && y === '') || (y <= this.reference_year && y > (this.reference_year - this.damping_factor))
+      return (this.includes_empty_year && y === '') || (y <= this.reference_year && y > (this.reference_year - this.params.damping_factor))
     },
 
     display_predicate (item) {
