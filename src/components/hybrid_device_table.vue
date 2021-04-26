@@ -29,11 +29,11 @@
               soit une estimation de <strong>{{nb_estimated_screens('from_nb_PCs')}}</strong> écrans achetés sur la période.
                 </td>
               </tr>
-            <tr :class="nb_screen_method === 'from_nbUsers' ? 'is-selected' : ''">
+            <tr :class="nb_screen_method === 'from_nb_users' ? 'is-selected' : ''">
               <td class="vcenter">
                 <b-field>
                   <b-radio v-model="nb_screen_method"
-                        native-value="from_nbUsers">
+                        native-value="from_nb_users">
                   </b-radio>
                 </b-field>
               </td>
@@ -44,7 +44,7 @@
                 <input v-model.number="nb_screens_per_user" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" />
                 écrans par agent,<br/> et une durée de vie moyenne de
                 <input v-model.number="screen_lifetime" type="number" min="1" max="99" step="0.5" size="is-small" class="inline-number w4" /> années,<br/>
-                soit une estimation de <strong>{{nb_estimated_screens('from_nbUsers')}}</strong> écrans achetés sur la période.
+                soit une estimation de <strong>{{nb_estimated_screens('from_nb_users')}}</strong> écrans achetés sur la période.
               </td>
             </tr>
             <tr :class="nb_screen_method === 'none' ? 'is-selected' : ''">
@@ -351,7 +351,7 @@ export default {
       if (method === 'from_nb_PCs') {
         return round(this.count_items_of_file(0, e => this.year_ok(e.year) && e.type === 'desktop') * this.nb_screens_per_desktop +
                      this.count_items_of_file(0, e => this.year_ok(e.year) && e.type === 'laptop') * this.nb_screens_per_laptop)
-      } else if (method === 'from_nbUsers') {
+      } else if (method === 'from_nb_users') {
         return round(this.nbUsers_actual * this.nb_screens_per_user / this.screen_lifetime * this.params.damping_factor)
       } else {
         return this.count_items(e => e.type === 'screen')
