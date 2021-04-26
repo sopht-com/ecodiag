@@ -577,7 +577,8 @@ table.table.condensed td {
 }
 button.trash {
   border-style: none;
-  margin-left: 10px;
+  margin-left: 0;
+  padding:0;
   background: none;
   cursor: pointer;
 }
