@@ -193,8 +193,8 @@
         <span class="unit">
           <input class="input is-small inline-number" v-model.number="props.row.item.nb" type="number" min="0" max="99999" step="1" style="width:3.5em" />
         </span>
-        <button class="trash is-small has-text-grey" @click="delete_row(props.row.item)" >
-          <i class="sui sui-trash" style="font-size: 16px;"></i>
+        <button class="trash has-text-grey" @click="delete_row(props.row.item)" >
+          <b-icon icon="trash" />
         </button>
       </b-table-column>
 
