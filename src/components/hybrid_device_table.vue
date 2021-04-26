@@ -205,7 +205,6 @@
         </span>
       </b-table-column>
 
-
       <b-table-column field="grey" :visible="optionalColumns.includes('grey')" sortable numeric width="8rem">
         <template v-slot:header="{}">
           <!-- {{$t('words.fabrication')}}<br/> -->
@@ -275,7 +274,8 @@ export default {
     'method': { type: String, default: 'flux' },
     'nbUsers': Number,
     'referenceYear': { type: Number, default: 2020 },
-    'optionalColumns': { type: Array, default: () => [] }
+    'optionalColumns': { type: Array, default: () => [] },
+    'l1p5': { type: Boolean, default: false }
   },
 
   i18n: {
@@ -323,16 +323,18 @@ export default {
   },
 
   updated () {
-    // window.$('.chevron-right').addClass('sui-chevron-right')
+    if (this.l1p5) {
+      window.$('.chevron-right').addClass('sui-chevron-right')
+    }
   },
 
   methods: {
 
     compute_grey: function (item) {
-      let factor = this.get_device_factor(item.type,item.model).mean
+      let factor = this.get_device_factor(item.type, item.model).mean
       return (this.normalization === 'year'
-              ? Math.round(item.nb * factor / (this.method=='stock' ? item.lifetime : this.params.damping_factor), 0)
-              : Math.round(factor, 0))
+        ? Math.round(item.nb * factor / (this.method === 'stock' ? item.lifetime : this.params.damping_factor), 0)
+        : Math.round(factor, 0))
     },
 
     count_items: function (filter) {
