@@ -29,22 +29,22 @@
               soit une estimation de <strong>{{nb_estimated_screens('from_nb_PCs')}}</strong> écrans achetés sur la période.
                 </td>
               </tr>
-            <tr :class="nb_screen_method === 'from_nb_users' ? 'is-selected' : ''">
+            <tr :class="nb_screen_method === 'from_nbUsers' ? 'is-selected' : ''">
               <td class="vcenter">
                 <b-field>
                   <b-radio v-model="nb_screen_method"
-                        native-value="from_nb_users">
+                        native-value="from_nbUsers">
                   </b-radio>
                 </b-field>
               </td>
               <td>
                 Comptabiliser
-                <input v-model.number="nb_users_actual" type="number" min="0" max="99999" step="1" size="is-small" class="inline-number w5" />
+                <input v-model.number="nbUsers_actual" type="number" min="0" max="99999" step="1" size="is-small" class="inline-number w5" />
                 agents, avec en moyenne
                 <input v-model.number="nb_screens_per_user" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" />
                 écrans par agent,<br/> et une durée de vie moyenne de
                 <input v-model.number="screen_lifetime" type="number" min="1" max="99" step="0.5" size="is-small" class="inline-number w4" /> années,<br/>
-                soit une estimation de <strong>{{nb_estimated_screens('from_nb_users')}}</strong> écrans achetés sur la période.
+                soit une estimation de <strong>{{nb_estimated_screens('from_nbUsers')}}</strong> écrans achetés sur la période.
               </td>
             </tr>
             <tr :class="nb_screen_method === 'none' ? 'is-selected' : ''">
@@ -273,8 +273,8 @@ export default {
   props: {
     'devicelist': Array,
     'method': { type: String, default: 'flux' },
-    'nb_users': Number,
-    'reference_year': { type: Number, default: 2020 },
+    'nbUsers': Number,
+    'referenceYear': { type: Number, default: 2020 },
     'optionalColumns': { type: Array, default: () => [] }
   },
 
@@ -351,8 +351,8 @@ export default {
       if (method === 'from_nb_PCs') {
         return round(this.count_items_of_file(0, e => this.year_ok(e.year) && e.type === 'desktop') * this.nb_screens_per_desktop +
                      this.count_items_of_file(0, e => this.year_ok(e.year) && e.type === 'laptop') * this.nb_screens_per_laptop)
-      } else if (method === 'from_nb_users') {
-        return round(this.nb_users_actual * this.nb_screens_per_user / this.screen_lifetime * this.params.damping_factor)
+      } else if (method === 'from_nbUsers') {
+        return round(this.nbUsers_actual * this.nb_screens_per_user / this.screen_lifetime * this.params.damping_factor)
       } else {
         return this.count_items(e => e.type === 'screen')
       }
@@ -385,7 +385,7 @@ export default {
 
     add_new_item: function (type) {
       let item = this.create_device_item(type)
-      item.year = this.reference_year
+      item.year = this.referenceYear
       this.devicelist.push(item)
       return item
     },
@@ -450,8 +450,8 @@ export default {
 
       reader.readAsText(file)
 
-      if (this.nb_users > 0 && this.nb_users_actual === 0) {
-        this.nb_users_actual = this.nb_users
+      if (this.nbUsers > 0 && this.nbUsers_actual === 0) {
+        this.nbUsers_actual = this.nbUsers
       }
       this.nb_screens_in_csv = this.count_items_of_file(this.filemap.length - 1, e => e.type === 'screen')
       if (this.nb_screens_in_csv === 0) {
@@ -461,7 +461,7 @@ export default {
     },
 
     year_ok (y) {
-      return (this.includes_empty_year && y === '') || (y <= this.reference_year && y > (this.reference_year - this.params.damping_factor))
+      return (this.includes_empty_year && y === '') || (y <= this.referenceYear && y > (this.referenceYear - this.params.damping_factor))
     },
 
     display_predicate (item) {
@@ -491,7 +491,7 @@ export default {
       this.devicelist.splice(0, this.devicelist.length)
       for (let i in copy) {
         let item = copy[i]
-        this.devicelist.push(this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.reference_year }))
+        this.devicelist.push(this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.referenceYear }))
       }
       this.filemap.splice(0, this.filemap.length)
     }
@@ -517,7 +517,7 @@ export default {
       nb_screens_per_desktop: '1',
       nb_screens_per_laptop: '0',
       screen_lifetime: 7,
-      nb_users_actual: 0,
+      nbUsers_actual: 0,
       nb_screens_per_user: 1,
       normalization_list: ['year', 'unit'],
       normalization: 'year',
