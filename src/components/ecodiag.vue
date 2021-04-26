@@ -51,7 +51,7 @@
         </p>
         <p class="whatif" v-if="method === 'flux'">
           <ml fr="Total CO2e (fabrication et transport) : ">Total CO2e (production and transport): </ml> 
-          <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e + total_grey_CO2(),0)}}</span> kgCO2e
+          <span class="value">{{toFixed(total_grey_CO2(),0)}}</span> kgCO2e
         </p>
 
         <p class="whatif" v-show="uncertainty" style="padding-left:1em">
@@ -64,8 +64,6 @@
         </p>
 
       </tab>
-
-
 
       <tab :name="$t('title.data')" >
         <table style="width:100%">
@@ -157,12 +155,6 @@
         </table>
 
       </tab>
-
-      <!-- <tab :name="$t('title.csv_import')">
-        <csv-processing :devicelist="devices_list" :method="method" :damping_factor="+params.damping_factor">
-
-        </csv-processing>
-      </tab> -->
 
     </tabs>
 
