@@ -206,7 +206,7 @@
       </b-table-column>
 
 
-      <b-table-column field="grey" sortable numeric width="8rem">
+      <b-table-column field="grey" :visible="optionalColumns.includes('grey')" sortable numeric width="8rem">
         <template v-slot:header="{}">
           <!-- {{$t('words.fabrication')}}<br/> -->
           <div class="is-size-7">kgCO2e/
@@ -275,7 +275,8 @@ export default {
     'method': { type: String, default: 'flux' },
     'damping_factor': { type: Number, default: 1 },
     'nb_users': Number,
-    'reference_year': { type: Number, default: 2020 }
+    'reference_year': { type: Number, default: 2020 },
+    'optionalColumns': { type: Array, default: () => [] }
   },
 
   i18n: {

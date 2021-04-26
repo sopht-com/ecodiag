@@ -24,7 +24,10 @@
 
       <tab :name="$t('title.device_list')" :selected="true">
       
-        <device-table :devicelist="devices_list" :method="method"></device-table>
+        <device-table
+          :devicelist="devices_list"
+          :method="method"
+          :optional-columns="['grey']"></device-table>
         <p></p>
 
         <p class="whatif" v-if="method === 'stock'">
