@@ -198,6 +198,14 @@
         </button>
       </b-table-column>
 
+      <b-table-column field="item.lifetime" :visible="method=='stock'" :label="$t('words.lifetime')" width="4rem" numeric v-slot="props">
+        <span class="unit">
+          <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="99999" step="0.5" style="width:3.5em"
+             @change="function () { if (!props.row.item.lifetime_unlocked) item['lifetime2'] = item.lifetime * 1.5 }" />
+        </span>
+      </b-table-column>
+
+
       <b-table-column field="grey" sortable numeric width="8rem">
         <template v-slot:header="{}">
           <!-- {{$t('words.fabrication')}}<br/> -->
