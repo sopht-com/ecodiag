@@ -569,6 +569,8 @@ table.table.condensed td {
 button.trash {
   border-style: none;
   margin-left: 10px;
+  background: none;
+  cursor: pointer;
 }
 
 </style>
