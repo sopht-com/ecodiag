@@ -226,12 +226,13 @@
       </b-table-column>
 
       <template slot="detail" slot-scope="props">
-        <tr v-if="props.row.item.csvdata && filemap.length>0" :class="'ed-detail score'.concat(props.row.score)">
+        <tr v-if="props.row.item.csvdata && filemap.length>0" class="ed-detail">
           <td></td>
           <td></td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ props.row.item.csvdata ? props.row.item.csvdata[filemap[props.row.item.origin].in_type] : '' }}</span></td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ props.row.item.csvdata ? props.row.item.csvdata[filemap[props.row.item.origin].in_model] : '' }}</span></td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="has-text-right">{{ props.row.item.csvdata ? props.row.item.csvdata[filemap[props.row.item.origin].in_date] : '' }}</span></td>
+          <td></td>
           <td></td>
         </tr>
       </template>
