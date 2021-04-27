@@ -185,7 +185,7 @@
         </ecodiag-select-type>
       </b-table-column>
 
-      <b-table-column field="model" sortable :label="$t('words.model')" v-slot="props">
+      <b-table-column field="model" sortable :label="$t('words.model')" v-slot="props" :td-attrs="()=>({style:{'width': '12rem'}})">
         <ecodiag-select-model expanded v-model="props.row.item.model" :item_type="props.row.item.type" @input="item_model_changed(props.row.item)">
         </ecodiag-select-model>
       </b-table-column>
