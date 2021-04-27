@@ -169,14 +169,19 @@
     >
 
       <b-table-column field="status" sortable label="status" v-slot="props">
-        <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
-        <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide (csv)</b-tag>
-        <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">Année invalide</b-tag>
-        <b-tag rounded v-else type="is-danger">Inconnue</b-tag>
+        <span v-if="props.row.id !== 'add'">
+          <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide (csv)</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">Année invalide</b-tag>
+          <b-tag rounded v-else type="is-danger">Inconnue</b-tag>
+        </span>
       </b-table-column>
 
       <b-table-column field="type" sortable :label="$t('words.type')" v-slot="props">
-        <ecodiag-select-type expanded v-model="props.row.item.type" @input="item_type_changed(props.row.item)">
+        <ecodiag-select-type expanded
+          v-model="props.row.item.type"
+          :msg="props.row.id === 'add' ? 'ajouter un élément' : '...'"
+          @input="item_type_changed(props.row.id, props.row.item)">
         </ecodiag-select-type>
       </b-table-column>
 
@@ -186,20 +191,21 @@
       </b-table-column>
 
       <b-table-column field="year" sortable :label="$t('words.purchase_year')" numeric v-slot="props">
-        <input class="input is-small inline-number" v-model.number="props.row.item.year" type="number" min="1900" max="2100" step="1" style="width:3.7rem" />
+        <input class="input is-small inline-number" v-if="props.row.id !== 'add'" v-model.number="props.row.item.year"
+          type="number" min="1900" max="2100" step="1" style="width:3.7rem" />
       </b-table-column>
 
       <b-table-column field="nb" sortable :label="$t('words.quantity')" numeric v-slot="props">
-        <span class="unit">
+        <span class="unit" v-if="props.row.id !== 'add'">
           <input class="input is-small inline-number" v-model.number="props.row.item.nb" type="number" min="0" max="99999" step="1" style="width:3.5em" />
         </span>
-        <button class="trash has-text-grey" @click="delete_row(props.row.item)" >
+        <button class="trash has-text-grey" v-if="props.row.id !== 'add'" @click="delete_row(props.row.item)" >
           <b-icon icon="trash" />
         </button>
       </b-table-column>
 
       <b-table-column field="item.lifetime" :visible="method=='stock'" :label="$t('words.lifetime')" width="4rem" numeric v-slot="props">
-        <span class="unit">
+        <span class="unit" v-if="devices.includes(props.row.item.type)">
           <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="99999" step="0.5" style="width:3.5em"
              @change="function () { if (!props.row.item.lifetime_unlocked) item['lifetime2'] = item.lifetime * 1.5 }" />
         </span>
@@ -220,7 +226,7 @@
           </b-tooltip>
         </template>
         <template v-slot="props">
-          {{props.row.grey}}
+          <span v-if="props.row.grey > 0">{{props.row.grey}}</span>
         </template>
       </b-table-column>
 
@@ -287,7 +293,7 @@ export default {
   computed: {
     displayed_devicelist: function () {
       let self = this
-      return this.devicelist.filter(e => this.display_predicate(e))
+      let tmp_list = this.devicelist.filter(e => this.display_predicate(e))
         /* this is to make 'status' dynamic while enabling sorting based on status */
         .map(function (e) {
           let res = {
@@ -302,6 +308,23 @@ export default {
             grey: self.compute_grey(e) }
           return res
         })
+      if ((!this.is_listening_add_item) /* && (tmp_list.filter(e => e.id === 'add').length === 0) */) {
+        let tmpitem = this.create_device_item()
+        tmpitem.year = this.referenceYear
+        let additem = {
+          id: 'add',
+          type: '...',
+          model: undefined,
+          year: this.referenceYear,
+          item: tmpitem,
+          nb: 1,
+          score: -3,
+          status: this.status.unknown,
+          grey: 0
+        }
+        tmp_list.push(additem)
+      }
+      return tmp_list
     },
     is_listening_add_item () {
       return Boolean(this.$listners) && Boolean(this.$listners.addItem)
@@ -408,7 +431,10 @@ export default {
       this.devicelist.filter(e => e.year === '').forEach(this.validate_row)
     },
 
-    item_type_changed: function (item) {
+    item_type_changed: function (id, item) {
+      if (id === 'add') {
+        this.devicelist.push(item)
+      }
       this.validate_row(item)
     },
     item_model_changed: function (item) {
