@@ -36,8 +36,8 @@ export default {
     }
   },
   watch: {
-    value (value) {
-      this.selected = value
+    value (v) {
+      this.selected = v
     }
   }
 }
