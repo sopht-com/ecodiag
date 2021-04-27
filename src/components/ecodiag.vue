@@ -377,11 +377,6 @@ export default {
         usedata  .find(x => x.key==key).val += itemCO2.use;
       }.bind(this));
 
-      greydata1.widthPercent  = 0.7;
-      greydata1.offsetPercent = 0;
-      greydata2.widthPercent  = 0.25;
-      greydata2.offsetPercent = 0.75;
-
       let res = []
         
       if(this.uncertainty) {
@@ -395,6 +390,11 @@ export default {
       }
       // greydata2.dim = 0.5;
       if (this.objective) {
+        greydata1.widthPercent  = 0.7;
+        greydata1.offsetPercent = 0;
+        greydata2.widthPercent  = 0.25;
+        greydata2.offsetPercent = 0.75;
+        
         res.push({key:'grey', label:this.$t('labels.fabrication_vs_objective'), data:[greydata1, greydata2] })
       } else {
         res.push({key:'grey', label:this.$t('labels.fabrication'), data:[greydata1] })
