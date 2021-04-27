@@ -448,6 +448,16 @@ export default {
       var reader = new FileReader()
       let self = this
       let filename = file.name
+      let handle_screens = function () {
+        if (self.nbUsers > 0 && self.nbUsers_actual === 0) {
+          self.nbUsers_actual = self.nbUsers
+        }
+        self.nb_screens_in_csv = self.count_items_of_file(self.filemap.length - 1, e => e.type === 'screen')
+        if (self.nb_screens_in_csv === 0) {
+          self.nb_screen_method = 'from_nb_PCs'
+          self.show_nb_screen_modal = true
+        }
+      }
       reader.onload = (function (/* f */) {
         return function (e) {
           let [csvdata, headermap] = this.parse_raw_csv(e.target.result)
@@ -475,22 +485,19 @@ export default {
             let max_year = self.devicelist.map(e => e.year).filter(y => y !== '').reduce((prev,curr) => Math.max(prev,curr), 0)
             if (max_year > 0) {
               self.$buefy.dialog.confirm({
-                message: 'Aucune entrée trouvée pour l\'année courrant ('+self.referenceYear+
+                message: 'Aucune entrée trouvée pour l\'année courante ('+self.referenceYear+
                   '). Changer l\'année du bilan pour '+max_year+' ?',
                 onConfirm: function () {
                   self.$emit('changeReferenceYear', max_year)
+                  handle_screens()
+                },
+                onCancel: function () {
+                  handle_screens()
                 }
               })
             }
-          }
-
-          if (self.nbUsers > 0 && self.nbUsers_actual === 0) {
-            self.nbUsers_actual = self.nbUsers
-          }
-          self.nb_screens_in_csv = self.count_items_of_file(self.filemap.length - 1, e => e.type === 'screen')
-          if (self.nb_screens_in_csv === 0) {
-            self.nb_screen_method = 'from_nb_PCs'
-            self.show_nb_screen_modal = true
+          } else {
+            handle_screens()
           }
         }.bind(this)
       }.bind(this))(file)
