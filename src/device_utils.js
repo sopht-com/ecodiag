@@ -9,9 +9,17 @@ import { v4 as uuidv4 } from 'uuid';
 export const device_utils = {
   data () {
     return {
+      status: {
+        user_ko: 2,
+        user_ok: 4,
+        unknown: 6,
+        invalid_year: 8,
+        csv_ok: 10
+      },
       params: {
-        damping_factor: 1, // in years, used in the "flux" method
-        lifetime_factor: 1.5, // used in the "flux" method to simulate a longer lifetime, or in the "stock" method to compute the default extended lifetime
+        includes_empty_year: false, // used in the "flux" method
+        damping_factor: 1,          // in years, used in the "flux" method
+        lifetime_factor: 1.5,       // used in the "flux" method to simulate a longer lifetime, or in the "stock" method to compute the default extended lifetime
         default_uncertainty: 30,
         lifetime_uncertainty: 1,
         kWh_to_CO2e: 0.084
@@ -206,6 +214,29 @@ export const device_utils = {
       } else {
         return undefined
       }
+    },
+
+    is_valid_year (y, method, ref_year) {
+      return method === 'stock' || (this.params.includes_empty_year && y === '') || (y <= ref_year && y > (ref_year - this.params.damping_factor))
+    },
+
+    compute_status: function (item, method, ref_year) {
+      /* eslint-disable indent */
+      if (!item.csvdata) {
+        return Object.keys(this.devices).includes(item._type) ? this.status.user_ok : this.status.user_ko
+      } else {
+        return item.score < 1 ? this.status.unknown
+           : (!this.is_valid_year(item.year, method, ref_year)) && item.score < 3 ? this.status.invalid_year
+           : this.status.csv_ok
+      }
+    },
+
+    extract_valid_items (items, method, ref_year) {
+      let self = this
+      return items.filter( function (item) {
+        let status = self.compute_status(item, method, ref_year)
+        return (status === self.status.user_ok) || (status === self.status.csv_ok)
+      } )
     },
 
     // Computes the estimated CO2e emissions of the input item,

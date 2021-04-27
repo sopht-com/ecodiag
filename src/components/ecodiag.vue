@@ -27,7 +27,8 @@
         <device-table
           :devicelist="devices_list"
           :method="method"
-          :optional-columns="['grey']"></device-table>
+          :optional-columns="['grey']"
+          :reference-year="reference_year" />
         <p></p>
 
         <p class="whatif" v-if="method === 'stock'">
@@ -299,6 +300,8 @@ export default {
       method_list: ['stock','flux'],
       method: undefined,
       isMethodPickerActive: true,
+
+      reference_year: 2020,
       
       objective: false,
       uncertainty: false,
@@ -310,7 +313,6 @@ export default {
 
   mounted() {
     // this.uncertainty = true;
-    this.devices_list = []
     // this.devices_list = 
     //   this.unpack_device_list([
     //     {'desktop/ecodiag_avg_PC':     0},
@@ -321,6 +323,9 @@ export default {
   },
 
   computed: {
+    valid_devices_list() {
+      return this.extract_valid_items(this.devices_list, this.method, this.reference_year)
+    },
     plotdata() {
 
       var main_categories =['desktop','screen','laptop','server','printer','other'];
@@ -357,7 +362,7 @@ export default {
         means[el] = 0;
       });
 
-      this.devices_list.forEach(function(item) {
+      this.valid_devices_list.forEach(function(item) {
         const itemCO2 = this.compute_device_co2e(item, this.method, up);
 
         var key = type_renamer(item.type);
@@ -394,7 +399,7 @@ export default {
         greydata1.offsetPercent = 0;
         greydata2.widthPercent  = 0.25;
         greydata2.offsetPercent = 0.75;
-        
+
         res.push({key:'grey', label:this.$t('labels.fabrication_vs_objective'), data:[greydata1, greydata2] })
       } else {
         res.push({key:'grey', label:this.$t('labels.fabrication'), data:[greydata1] })
@@ -410,14 +415,14 @@ export default {
 
     total_grey_CO2: function(suffix) {
       var att = (suffix &&suffix==2) ? 'grey2' : 'grey'
-      return this.devices_list.reduce(function(res,item){
+      return this.valid_devices_list.reduce(function(res,item){
         const itemCO2 = this.compute_device_co2e(item, this.method)
         return res + itemCO2[att]
       }.bind(this), 0)
     },
 
     total_elec_kWh: function() {
-      return this.devices_list.reduce(function(res,item){
+      return this.valid_devices_list.reduce(function(res,item){
         return res + item.nb * this.get_yearly_consumption(item)
       }.bind(this), 0)
     },
@@ -462,7 +467,7 @@ export default {
     export_json_device_list(e) {
       e.preventDefault();
 
-      var d = {devices: this.pack_device_list(this.devices_list)};
+      var d = {devices: this.pack_device_list(this.valid_devices_list)};
       if(this.params.kWh_to_CO2e!=default_kWh2CO2) {
         d['kWh2CO2'] = this.params.kWh_to_CO2e;
       }

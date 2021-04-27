@@ -75,12 +75,12 @@
           <table class="table is-fullwidth condensed is-small">
             <tr><th></th>
               <th class="has-text-right"><span class="icon is-small"><i class="sui sui-check"></i></span></th>
-              <th class="has-text-right" v-show="!includes_empty_year"><span>sans date</span></th>
+              <th class="has-text-right" v-show="!params.includes_empty_year"><span>sans date</span></th>
               <th class="has-text-right"><span>hors période</span></th></tr>
             <tr v-for="row in csvsummary_items" :key="row.label">
               <td v-html="row.label"></td>
               <td class="has-text-right">{{count_items_of_file(0, e => year_ok(e.year) && row.condition(e))}}</td>
-              <td class="has-text-right" v-show="!includes_empty_year">{{count_items_of_file(0, e => e.year === '' &&  row.condition(e))}}</td>
+              <td class="has-text-right" v-show="!params.includes_empty_year">{{count_items_of_file(0, e => e.year === '' &&  row.condition(e))}}</td>
               <td class="has-text-right">{{count_items_of_file(0, e => (!year_ok(e.year)) && e.year !== '' &&  row.condition(e))}}</td>
             </tr>
             <tr v-if="nb_screens_in_csv === 0">
@@ -91,7 +91,7 @@
                   <i class="sui sui-pencil" style="font-size: 16px;"></i>
                 </b-button>
               </td>
-              <td v-show="!includes_empty_year"></td>
+              <td v-show="!params.includes_empty_year"></td>
             </tr>
         </table>
         </article>
@@ -106,12 +106,12 @@
             </b-checkbox>
           </b-field>
           <b-field v-if="nb_emptyyear_rows > 0 && !hide_empty_year">
-            <b-checkbox v-model="includes_empty_year">
+            <b-checkbox v-model="params.includes_empty_year">
                 Inclure les {{nb_emptyyear_rows}} lignes sans année dans le bilan
             </b-checkbox>
           </b-field>
           <b-field v-if="nb_emptyyear_rows > 0">
-            <b-checkbox v-if="!includes_empty_year" v-model="hide_empty_year">
+            <b-checkbox v-if="!params.includes_empty_year" v-model="hide_empty_year">
                 Masquer les {{nb_emptyyear_rows}} lignes sans année
             </b-checkbox>
           </b-field>
@@ -304,7 +304,7 @@ export default {
             item: e,
             nb: e.nb,
             score: e.score,
-            status: self.compute_status(e),
+            status: self.compute_status(e, self.method, self.referenceYear),
             grey: self.compute_grey(e) }
           return res
         })
@@ -330,7 +330,7 @@ export default {
       return Boolean(this.$listners) && Boolean(this.$listners.addItem)
     },
     nb_outofperiod_rows () {
-      return this.devicelist.filter(e => e.score >= 0 && e.year !== '' && !this.year_ok(e.year)).length
+      return this.devicelist.filter(e => e.score >= 0 && e.year !== '' && !this.is_valid_year(e.year, this.method, this.referenceYear)).length
     },
     nb_emptyyear_rows () {
       return this.devicelist.filter(e => e.score >= 0 && e.year === '').length
@@ -444,16 +444,6 @@ export default {
     item_model_changed: function (item) {
       this.validate_row(item)
     },
-    compute_status: function (item) {
-      /* eslint-disable indent */
-      if (!item.csvdata) {
-        return Object.keys(this.devices).includes(item._type) ? this.status.user_ok : this.status.user_ko
-      } else {
-        return item.score < 1 ? this.status.unknown
-           : (!this.year_ok(item.year)) && item.score < 3 ? this.status.invalid_year
-           : this.status.csv_ok
-      }
-    },
     load_csv: function (file) {
       var reader = new FileReader()
       let self = this
@@ -493,7 +483,7 @@ export default {
     },
 
     year_ok (y) {
-      return (this.includes_empty_year && y === '') || (y <= this.referenceYear && y > (this.referenceYear - this.params.damping_factor))
+      return this.is_valid_year(y, this.method, this.referenceYear)
     },
 
     display_predicate (item) {
@@ -513,7 +503,7 @@ export default {
       var copy = []
       for (let i in this.devicelist) {
         let item = this.clone_obj(this.devicelist[i])
-        let status = this.compute_status(item)
+        let status = this.compute_status(item, this.method, this.referenceYear)
         if (item && (status === this.status.user_ok || status === this.status.csv_ok) && item.nb > 0) {
           item.key = item._type.concat(item._model)
           copy.push(item)
@@ -540,7 +530,6 @@ export default {
       dropFile: {},
       devices: devices,
       filemap: [],
-      includes_empty_year: false,
       hide_empty_year: false,
       show_outofperiod: false,
       nb_screens_in_csv: 0,
@@ -553,13 +542,6 @@ export default {
       nb_screens_per_user: 1,
       normalization_list: ['year', 'unit'],
       normalization: 'year',
-      status: {
-        user_ko: 2,
-        user_ok: 4,
-        unknown: 6,
-        invalid_year: 8,
-        csv_ok: 10
-      },
       csvsummary_items: [
         { label: 'Serveurs :', condition: e => e.type === 'server' },
         { label: 'PC fixes :', condition: e => e.type === 'desktop' },
