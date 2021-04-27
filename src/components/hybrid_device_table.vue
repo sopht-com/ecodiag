@@ -497,7 +497,7 @@ export default {
             self.devicelist.push(e)
           })
 
-          if (self.devicelist.filter(e => self.year_ok(e)).length === 0) {
+          if (self.devicelist.filter(e => self.year_ok(e.year)).length === 0) {
             // there is nothing for the current year,
             // try to guess
             let max_year = self.devicelist.map(e => e.year).filter(y => y !== '').reduce((prev,curr) => Math.max(prev,curr), 0)
