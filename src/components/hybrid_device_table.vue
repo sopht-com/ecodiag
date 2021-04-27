@@ -205,7 +205,7 @@
       </b-table-column>
 
       <b-table-column field="item.lifetime" :visible="method=='stock'" :label="$t('words.lifetime')" width="4rem" numeric v-slot="props">
-        <span class="unit" v-if="devices.includes(props.row.item.type)">
+        <span class="unit" v-if="is_valid_type(props.row.item.type)">
           <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="99999" step="0.5" style="width:3.5em"
              @change="function () { if (!props.row.item.lifetime_unlocked) item['lifetime2'] = item.lifetime * 1.5 }" />
         </span>
@@ -352,6 +352,10 @@ export default {
   },
 
   methods: {
+
+    is_valid_type: function(type) {
+      return type in this.devices
+    },
 
     compute_grey: function (item) {
       let factor = this.get_device_factor(item.type, item.model).mean
