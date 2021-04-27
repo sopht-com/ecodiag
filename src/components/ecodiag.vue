@@ -121,6 +121,16 @@
           <tr class="blank"></tr>
 
           <tr>
+            <td><ml fr="Définir/montrer un objectif :">Define/show objective:</ml></td>
+            <td>
+              <input type="checkbox" v-model="objective" />
+            </td>
+            <td></td>
+          </tr>
+
+          <tr class="blank"></tr>
+
+          <tr>
             <td><ml fr="Méthode de calcul :">Compute method:</ml></td>
             <td>
               <select v-model="method">
@@ -290,10 +300,11 @@ export default {
       method: undefined,
       isMethodPickerActive: true,
       
-      uncertainty:false,
-      uncertainty_percent:71, // this reproduces the standard deviation with a symmetric range around the mean
-      grey_inf:0,
-      grey_sup:0,
+      objective: false,
+      uncertainty: false,
+      uncertainty_percent: 71, // this reproduces the standard deviation with a symmetric range around the mean
+      grey_inf: 0,
+      grey_sup: 0
     } 
   },
 
@@ -381,12 +392,12 @@ export default {
         this.grey_sup = sups.total[1];
 
         greydata1.uncertainty = {inf:infs.total[1], sup:sups.total[1], mean:means.total};
-
-        var alldata = [greydata1, greydata2];
-        res.push({key:'grey', label:this.$t('labels.fabrication'), data:alldata })
+      }
+      // greydata2.dim = 0.5;
+      if (this.objective) {
+        res.push({key:'grey', label:this.$t('labels.fabrication_vs_objective'), data:[greydata1, greydata2] })
       } else {
-        // greydata2.dim = 0.5;
-        res.push({key:'grey', label:this.$t('labels.fabrication'), data:[greydata1, greydata2] })
+        res.push({key:'grey', label:this.$t('labels.fabrication'), data:[greydata1] })
       }
       if (this.method !== 'flux') {
         res.push({key:'use',  label:this.$t('labels.use'), data:[usedata]})

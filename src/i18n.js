@@ -25,7 +25,8 @@ export default {
       csv_import: 'CSV import'
     },
     labels: {
-      fabrication: 'fabrication nl and transport nl (actual vs objective)',
+      fabrication: 'fabrication nl and transport',
+      fabrication_vs_objective: 'fabrication nl and transport nl (actual vs objective)',
       fabrication_actual: 'fabrication nl and transport nl (actual)',
       fabrication_objective: 'fabrication nl and transport nl (objective)',
       fabrication_uncertainty: 'fabrication nl and transport nl (mean + nl uncertainty nl bounds)',
@@ -64,7 +65,8 @@ export default {
       csv_import: 'Importer CSV'
     },
     labels: {
-      fabrication: 'fabrication nl et transport nl (actuel vs objectif)',
+      fabrication: 'fabrication nl et transport',
+      fabrication_vs_objective: 'fabrication nl et transport nl (actuel vs objectif)',
       fabrication_actual: 'fabrication nl et transport nl (actuel)',
       fabrication_objective: 'fabrication nl et transport nl (objectif)',
       fabrication_uncertainty: 'fabrication nl et transport nl (moyenne + nl bornes nl d\'incertitudes)',
