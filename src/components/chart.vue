@@ -259,12 +259,12 @@ export default {
 
 
 path {  /*stroke-width:1px;*/ stroke: #fff; }
-path:hover, rect:hover {
+/* path:hover, rect:hover { */
     /*fill-opacity: 0.8;*/
     /*stroke:white;*/
     /*stroke-width:2;*/
     /*fill: none;*/
-}
+/* } */
 .axis {  font: 10px sans-serif; }
 
 .axis path,
