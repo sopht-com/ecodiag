@@ -299,13 +299,14 @@ export default {
 
   mounted() {
     // this.uncertainty = true;
-    this.devices_list = 
-      this.unpack_device_list([
-        {'desktop/ecodiag_avg_PC':     0},
-        {'desktop/avg_WS':             0},
-        {'laptop/ecodiag_avg_laptop':  0},
-        {'screen':                     0},
-      ]);
+    this.devices_list = []
+    // this.devices_list = 
+    //   this.unpack_device_list([
+    //     {'desktop/ecodiag_avg_PC':     0},
+    //     {'desktop/avg_WS':             0},
+    //     {'laptop/ecodiag_avg_laptop':  0},
+    //     {'screen':                     0},
+    //   ]);
   },
 
   computed: {
