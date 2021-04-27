@@ -190,7 +190,7 @@
         </ecodiag-select-model>
       </b-table-column>
 
-      <b-table-column field="year" sortable :label="$t('words.purchase_year')" numeric v-slot="props">
+      <b-table-column field="year" :visible="method=='flux'" sortable :label="$t('words.purchase_year')" numeric v-slot="props">
         <input class="input is-small inline-number" v-if="props.row.id !== 'add'" v-model.number="props.row.item.year"
           type="number" min="1900" max="2100" step="1" style="width:3.7rem" />
       </b-table-column>
