@@ -73,17 +73,30 @@
         <article v-if="filemap.length > 0" class="notification">
           <p>Fichier : {{filemap[0].filename}}</p>
           <table class="table is-fullwidth condensed is-small">
-            <tr><th></th>
-              <th class="has-text-right"><span class="icon is-small"><i class="sui sui-check"></i></span></th>
-              <th class="has-text-right" v-show="!params.includes_empty_year"><span>sans date</span></th>
-              <th class="has-text-right"><span>hors période</span></th></tr>
+            <tr v-if="method === 'flux'"><th></th>
+              <th class="has-text-right">
+                <span class="icon is-small"><i class="sui sui-check"></i></span>
+              </th>
+              <th class="has-text-right" v-show="!params.includes_empty_year">
+                <span>sans date</span>
+              </th>
+              <th class="has-text-right">
+                <span>hors période</span>
+              </th>
+            </tr>
             <tr v-for="row in csvsummary_items" :key="row.label">
               <td v-html="row.label"></td>
-              <td class="has-text-right">{{count_items_of_file(0, e => year_ok(e.year) && row.condition(e))}}</td>
-              <td class="has-text-right" v-show="!params.includes_empty_year">{{count_items_of_file(0, e => e.year === '' &&  row.condition(e))}}</td>
-              <td class="has-text-right">{{count_items_of_file(0, e => (!year_ok(e.year)) && e.year !== '' &&  row.condition(e))}}</td>
+              <td class="has-text-right">
+                {{count_items_of_file(0, e => year_ok(e.year) && row.condition(e))}}
+              </td>
+              <td class="has-text-right" v-show="method === 'flux' && !params.includes_empty_year">
+                {{count_items_of_file(0, e => e.year === '' &&  row.condition(e))}}
+              </td>
+              <td class="has-text-right" v-show="method === 'flux'">
+                {{count_items_of_file(0, e => (!year_ok(e.year)) && e.year !== '' &&  row.condition(e))}}
+              </td>
             </tr>
-            <tr v-if="nb_screens_in_csv === 0">
+            <tr v-if="method === 'flux' && nb_screens_in_csv === 0">
               <td>Ecrans suppl. <strong>estimés</strong> :</td>
               <td class="has-text-right">{{current_estimated_screens}}</td>
               <td>
@@ -105,12 +118,12 @@
                 Afficher les {{nb_outofperiod_rows}} lignes hors période
             </b-checkbox>
           </b-field>
-          <b-field v-if="nb_emptyyear_rows > 0 && !hide_empty_year">
+          <b-field v-if="method === 'flux' && nb_emptyyear_rows > 0 && !hide_empty_year">
             <b-checkbox v-model="params.includes_empty_year">
                 Inclure les {{nb_emptyyear_rows}} lignes sans année dans le bilan
             </b-checkbox>
           </b-field>
-          <b-field v-if="nb_emptyyear_rows > 0">
+          <b-field v-if="method === 'flux' && nb_emptyyear_rows > 0">
             <b-checkbox v-if="!params.includes_empty_year" v-model="hide_empty_year">
                 Masquer les {{nb_emptyyear_rows}} lignes sans année
             </b-checkbox>
@@ -454,8 +467,13 @@ export default {
         }
         self.nb_screens_in_csv = self.count_items_of_file(self.filemap.length - 1, e => e.type === 'screen')
         if (self.nb_screens_in_csv === 0) {
-          self.nb_screen_method = 'from_nb_PCs'
-          self.show_nb_screen_modal = true
+          if (self.method === 'flux') {
+            self.nb_screen_method = 'from_nb_PCs'
+            self.show_nb_screen_modal = true
+          } else {
+            self.$buefy.dialog.alert({
+              message: 'Aucun écran trouvé dans le listing, pensez à les rajouter !'})
+          }
         }
       }
       reader.onload = (function (/* f */) {
