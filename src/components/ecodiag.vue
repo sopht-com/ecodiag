@@ -90,7 +90,7 @@
           <tr class="blank"></tr>
 
           <tr><td><ml fr="Coût carbone d'1kWh électrique :">Electricity carbon intensity:</ml></td>
-              <td><input v-model="params.kWh_to_CO2e" type="number" min="0.04" max="2" step="0.002" /> <span class="unit">kgCO<sub>2</sub>e/kWh</span></td>
+              <td><input v-model.number="params.kWh_to_CO2e" type="number" min="0.04" max="2" step="0.002" /> <span class="unit">kgCO<sub>2</sub>e/kWh</span></td>
               <td class="note"></td>
           </tr>
 
@@ -104,13 +104,13 @@
           
             <tr v-show="uncertainty">
               <td><ml fr="Choix de l'intervalle de confiance :">Reported uncertainty range:</ml></td>
-              <td> <input type="range" min="50" max="95" step="1" v-model="uncertainty_percent" /> <span v-html="uncertainty_percent"></span>%.</td>
+              <td> <input type="range" min="50" max="95" step="1" v-model.number="uncertainty_percent" /> <span v-html="uncertainty_percent"></span>%.</td>
               <td></td>
             </tr>
 
             <tr v-show="uncertainty">
               <td><ml fr="Incertitude de fabrication par défaut :">Default fabrication uncertainty:</ml></td>
-              <td>&plusmn;<input v-model="params.default_uncertainty" type="number" min="0" max="100" step="1" size="4" /> <span class="unit">%</span></td>
+              <td>&plusmn;<input v-model.number="params.default_uncertainty" type="number" min="0" max="100" step="1" size="4" /> <span class="unit">%</span></td>
               <td class="note">({{$t('words.stdev')}})</td>
             </tr>
 
@@ -129,6 +129,18 @@
             <td></td>
           </tr>
 
+            <tr v-show="objective"><td><ml fr="Facteur d'extension de la durée de vie :">Lifetime extension factor:</ml></td>
+              <td><input v-model.number="params.lifetime_factor" type="number" min="1.1" max="4" step="0.1" /> <span class="unit">années</span></td>
+              <td class="note">
+                <ml fr="Utilisé pour simuler les impacts d'une augmentation de x">
+                  Used to simulate the impacts of increasing by x
+                </ml>
+                <span v-text="params.lifetime_factor"></span>
+                <ml fr=" de la durée de vie effective des équipements.">
+                   the actual lifetime of each item.
+                </ml></td>
+            </tr>
+
           <tr class="blank"></tr>
 
           <tr>
@@ -144,23 +156,16 @@
           </tr>
 
             <tr v-show="method=='flux'"><td><ml fr="Durée d'amortissement :">Damping factor:</ml></td>
-              <td><input v-model="params.damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
+              <td><input v-model.number="params.damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
               <td class="note">La liste des équipements fournis doit correspondre à la liste des achats des
                 <span v-text="params.damping_factor"></span> années précédentes, indépendamment de la durée de vie réel des équipements.</td>
             </tr>
 
-            <tr v-show="method=='flux'"><td><ml fr="Facteur d'extension de la durée de vie :">Lifetime extension factor:</ml></td>
-              <td><input v-model="params.lifetime_factor" type="number" min="1.1" max="4" step="0.1" /> <span class="unit">années</span></td>
-              <td class="note">
-                <ml fr="Utilisé pour simuler les impacts d'une augmentation de x">
-                  Used to simulate the impacts of increasing by x
-                </ml>
-                <span v-text="params.lifetime_factor"></span>
-                <ml fr=" de la durée de vie effective des équipements.">
-                   the actual lifetime of each item.
-                </ml></td>
+            <tr v-show="method=='flux'"><td><ml fr="Année du bilan:">Account year:</ml></td>
+              <td><input v-model.number="reference_year" type="number" min="2000" max="2100" step="1" /> </td>
+              <td class="note"></td>
             </tr>
-          
+
           <tr class="blank"></tr>
 
           <tr><td><ml fr="Télécharger le fichier de données :">Download data file:</ml></td>
