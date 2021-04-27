@@ -94,6 +94,7 @@ export const device_utils = {
       let getstd = function (el) {
         if (el.std) { return el.std } else { return this.params.default_uncertainty / 100 } // default is 30%
       }.bind(this)
+
       if (!(type in devices)) {
         return {mean: 0, std: 0}
       }
@@ -137,6 +138,7 @@ export const device_utils = {
             item._type = v
             // TODO make get_default_model configurable
             item.model = self.get_default_model(item._type)
+            self.update_item_from_type_and_model(item)
           }
         },
         get : function () { return item._type }
@@ -172,7 +174,6 @@ export const device_utils = {
     // and other attributes copied from the input item if available,
     // or gathered from the database otherwise.
     consolidate_device_item (type, model, item) {
-      console.log('consolidate_device_item')
       const lifetime = item.lifetime ? item.lifetime : this.get_device_attribute(type, model, 'duration')
       let res = {
         type: type,
