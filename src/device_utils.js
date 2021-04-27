@@ -235,7 +235,7 @@ export const device_utils = {
       let self = this
       return items.filter( function (item) {
         let status = self.compute_status(item, method, ref_year)
-        return (status === self.status.user_ok) || (status === self.status.csv_ok)
+        return item.score >= 0 && ((status === self.status.user_ok) || (status === self.status.csv_ok))
       } )
     },
 
