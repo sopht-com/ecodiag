@@ -28,7 +28,8 @@
           :devicelist="devices_list"
           :method="method"
           :optional-columns="['grey']"
-          :reference-year="reference_year" />
+          :reference-year="reference_year"
+          @changeReferenceYear="(e) => reference_year = e" />
         <p></p>
 
         <p class="whatif" v-if="method === 'stock'">

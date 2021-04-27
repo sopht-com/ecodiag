@@ -268,7 +268,7 @@ import messages from '../i18n'
 export default {
   name: 'ecodiag-hybrid-device-table',
 
-  emits: [ 'addItem' ],
+  emits: [ 'addItem', 'changeReferenceYear' ],
 
   components: {
     'ecodiag-select-type': () => import('./type_selector.vue'),
@@ -451,6 +451,7 @@ export default {
       reader.onload = (function (/* f */) {
         return function (e) {
           let [csvdata, headermap] = this.parse_raw_csv(e.target.result)
+
           headermap['filename'] = filename
           // remove previously imported data
           self.filemap.splice(0, self.filemap.length)
@@ -467,19 +468,34 @@ export default {
             e['origin'] = fileid
             self.devicelist.push(e)
           })
+
+          if (self.devicelist.filter(e => self.year_ok(e)).length === 0) {
+            // there is nothing for the current year,
+            // try to guess
+            let max_year = self.devicelist.map(e => e.year).filter(y => y !== '').reduce((prev,curr) => Math.max(prev,curr), 0)
+            if (max_year > 0) {
+              self.$buefy.dialog.confirm({
+                message: 'Aucune entrée trouvée pour l\'année courrant ('+self.referenceYear+
+                  '). Changer l\'année du bilan pour '+max_year+' ?',
+                onConfirm: function () {
+                  self.$emit('changeReferenceYear', max_year)
+                }
+              })
+            }
+          }
+
+          if (self.nbUsers > 0 && self.nbUsers_actual === 0) {
+            self.nbUsers_actual = self.nbUsers
+          }
+          self.nb_screens_in_csv = self.count_items_of_file(self.filemap.length - 1, e => e.type === 'screen')
+          if (self.nb_screens_in_csv === 0) {
+            self.nb_screen_method = 'from_nb_PCs'
+            self.show_nb_screen_modal = true
+          }
         }.bind(this)
       }.bind(this))(file)
 
       reader.readAsText(file)
-
-      if (this.nbUsers > 0 && this.nbUsers_actual === 0) {
-        this.nbUsers_actual = this.nbUsers
-      }
-      this.nb_screens_in_csv = this.count_items_of_file(this.filemap.length - 1, e => e.type === 'screen')
-      if (this.nb_screens_in_csv === 0) {
-        this.nb_screen_method = 'from_nb_PCs'
-        this.show_nb_screen_modal = true
-      }
     },
 
     year_ok (y) {
