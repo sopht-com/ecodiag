@@ -145,9 +145,7 @@
           <section class="section">
             <div class="content has-text-centered">
               <p>
-                <span class="icon">
-                  <b-icon icon="upload" size="is-large" />
-                </span>
+                <b-icon icon="upload" size="is-large" />
               </p>
               <p>
                 Téléverser un fichier (.csv) <br/>
