@@ -157,9 +157,7 @@
     </div>
 
     <div id="ecodiagtable" v_if="devicelist.header_map">
-    <input v-if="is_listening_add_item"
-    type="button" value="+" name="devices_add_row" style="position: absolute;bottom: 2px;"
-          @click="add_new_item('desktop')" >
+
     <b-table
       v_if="devicelist.length>0"
       :data="displayed_devicelist"
