@@ -12,18 +12,17 @@
   <!-- </select> -->
 </div>
 
-
 <div class="logo"></div>
 <tabs>
 
   <tab name="Ecodiag" :selected="true" button-style="margin-left:52px">
 
     <chart :plotdata="plotdata"></chart>
-    
+
     <tabs>
 
       <tab :name="$t('title.device_list')" :selected="true">
-      
+
         <device-table
           :devicelist="devices_list"
           :method="method"
@@ -51,12 +50,12 @@
           <ml fr="Total CO2e annuel :">Total yearly CO2e:</ml>
           <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e + total_grey_CO2(),0)}}</span> kgCO2e/{{$t('words.year')}}
             = <span class="value">{{toFixed(total_grey_CO2(),0)}}</span>
-            <ml fr="(fabrication et transport)">(production and transport)</ml>            
+            <ml fr="(fabrication et transport)">(production and transport)</ml>
             + <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e,0)}}</span>
             <ml fr="(consommation électrique)">(electricity consumption)</ml>.
         </p>
         <p class="whatif" v-if="method === 'flux'">
-          <ml fr="Total CO2e (fabrication et transport) : ">Total CO2e (production and transport): </ml> 
+          <ml fr="Total CO2e (fabrication et transport) : ">Total CO2e (production and transport): </ml>
           <span class="value">{{toFixed(total_grey_CO2(),0)}}</span> kgCO2e
         </p>
 
@@ -103,7 +102,7 @@
             <td><input type="checkbox" v-model="uncertainty" /> </td>
             <td>en béta test</td>
           </tr>
-          
+
             <tr v-show="uncertainty">
               <td><ml fr="Choix de l'intervalle de confiance :">Reported uncertainty range:</ml></td>
               <td> <input type="range" min="50" max="95" step="1" v-model.number="uncertainty_percent" /> <span v-html="uncertainty_percent"></span>%.</td>
@@ -271,10 +270,12 @@
 
 <script>
 
-var default_kWh2CO2 = 0.084;
+/* eslint-disable no-multi-spaces */
 
 import { device_utils } from '../device_utils'
 import { devices } from '../devices'
+
+var default_kWh2CO2 = 0.084
 
 export default {
   name: 'ecodiag',
@@ -290,129 +291,130 @@ export default {
 
   mixins: [device_utils],
 
-  data() {
+  data () {
     return {
-      langs: ['en','fr'],
+      langs: ['en', 'fr'],
 
       devices_list: [],
-      
-      devices:devices,
+
+      devices: devices,
 
       equiv_data: {
-        coal: {factor: 1./3., unit:" kg of ", unit_fr:" kg de "},
-        solar_panel: {factor: 1./(1000*0.160*0.944*0.9), unit:" m&sup2; of ", unit_fr:" m&sup2; de "}
+        coal: { factor: 1.0 / 3.0, unit: ' kg of ', unit_fr: ' kg de ' },
+        solar_panel: { factor: 1.0 / (1000 * 0.160 * 0.944 * 0.9), unit: ' m&sup2; of ', unit_fr: ' m&sup2; de ' }
       },
       equiv_selected: 'coal',
 
-      method_list: ['stock','flux'],
+      method_list: ['stock', 'flux'],
       method: undefined,
       isMethodPickerActive: true,
 
       reference_year: 2020,
-      
+
       objective: false,
       uncertainty: false,
       uncertainty_percent: 71, // this reproduces the standard deviation with a symmetric range around the mean
       grey_inf: 0,
       grey_sup: 0
-    } 
+    }
   },
 
-  mounted() {
-    // this.uncertainty = true;
-    // this.devices_list = 
+  mounted () {
+    // this.uncertainty = true
+    // this.devices_list =
     //   this.unpack_device_list([
     //     {'desktop/ecodiag_avg_PC':     0},
     //     {'desktop/avg_WS':             0},
     //     {'laptop/ecodiag_avg_laptop':  0},
     //     {'screen':                     0},
-    //   ]);
+    //   ])
   },
 
   computed: {
-    valid_devices_list() {
+    valid_devices_list () {
       return this.extract_valid_items(this.devices_list, this.method, this.reference_year)
     },
-    plotdata() {
+    plotdata () {
+      var main_categories = ['desktop', 'screen', 'laptop', 'server', 'printer', 'other']
 
-      var main_categories =['desktop','screen','laptop','server','printer','other'];
-
-      var type_renamer = function(t) {
-        if(main_categories.includes(t))
-          return t;
-        else
-          return 'other';
+      var type_renamer = function (t) {
+        if (main_categories.includes(t)) {
+          return t
+        } else {
+          return 'other'
+        }
       }
 
       var self = this
-      var tr = function(x) {
+      var tr = function (x) {
         if (x in self.devices) {
           return self.tr_label(self.devices[x])
         } else {
-          return self.$t('labels.'+x)
+          return self.$t('labels.' + x)
         }
       }
-      var greydata1 = main_categories.map(function(x) {return {key:x, label: tr(x), val:0};})
-      var greydata2 = this.clone_obj(greydata1);
-      var usedata   = this.clone_obj(greydata1);
-      var uncertainty_percent = this.uncertainty_percent;
-      var up = [];
-      if(this.uncertainty)
-       up = [95,uncertainty_percent,50];
-      var infs = {};
-      var sups = {};
-      var means = {};
-      main_categories.push('total');
-      main_categories.forEach(function(el) {
-        infs[el]=new Array(up.length); infs[el].fill(0);
-        sups[el]=new Array(up.length); sups[el].fill(0);
-        means[el] = 0;
-      });
+      var greydata1 = main_categories.map(function (x) { return { key: x, label: tr(x), val: 0 } })
+      var greydata2 = this.clone_obj(greydata1)
+      var usedata   = this.clone_obj(greydata1)
+      var uncertainty_percent = this.uncertainty_percent
+      var up = []
+      if (this.uncertainty) {
+        up = [95, uncertainty_percent, 50]
+      }
+      var infs = {}
+      var sups = {}
+      var means = {}
+      main_categories.push('total')
+      main_categories.forEach(function (el) {
+        infs[el] = new Array(up.length); infs[el].fill(0)
+        sups[el] = new Array(up.length); sups[el].fill(0)
+        means[el] = 0
+      })
 
-      this.valid_devices_list.forEach(function(item) {
-        const itemCO2 = this.compute_device_co2e(item, this.method, up);
+      this.valid_devices_list.forEach(function (item) {
+        const itemCO2 = this.compute_device_co2e(item, this.method, up)
 
-        var key = type_renamer(item.type);
-        means.total += itemCO2.grey;
-        means[key] += itemCO2.grey;
-        if(this.uncertainty) {
-          for(var i=0; i<up.length; ++i) {
-            infs.total[i] += itemCO2.infs[i];
-            sups.total[i] += itemCO2.sups[i];
-            infs[key][i]  += itemCO2.infs[i];
-            sups[key][i]  += itemCO2.sups[i];
+        var key = type_renamer(item.type)
+        means.total += itemCO2.grey
+        means[key] += itemCO2.grey
+        if (this.uncertainty) {
+          for (var i = 0; i < up.length; ++i) {
+            infs.total[i] += itemCO2.infs[i]
+            sups.total[i] += itemCO2.sups[i]
+            infs[key][i]  += itemCO2.infs[i]
+            sups[key][i]  += itemCO2.sups[i]
           }
         }
-        greydata1.find(x => x.key==key).val += itemCO2.grey;
-        greydata2.find(x => x.key==key).val += itemCO2.grey2;
-        
-        usedata  .find(x => x.key==key).val += itemCO2.use;
-      }.bind(this));
+        greydata1.find(x => x.key === key).val += itemCO2.grey
+        greydata2.find(x => x.key === key).val += itemCO2.grey2
+
+        usedata.find(x => x.key === key).val += itemCO2.use
+      }.bind(this))
 
       let res = []
-        
-      if(this.uncertainty) {
+
+      if (this.uncertainty) {
         // cache inf/sup range:
 
         /* eslint-disable vue/no-side-effects-in-computed-properties */
-        this.grey_inf = infs.total[1];
-        this.grey_sup = sups.total[1];
+        this.grey_inf = infs.total[1]
+        this.grey_sup = sups.total[1]
 
-        greydata1.uncertainty = {inf:infs.total[1], sup:sups.total[1], mean:means.total};
+        greydata1.uncertainty = { inf: infs.total[1], sup: sups.total[1], mean: means.total }
       }
       // greydata2.dim = 0.5;
       if (this.objective) {
-        greydata1.widthPercent  = 0.7;
-        greydata1.offsetPercent = 0;
-        greydata2.widthPercent  = 0.25;
-        greydata2.offsetPercent = 0.75;
+        greydata1.widthPercent  = 0.7
+        greydata1.offsetPercent = 0
+        greydata2.widthPercent  = 0.25
+        greydata2.offsetPercent = 0.75
 
-        res.push({key:'grey', label:this.$t('labels.fabrication_vs_objective'), data:[greydata1, greydata2] })
+        res.push({ key: 'grey', label: this.$t('labels.fabrication_vs_objective'), data: [greydata1, greydata2] })
       } else {
-        res.push({key:'grey', label:this.$t('labels.fabrication'), data:[greydata1] })
+        res.push({ key: 'grey', label: this.$t('labels.fabrication'), data: [greydata1] })
       }
       if (this.method !== 'flux') {
-        res.push({key:'use',  label:this.$t('labels.use'), data:[usedata]})
+        res.push({ key: 'use', label: this.$t('labels.use'), data: [usedata] })
       }
       return res
     }
@@ -420,79 +422,80 @@ export default {
 
   methods: {
 
-    total_grey_CO2: function(suffix) {
-      var att = (suffix &&suffix==2) ? 'grey2' : 'grey'
-      return this.valid_devices_list.reduce(function(res,item){
+    total_grey_CO2: function (suffix) {
+      var att = (suffix && suffix === 2) ? 'grey2' : 'grey'
+      return this.valid_devices_list.reduce(function (res, item) {
         const itemCO2 = this.compute_device_co2e(item, this.method)
         return res + itemCO2[att]
       }.bind(this), 0)
     },
 
-    total_elec_kWh: function() {
-      return this.valid_devices_list.reduce(function(res,item){
+    total_elec_kWh: function () {
+      return this.valid_devices_list.reduce(function (res, item) {
         return res + item.nb * this.get_yearly_consumption(item)
       }.bind(this), 0)
     },
-    
-    trAtt: function(obj,key) {
-      var suffix = "_" + this.$i18n.locale
-      var r = obj[key+suffix]
-      if(!r) {
+
+    trAtt: function (obj, key) {
+      var suffix = '_' + this.$i18n.locale
+      var r = obj[key + suffix]
+      if (!r) {
         r = obj[key]
         var rbis = this.$i18n.messages[this.$i18n.locale].words[r]
-        if(rbis) {console.log('found ' + rbis); r = rbis}
+        if (rbis) { console.log('found ' + rbis); r = rbis }
       }
       return r
     },
 
-    import_json_device_list(files) {
-      if(files.length==1){
-        var file = files[0];
-        var reader = new FileReader();
+    import_json_device_list (files) {
+      if (files.length === 1) {
+        var file = files[0]
+        var reader = new FileReader()
 
-        reader.onload = (function(/* f */) {
-            return function(e) {
-              var json_text = e.target.result;
-              // remove first line if needed:
-              if(json_text.startsWith("var"))
-                json_text = json_text.split("\n").slice(1).join("\n");
-              // remove comments:
-              json_text = JSON.minify(json_text);
-              var imported_data = JSON.parse(json_text);
+        reader.onload = (function (/* f */) {
+          return function (e) {
+            var json_text = e.target.result
+            // remove first line if needed:
+            if (json_text.startsWith('var')) {
+              json_text = json_text.split('\n').slice(1).join('\n')
+            }
+            // remove comments:
+            json_text = JSON.minify(json_text)
+            var imported_data = JSON.parse(json_text)
 
-              if(imported_data.kWh2CO2)
-                this.params.kWh_to_CO2e = imported_data.kWh2CO2;
-              
-              this.devices_list = this.unpack_device_list(imported_data.devices);
-            }.bind(this);
-          }.bind(this))(file);
+            if (imported_data.kWh2CO2) {
+              this.params.kWh_to_CO2e = imported_data.kWh2CO2
+            }
 
-        reader.readAsText(file);
+            this.devices_list = this.unpack_device_list(imported_data.devices)
+          }.bind(this)
+        }.bind(this))(file)
+
+        reader.readAsText(file)
       }
     },
 
-    export_json_device_list(e) {
-      e.preventDefault();
+    export_json_device_list (e) {
+      e.preventDefault()
 
-      var d = {devices: this.pack_device_list(this.valid_devices_list)};
-      if(this.params.kWh_to_CO2e!=default_kWh2CO2) {
-        d['kWh2CO2'] = this.params.kWh_to_CO2e;
+      var d = { devices: this.pack_device_list(this.valid_devices_list) }
+      if (this.params.kWh_to_CO2e !== default_kWh2CO2) {
+        d['kWh2CO2'] = this.params.kWh_to_CO2e
       }
 
       var blob = new Blob([JSON.stringify(d, null, 2)], {
-        "type": "application/json"
-      });
-      var a = document.createElement("a");
-      
-      var filename = e.target.export_filename.value;
-      
-      a.download = filename;
-      a.href = URL.createObjectURL(blob);
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    },
+        'type': 'application/json'
+      })
+      var a = document.createElement('a')
+
+      var filename = e.target.export_filename.value
+
+      a.download = filename
+      a.href = URL.createObjectURL(blob)
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+    }
   }
 }
 </script>
-
