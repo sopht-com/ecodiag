@@ -1,7 +1,6 @@
 
 <template>
   <div>
-
     <b-modal
       :active.sync="show_nb_screen_modal"
       has-modal-card
@@ -368,7 +367,7 @@ export default {
 
   methods: {
 
-    is_valid_type: function(type) {
+    is_valid_type: function (type) {
       return type in this.devices
     },
 
@@ -474,7 +473,7 @@ export default {
             self.show_nb_screen_modal = true
           } else {
             self.$buefy.dialog.alert({
-              message: 'Aucun écran trouvé dans le listing, pensez à les rajouter !'})
+              message: 'Aucun écran trouvé dans le listing, pensez à les rajouter !' })
           }
         }
       }
@@ -502,11 +501,11 @@ export default {
           if (self.devicelist.filter(e => self.year_ok(e.year)).length === 0) {
             // there is nothing for the current year,
             // try to guess
-            let max_year = self.devicelist.map(e => e.year).filter(y => +y > 0).reduce((prev,curr) => Math.max(prev,curr), 0)
+            let max_year = self.devicelist.map(e => e.year).filter(y => +y > 0).reduce((prev, curr) => Math.max(prev, curr), 0)
             if (max_year > 0) {
               self.$buefy.dialog.confirm({
-                message: 'Aucune entrée trouvée pour l\'année courante ('+self.referenceYear+
-                  '). Changer l\'année du bilan pour '+max_year+' ?',
+                message: 'Aucune entrée trouvée pour l\'année courante (' + self.referenceYear +
+                  '). Changer l\'année du bilan pour ' + max_year + ' ?',
                 onConfirm: function () {
                   self.$emit('changeReferenceYear', max_year)
                   handle_screens()
