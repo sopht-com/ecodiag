@@ -101,7 +101,7 @@
               <td class="has-text-right">{{current_estimated_screens}}</td>
               <td>
                 <b-button size="is-tiny" @click="show_nb_screen_modal=true">
-                  <i class="sui sui-pencil" style="font-size: 16px;"></i>
+                  <b-icon icon="pencil"/>
                 </b-button>
               </td>
               <td v-show="!params.includes_empty_year"></td>
@@ -115,17 +115,17 @@
           <p>Outils et options</p>
           <b-field v-if="nb_outofperiod_rows > 0">
             <b-checkbox v-model="show_outofperiod">
-                Afficher les {{nb_outofperiod_rows}} lignes hors période
+              Afficher les {{nb_outofperiod_rows}} lignes hors période
             </b-checkbox>
           </b-field>
           <b-field v-if="method === 'flux' && nb_emptyyear_rows > 0 && !hide_empty_year">
             <b-checkbox v-model="params.includes_empty_year">
-                Inclure les {{nb_emptyyear_rows}} lignes sans année dans le bilan
+              Inclure les {{nb_emptyyear_rows}} lignes sans année dans le bilan
             </b-checkbox>
           </b-field>
           <b-field v-if="method === 'flux' && nb_emptyyear_rows > 0">
             <b-checkbox v-if="!params.includes_empty_year" v-model="hide_empty_year">
-                Masquer les {{nb_emptyyear_rows}} lignes sans année
+              Masquer les {{nb_emptyyear_rows}} lignes sans année
             </b-checkbox>
           </b-field>
           <b-field>
@@ -628,7 +628,9 @@ table.table.condensed td {
   padding-bottom: 0.2em;
 }
 .button.is-tiny {
-  font-size: 0.5rem
+  font-size: 0.75rem;
+  padding: 0 0.75rem;
+  height: 2em;
 }
 button.trash {
   border-style: none;
