@@ -361,6 +361,8 @@ export default {
   updated () {
     if (this.l1p5) {
       window.$('.chevron-right').addClass('sui-chevron-right')
+      window.$('i.trash').addClass('sui-trash')
+      window.$('i.pencil').addClass('sui-pencil')
     }
   },
 
