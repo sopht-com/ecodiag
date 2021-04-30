@@ -86,7 +86,7 @@ export const device_utils = {
       var device = devices[type]
       if (device) {
         res = device[attr]
-        if (model && model != 'default' && devices[type].models[model][attr]) {
+        if (model && model != 'default' && devices[type].models && model in devices[type].models && devices[type].models[model][attr]) {
           res = devices[type].models[model][attr]
         }
       }
@@ -164,11 +164,13 @@ export const device_utils = {
 
       item.type = type // this automatically sets model, lifetime, lifetime2, yearly_consumption, and usage from default values
       // now, let's update the model (this also sets lifetime, lifetime2, yearly_consumption, and usage from default values)
-      if (params.model) { item.model = params.model }
+      if (params.model && type in this.devices && this.devices[type].models && params.model in this.devices[type].models) {
+        item.model = params.model
+      }
       // now, let's update them if provided by params,
       // that is, copy all parameters but 'type' and 'model':
       for (let key in params) {
-        if (key !== 'type' && key !== 'model') {
+        if (key !== 'type' && key !== 'model' && params[key]) {
           const val = params[key]
           item[key] = val
         }
