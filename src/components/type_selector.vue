@@ -21,7 +21,7 @@ export default {
   props: ['msg'],
   inheritAttrs: false,
   mixins: [base_selector],
-  updated() {
+  updated () {
     // This is required when nested wihtin a b-table:
     // if a change of the b-select element trigger a change of the b-table,
     // then this b-select element won't be properly updated
