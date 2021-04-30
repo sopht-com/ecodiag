@@ -29,7 +29,8 @@
           :method="method"
           :optional-columns="['grey']"
           :reference-year="reference_year"
-          @changeReferenceYear="(e) => reference_year = e" />
+          @changeReferenceYear="(e) => reference_year = e"
+          :auto-add="true" />
         <p></p>
 
         <p class="whatif" v-if="method === 'stock'">

@@ -276,7 +276,7 @@ import messages from '../i18n'
 export default {
   name: 'ecodiag-hybrid-device-table',
 
-  emits: [ 'addItem', 'changeReferenceYear' ],
+  emits: [ 'changeReferenceYear' ],
 
   components: {
     'ecodiag-select-type': () => import('./type_selector.vue'),
@@ -289,6 +289,7 @@ export default {
     'nbUsers': Number,
     'referenceYear': { type: Number, default: 2020 },
     'optionalColumns': { type: Array, default: () => [] },
+    'autoAdd': { type: Boolean, default: true },
     'l1p5': { type: Boolean, default: false }
   },
 
@@ -316,7 +317,7 @@ export default {
             grey: self.compute_grey(e) }
           return res
         })
-      if ((!self.is_listening_add_item) /* && (tmp_list.filter(e => e.id === 'add').length === 0) */) {
+      if (self.autoAdd /* && (tmp_list.filter(e => e.id === 'add').length === 0) */) {
         let tmpitem = this.create_device_item()
         tmpitem.year = this.referenceYear
         let additem = {
@@ -333,9 +334,6 @@ export default {
         tmp_list.push(additem)
       }
       return tmp_list
-    },
-    is_listening_add_item () {
-      return Boolean(this.$listners) && Boolean(this.$listners.addItem)
     },
     nb_outofperiod_rows () {
       return this.devicelist.filter(e => e.score >= 0 && e.year !== '' && !this.is_valid_year(e.year, this.method, this.referenceYear)).length
