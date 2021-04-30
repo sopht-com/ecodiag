@@ -74,7 +74,7 @@
           <table class="table is-fullwidth condensed is-small">
             <tr v-if="method === 'flux'"><th></th>
               <th class="has-text-right">
-                <span class="icon is-small"><i class="sui sui-check"></i></span>
+                <b-icon icon="check" size="is-small" />
               </th>
               <th class="has-text-right" v-show="!params.includes_empty_year">
                 <span>sans date</span>
@@ -146,7 +146,7 @@
             <div class="content has-text-centered">
               <p>
                 <span class="icon">
-                  <i style="font-size: 36px" class="sui sui-upload"></i>
+                  <b-icon icon="upload" size="is-large" />
                 </span>
               </p>
               <p>
@@ -172,7 +172,7 @@
       show-detail-icon
       custom-row-key="id"
       :opened-detailed="devicelist.filter(e => e.score===0).map(e => e.id)"
-      :sort-icon="'sui-angle-up'"
+      :sort-icon="l1p5 ? 'sui-angle-up' : 'angle-up'"
       default-sortXXX="status"
       :row-class="(row, index) => Boolean(row.item.csvdata) && filemap.length>0 ? '' : 'ed-hide-detail'"
       :paginated="displayed_devicelist.length>200"
@@ -257,7 +257,7 @@
       <section slot="empty" class="section">
         <div class="content has-text-grey has-text-centered">
           <p>
-            <i class="sui sui-ban" style="font-size: 64px;"></i>
+            <b-icon icon="ban" size="is-large" />
           </p>
           <p>Aucun item</p>
         </div>
@@ -320,7 +320,7 @@ export default {
             grey: self.compute_grey(e) }
           return res
         })
-      if ((!this.is_listening_add_item) /* && (tmp_list.filter(e => e.id === 'add').length === 0) */) {
+      if ((!self.is_listening_add_item) /* && (tmp_list.filter(e => e.id === 'add').length === 0) */) {
         let tmpitem = this.create_device_item()
         tmpitem.year = this.referenceYear
         let additem = {
@@ -362,6 +362,9 @@ export default {
       window.$('.chevron-right').addClass('sui-chevron-right')
       window.$('i.trash').addClass('sui-trash')
       window.$('i.pencil').addClass('sui-pencil')
+      window.$('i.check').addClass('sui-check')
+      window.$('i.upload').addClass('sui-upload')
+      window.$('i.ban').addClass('sui-ban')
     }
   },
 
