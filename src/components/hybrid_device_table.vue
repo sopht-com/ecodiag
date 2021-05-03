@@ -179,6 +179,13 @@
       per-page="200"
     >
 
+      <!-- This hidden column is a hack to enable column sorting while editing items.
+           By default, if sorting is enabled for a given column, and that an edit
+           change the row order, then user lost track of the item he/she is currently editing,
+           which is really painful!
+           The workaround consists in handling sorting by hand through ':backend-sorting' and '@sort'
+           to record the current order within the 'bakedorder' attributes and fallback to bakedorder
+           order anytime an input field is clicked. -->
       <b-table-column field="bakedorder" sortable :visible="false" />
 
       <b-table-column field="status" sortable label="status" v-slot="props">
