@@ -223,7 +223,7 @@
         <template v-slot:header="{}">
           <!-- {{$t('words.fabrication')}}<br/> -->
           <div class="is-size-7">kgCO2e/
-          <select v-model="normalization" class="is-size-7">
+          <select v-model="normalization" class="is-size-7" @click.stop>
             <option v-for="key in normalization_list" :key="key" :value="key">
               {{$t('words.'+key)}}
             </option>
