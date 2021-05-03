@@ -65,9 +65,15 @@
           kgCO2e/{{$t('words.year')}}.
         </p>
 
-        <p class="whatif" v-html="$t('message.lifetime_saving', {amount: toFixed(total_grey_CO2()-total_grey_CO2('2')) } )">
-        </p>
-
+        <template v-if="objective">
+          <p class="whatif" v-if="method === 'stock'" v-html="$t('message.lifetime_saving', {amount: toFixed(total_grey_CO2()-total_grey_CO2('2')) } )">
+          </p>
+          <p class="whatif" v-if="method === 'flux'">
+            Économies réalisables par l'augmentation de la durée de vie de mes équipements d'un facteur
+            <span class="value">{{params.lifetime_factor}}</span>
+            : <span class="value">{{toFixed(total_grey_CO2()-total_grey_CO2('2'))}}</span> kgCO2e par an.
+          </p>
+        </template>
       </tab>
 
       <tab :name="$t('title.data')" >
