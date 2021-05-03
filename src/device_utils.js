@@ -218,8 +218,12 @@ export const device_utils = {
       }
     },
 
+    is_empty_year(y) {
+      return (!y) || y === ''
+    },
+    
     is_valid_year (y, method, ref_year) {
-      return method === 'stock' || (this.params.includes_empty_year && y === '') || (y <= ref_year && y > (ref_year - this.params.damping_factor))
+      return method === 'stock' || (this.params.includes_empty_year && this.is_empty_year(y)) || (y <= ref_year && y > (ref_year - this.params.damping_factor))
     },
 
     compute_status: function (item, method, ref_year) {
@@ -446,7 +450,7 @@ export const device_utils = {
         if (header_map.in_type && csvitem[header_map.in_type]) { key = key.concat(csvitem[header_map.in_type]) }
         if (header_map.in_model && csvitem[header_map.in_model]) { key = key.concat(csvitem[header_map.in_model]) }
 
-        if (item['year'] != '') {
+        if (!this.is_empty_year(item['year'])) {
           key = key.concat(item['year'])
         } else {
           if (key !== '') {

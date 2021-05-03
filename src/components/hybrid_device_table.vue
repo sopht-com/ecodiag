@@ -89,10 +89,10 @@
                 {{count_items_of_file(0, e => year_ok(e.year) && row.condition(e))}}
               </td>
               <td class="has-text-right" v-show="method === 'flux' && !params.includes_empty_year">
-                {{count_items_of_file(0, e => e.year === '' &&  row.condition(e))}}
+                {{count_items_of_file(0, e => is_empty_year(e.year) &&  row.condition(e))}}
               </td>
               <td class="has-text-right" v-show="method === 'flux'">
-                {{count_items_of_file(0, e => (!year_ok(e.year)) && e.year !== '' &&  row.condition(e))}}
+                {{count_items_of_file(0, e => (!year_ok(e.year)) && (!is_empty_year(e.year)) &&  row.condition(e))}}
               </td>
             </tr>
             <tr v-if="method === 'flux' && nb_screens_in_csv === 0">
@@ -370,10 +370,10 @@ export default {
       return tmp_list
     },
     nb_outofperiod_rows () {
-      return this.devicelist.filter(e => e.score >= 0 && e.year !== '' && !this.is_valid_year(e.year, this.method, this.referenceYear)).length
+      return this.devicelist.filter(e => e.score >= 0 && (!this.is_empty_year(e.year)) && (!this.is_valid_year(e.year, this.method, this.referenceYear))).length
     },
     nb_emptyyear_rows () {
-      return this.devicelist.filter(e => e.score >= 0 && e.year === '').length
+      return this.devicelist.filter(e => e.score >= 0 && this.is_empty_year(e.year)).length
     },
     current_estimated_screens () {
       let item = this.get_estimated_screen_item()
@@ -473,11 +473,11 @@ export default {
     },
 
     delete_empty_year: function () {
-      this.devicelist.filter(e => e.year === '').forEach(this.delete_row)
+      this.devicelist.filter(e => this.is_empty_year(e.year)).forEach(this.delete_row)
     },
 
     validate_empty_year: function () {
-      this.devicelist.filter(e => e.year === '').forEach(this.validate_row)
+      this.devicelist.filter(e => this.is_empty_year(e.year)).forEach(this.validate_row)
     },
 
     sort_items (field, order /* , event */) {
@@ -575,8 +575,8 @@ export default {
               (!item.csvdata) || /* we show all user entered rows */
               (this.method === 'stock') || /* in this case the purchase year is irrelevant */
               (this.year_ok(item.year)) ||
-              (item.year === '' && !this.hide_empty_year) ||
-              (item.year !== '' && this.show_outofperiod))
+              (this.is_empty_year(item.year) && !this.hide_empty_year) ||
+              ((!this.is_empty_year(item.year)) && this.show_outofperiod))
     },
 
     /* This function merge all valid entries with respect to type/model (ignoring actual purchase year),
