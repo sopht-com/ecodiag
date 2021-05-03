@@ -300,6 +300,10 @@ export default {
   mixins: [device_utils],
 
   computed: {
+    valid_devices_list () {
+      return this.extract_valid_items(this.devicelist, this.method, this.referenceYear)
+    },
+
     displayed_devicelist: function () {
       let self = this
       let tmp_list = this.devicelist.filter(e => this.display_predicate(e))
@@ -540,8 +544,8 @@ export default {
        The purchase year of valid entries is rewriteen as the current reference year */
     simplify_data () {
       var copy = []
-      for (let i in this.devicelist) {
-        let item = this.clone_obj(this.devicelist[i])
+      for (let i in this.valid_devices_list) {
+        let item = this.clone_obj(this.valid_devices_list[i])
         let status = this.compute_status(item, this.method, this.referenceYear)
         if (item && (status === this.status.user_ok || status === this.status.csv_ok) && item.nb > 0) {
           item.key = item._type.concat(item._model)
