@@ -364,7 +364,7 @@ export default {
   methods: {
 
     total_grey_CO2: function (suffix) {
-      var att = (suffix && suffix === 2) ? 'grey2' : 'grey'
+      var att = (suffix && suffix === '2') ? 'grey2' : 'grey'
       return this.valid_devices_list.reduce(function (res, item) {
         const itemCO2 = this.compute_device_co2e(item, this.method)
         return res + itemCO2[att]
