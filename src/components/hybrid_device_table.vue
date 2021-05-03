@@ -161,6 +161,7 @@
     <b-table
       v_if="devicelist.length>0"
       :data="displayed_devicelist"
+      ref="ecodiagTable"
       hoverable
       detailed
       custom-detail-row
@@ -169,12 +170,16 @@
       custom-row-key="id"
       :opened-detailed="devicelist.filter(e => e.score===0).map(e => e.id)"
       :sort-icon="l1p5 ? 'sui-angle-up' : 'angle-up'"
-      default-sortXXX="status"
+      :default-sort="default_sort"
+      @sort="sort_items"
+      :backend-sorting="true"
       :row-class="(row, index) => Boolean(row.item.csvdata) && filemap.length>0 ? '' : 'ed-hide-detail'"
       :paginated="displayed_devicelist.length>200"
       narrowed
       per-page="200"
     >
+
+      <b-table-column field="bakedorder" sortable :visible="false" />
 
       <b-table-column field="status" sortable label="status" v-slot="props">
         <span v-if="props.row.id !== 'add'">
@@ -186,25 +191,31 @@
       </b-table-column>
 
       <b-table-column field="type" sortable :label="$t('words.type')" v-slot="props">
-        <ecodiag-select-type expanded
-          v-model="props.row.item.type"
-          :msg="props.row.id === 'add' ? 'ajouter un élément' : '...'"
-          @input="item_type_changed(props.row.id, props.row.item)">
-        </ecodiag-select-type>
+        <div @click="stop_sorting">
+          <ecodiag-select-type expanded
+            v-model="props.row.item.type"
+            :msg="props.row.id === 'add' ? 'ajouter un élément' : '...'"
+            @input="item_type_changed(props.row.id, props.row.item)">
+          </ecodiag-select-type>
+        </div>
       </b-table-column>
 
       <b-table-column field="model" sortable :label="$t('words.model')" v-slot="props" :td-attrs="()=>({style:{'width': '12rem'}})">
-        <ecodiag-select-model expanded v-model="props.row.item.model" :item_type="props.row.item.type" @input="item_model_changed(props.row.item)">
-        </ecodiag-select-model>
+        <div @click="stop_sorting">
+          <ecodiag-select-model expanded v-model="props.row.item.model" :item_type="props.row.item.type" @input="item_model_changed(props.row.item)">
+          </ecodiag-select-model>
+        </div>
       </b-table-column>
 
       <b-table-column field="year" :visible="method=='flux'" sortable :label="$t('words.purchase_year')" numeric v-slot="props">
-        <input class="input is-small inline-number" v-if="props.row.id !== 'add'" v-model.number="props.row.item.year"
-          type="number" min="1900" max="2100" step="1" style="width:3.7rem" />
+        <div @click="stop_sorting">
+          <input class="input is-small inline-number" v-if="props.row.id !== 'add'" v-model.number="props.row.item.year"
+            type="number" min="1900" max="2100" step="1" style="width:3.7rem" />
+          </div>
       </b-table-column>
 
       <b-table-column field="nb" sortable :label="$t('words.quantity')" numeric v-slot="props">
-        <span class="unit" v-if="props.row.id !== 'add'">
+        <span class="unit" v-if="props.row.id !== 'add'" @click="stop_sorting">
           <input class="input is-small inline-number" v-model.number="props.row.item.nb" type="number" min="0" max="99999" step="1" style="width:3.5em" />
         </span>
         <button class="trash has-text-grey" v-if="props.row.id !== 'add'" @click="delete_row(props.row.item)" >
@@ -213,7 +224,7 @@
       </b-table-column>
 
       <b-table-column field="item.lifetime" :visible="method=='stock'" :label="$t('words.lifetime')" width="4rem" numeric v-slot="props">
-        <span class="unit" v-if="is_valid_type(props.row.item.type)">
+        <span class="unit" v-if="is_valid_type(props.row.item.type)" @click="stop_sorting">
           <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="99999" step="0.5" style="width:3.5em"
              @change="function () { if (!props.row.item.lifetime_unlocked) item['lifetime2'] = item.lifetime * 1.5 }" />
         </span>
@@ -321,6 +332,20 @@ export default {
             grey: self.compute_grey(e) }
           return res
         })
+
+      if (this.sort_field !== 'bakedorder') {
+        // console.log('sort_items ' + this.sort_field + ' ' + this.sort_order)
+        let s = {}
+        if (this.sort_order === 'desc') {
+          s = (a, b) => a[this.sort_field] < b[this.sort_field] ? -1 : 1
+        } else {
+          s = (a, b) => a[this.sort_field] > b[this.sort_field] ? -1 : 1
+        }
+        tmp_list.sort(s)
+      } else {
+        tmp_list.sort((a, b) => a.item.bakedorder - b.item.bakedorder)
+      }
+
       if (self.autoAdd /* && (tmp_list.filter(e => e.id === 'add').length === 0) */) {
         let tmpitem = this.create_device_item()
         tmpitem.year = this.referenceYear
@@ -337,6 +362,11 @@ export default {
         }
         tmp_list.push(additem)
       }
+
+      tmp_list.forEach(function (item, i) {
+        item.item['bakedorder'] = i
+      })
+
       return tmp_list
     },
     nb_outofperiod_rows () {
@@ -448,6 +478,16 @@ export default {
 
     validate_empty_year: function () {
       this.devicelist.filter(e => e.year === '').forEach(this.validate_row)
+    },
+
+    sort_items (field, order /* , event */) {
+      this.sort_field = field
+      this.sort_order = order
+    },
+
+    stop_sorting () {
+      this.default_sort = 'bakedorder'
+      this.$refs.ecodiagTable.initSort()
     },
 
     item_type_changed: function (id, item) {
@@ -571,6 +611,9 @@ export default {
   data () {
     return {
       dropFile: {},
+      sort_order: 'asc',
+      sort_field: 'bakedorder',
+      default_sort: 'bakedorder',
       devices: devices,
       filemap: [],
       hide_empty_year: false,
