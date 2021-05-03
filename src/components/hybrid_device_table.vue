@@ -23,7 +23,7 @@
                 </td>
                 <td>
                   Comptabiliser en moyenne :<br/>
-              <input v-model.number="nb_screens_per_desktop" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" /> écran acheté par PC-fix acheté, et<br/>
+              <input v-model.number="nb_screens_per_desktop" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" /> écran acheté par PC-fixe acheté, et<br/>
               <input v-model.number="nb_screens_per_laptop" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" /> écran acheté par portable acheté, <br/>
               soit une estimation de <strong>{{nb_estimated_screens('from_nb_PCs')}}</strong> écrans achetés sur la période.
                 </td>
