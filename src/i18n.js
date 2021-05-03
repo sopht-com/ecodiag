@@ -75,7 +75,7 @@ export default {
       'other': 'autre'
     },
     message: {
-      lifetime_saving: 'Économies réalisables par l\'augmentation de la durée de vie de mes équipements : <span class=\'value\'>{amount}</span> kg.CO2e par an.'
+      lifetime_saving: 'Économies réalisables par l\'augmentation de la durée de vie de mes équipements : <span class=\'value\'>{amount}</span> kgCO2e par an.'
     }
   }
 }

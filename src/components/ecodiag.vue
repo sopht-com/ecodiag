@@ -33,9 +33,9 @@
         <p></p>
 
         <p class="whatif" v-if="method === 'stock'">
-          <ml fr="Bilan consommation électrique :">Total electricity consumption:</ml>
+          <ml fr="Bilan consommation électrique : ">Total electricity consumption: </ml>
           <span class="value">{{toFixed(total_elec_kWh(),0)}}</span> kWh/{{$t('words.year')}},
-          <ml fr="soit l'équivalent de la production de">which is equivalent to the production of</ml>
+          <ml fr="soit l'équivalent de la production de ">which is equivalent to the production of </ml>
           <span class="value">{{ Math.round(total_elec_kWh() * equiv_data[equiv_selected].factor*10)/10 }}</span>
           <span v-html="trAtt(equiv_data[equiv_selected],'unit')" ></span>
 
@@ -47,12 +47,12 @@
         </p>
 
         <p class="whatif" v-if="method === 'stock'">
-          <ml fr="Total CO2e annuel :">Total yearly CO2e:</ml>
+          <ml fr="Total CO2e annuel : ">Total yearly CO2e: </ml>
           <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e + total_grey_CO2(),0)}}</span> kgCO2e/{{$t('words.year')}}
             = <span class="value">{{toFixed(total_grey_CO2(),0)}}</span>
-            <ml fr="(fabrication et transport)">(production and transport)</ml>
+            <ml fr=" (fabrication et transport)"> (production and transport)</ml>
             + <span class="value">{{toFixed(total_elec_kWh()*params.kWh_to_CO2e,0)}}</span>
-            <ml fr="(consommation électrique)">(electricity consumption)</ml>.
+            <ml fr=" (consommation électrique)"> (electricity consumption)</ml>.
         </p>
         <p class="whatif" v-if="method === 'flux'">
           <ml fr="Total CO2e (fabrication et transport) : ">Total CO2e (production and transport): </ml>
