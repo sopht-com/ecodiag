@@ -232,9 +232,16 @@
 
       <b-table-column field="item.lifetime" :visible="method=='stock'" :label="$t('words.lifetime')" width="4rem" numeric v-slot="props">
         <span class="unit" v-if="is_valid_type(props.row.item.type)" @click="stop_sorting">
-          <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="99999" step="0.5" style="width:3.5em"
-             @change="function () { if (!props.row.item.lifetime_unlocked) item['lifetime2'] = item.lifetime * 1.5 }" />
+          <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="999" step="0.5" style="width:3.5em"
+             @changeXX="function () { if (!props.row.item.lifetime_unlocked) props.row.item['lifetime2'] = props.row.item.lifetime * params.lifetime_factor }"
+              />
         </span>
+      </b-table-column>
+
+      <b-table-column field="item.lifetime2" :visible="method=='stock' && optionalColumns.includes('objective')" :label="'('+$t('words.objective')+')'" width="4rem" numeric v-slot="props">
+          <locker v-if="is_valid_type(props.row.item.type)" :onchange="function (x) { props.row.item['lifetime_unlocked'] = x }">
+            <input class="input is-small inline-number" v-model.number="props.row.item.lifetime2" type="number" min="1" max="999" step="0.5" style="width:3.5em" disabled />
+          </locker>
       </b-table-column>
 
       <b-table-column field="grey" :visible="optionalColumns.includes('grey')" sortable numeric width="8rem">
@@ -298,7 +305,8 @@ export default {
 
   components: {
     'ecodiag-select-type': () => import('./type_selector.vue'),
-    'ecodiag-select-model': () => import('./model_selector.vue')
+    'ecodiag-select-model': () => import('./model_selector.vue'),
+    'locker': () => import('./locker.vue')
   },
 
   props: {

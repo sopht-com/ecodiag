@@ -26,7 +26,7 @@
         <device-table
           :devicelist="devices_list"
           :method="method"
-          :optional-columns="['grey']"
+          :optional-columns="objective ? ['grey', 'objective'] : ['grey']"
           :reference-year="reference_year"
           @changeReferenceYear="(e) => reference_year = e"
           :auto-add="true" />
