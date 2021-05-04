@@ -11,21 +11,21 @@
 
 <script>
 export default {
-  name: 'locked',
-  props:['onchange'],
+  name: 'locker',
+  props: ['onchange'],
 
-  mounted() {
-    this.locker_id = "locker_"+this._uid;
-    this.nested_input = this.$refs.div_input.childNodes[0];
-    this.unlocked = !this.nested_input.disabled;
+  mounted () {
+    this.locker_id = 'locker_' + this._uid
+    this.nested_input = this.$refs.div_input.childNodes[0]
+    this.unlocked = !this.nested_input.disabled
   },
 
-  data() {
+  data () {
     return {
       unlocked: null,
       locker_id: null,
       nested_input: null
-    };
+    }
   }
 
 }
@@ -34,12 +34,12 @@ export default {
 <style scoped>
 
 input[type=checkbox].locker {
-  display:none;
+  display: none;
 }
 
 input[type=checkbox].locker + label
 {
-  background: url("icons/lock_icon.png") left bottom no-repeat;
+  background: url("../icons/lock_icon.png") left bottom no-repeat;
   background-size: 11px 14px;
 
   height: 15px;
@@ -50,10 +50,10 @@ input[type=checkbox].locker + label
   margin-top:  0px;
   margin-right:6px;
 }
- 
- input[type=checkbox].locker:checked + label
+
+input[type=checkbox].locker:checked + label
 {
-  background: url("icons/unlock_icon.png") left bottom no-repeat;
+  background: url("../icons/unlock_icon.png") left bottom no-repeat;
   background-size: 11px 14px;
 }
 
