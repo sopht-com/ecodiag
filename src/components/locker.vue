@@ -1,12 +1,12 @@
 
 <template>
-<div>
+<span>
   <input :id="locker_id" type="checkbox" class="locker" v-model="unlocked" @change="nested_input.disabled = !unlocked; if(onchange) onchange(unlocked);"/>
   <label :for="locker_id"></label>
   <span ref="div_input">
     <slot></slot>
   </span>
-</div>
+</span>
 </template>
 
 <script>
@@ -44,11 +44,11 @@ input[type=checkbox].locker + label
 
   height: 15px;
   width: 11px;
-  margin-left: -4px;
+  margin-left: 0;
   display:inline-block;
   padding: 0px;
-  margin-top:  0px;
-  margin-right:6px;
+  margin-top: 6px;
+  margin-right: 4px;
 }
 
 input[type=checkbox].locker:checked + label
