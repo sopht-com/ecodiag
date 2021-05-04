@@ -230,18 +230,22 @@
         </button>
       </b-table-column>
 
-      <b-table-column field="item.lifetime" :visible="method=='stock'" :label="$t('words.lifetime')" width="4rem" numeric v-slot="props">
+      <b-table-column field="item.lifetime"
+        :visible="method=='stock'"
+        :label="$t('words.lifetime') + (optionalColumns.includes('objective') ? ' (actuel/objectif)' : '')"
+        :width="optionalColumns.includes('objective') ? '8.8rem' : '4rem'"
+        numeric v-slot="props">
         <span class="unit" v-if="is_valid_type(props.row.item.type)" @click="stop_sorting">
-          <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="999" step="0.5" style="width:3.5em"
-             @changeXX="function () { if (!props.row.item.lifetime_unlocked) props.row.item['lifetime2'] = props.row.item.lifetime * params.lifetime_factor }"
+          <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="999" step="0.5" style="width: 2.9rem"
+             @change="function () { if (!props.row.item.lifetime_unlocked) props.row.item['lifetime2'] = props.row.item.lifetime * params.lifetime_factor }"
               />
         </span>
-      </b-table-column>
-
-      <b-table-column field="item.lifetime2" :visible="method=='stock' && optionalColumns.includes('objective')" :label="'('+$t('words.objective')+')'" width="4rem" numeric v-slot="props">
-          <locker v-if="is_valid_type(props.row.item.type)" :onchange="function (x) { props.row.item['lifetime_unlocked'] = x }">
-            <input class="input is-small inline-number" v-model.number="props.row.item.lifetime2" type="number" min="1" max="999" step="0.5" style="width:3.5em" disabled />
+        <template v-if="is_valid_type(props.row.item.type) && optionalColumns.includes('objective')">
+          &nbsp;/&nbsp;
+          <locker :onchange="function (x) { props.row.item['lifetime_unlocked'] = x }">
+            <input class="input is-small inline-number" v-model.number="props.row.item.lifetime2" type="number" min="1" max="999" step="0.5" style="width: 2.9rem" disabled />
           </locker>
+        </template>
       </b-table-column>
 
       <b-table-column field="grey" :visible="optionalColumns.includes('grey')" sortable numeric width="8rem">
@@ -255,7 +259,7 @@
           </select>
           </div>
           <b-tooltip label="fabrication + transport + fin de vie" append-to-body>
-          hors usage
+          fabrication &amp; transport
           </b-tooltip>
         </template>
         <template v-slot="props">
@@ -677,8 +681,8 @@ tr.ed-hide-detail td a {
   display: none
 }
 input.input.inline-number {
-  padding-left: 6px;
-  padding-right: 4px
+  padding-left: 4px;
+  padding-right: 2px
 }
 td.vcenter {
   vertical-align: middle
