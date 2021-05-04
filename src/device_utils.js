@@ -136,6 +136,8 @@ export const device_utils = {
         _type: null,
         _model: null,
         nb: 1,
+        lifetime: null,
+        lifetime2: null,
         score: 0
       }
 
