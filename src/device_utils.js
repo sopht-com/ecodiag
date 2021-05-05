@@ -166,7 +166,7 @@ export const device_utils = {
 
       item.type = type // this automatically sets model, lifetime, lifetime2, yearly_consumption, and usage from default values
       // now, let's update the model (this also sets lifetime, lifetime2, yearly_consumption, and usage from default values)
-      if (params.model && type in this.devices && this.devices[type].models && params.model in this.devices[type].models) {
+      if (params.model && type in devices && devices[type].models && params.model in devices[type].models) {
         item.model = params.model
       }
       // now, let's update them if provided by params,
@@ -231,7 +231,7 @@ export const device_utils = {
     compute_status: function (item, method, ref_year) {
       /* eslint-disable indent */
       if (!item.csvdata) {
-        return Object.keys(this.devices).includes(item._type) ? this.status.user_ok : this.status.user_ko
+        return Object.keys(devices).includes(item._type) ? this.status.user_ok : this.status.user_ko
       } else {
         return item.score < 1 ? this.status.unknown
            : (!this.is_valid_year(item.year, method, ref_year)) && item.score < 3 ? this.status.invalid_year
