@@ -217,13 +217,15 @@
       <b-table-column field="year" :visible="method=='flux'" sortable :label="$t('words.purchase_year')" numeric v-slot="props">
         <div @click="stop_sorting">
           <input class="input is-small inline-number" v-if="props.row.id !== 'add'" v-model.number="props.row.item.year"
-            type="number" min="1900" max="2100" step="1" style="width:3.7rem" />
+            type="number" min="1900" max="2100" step="1" style="width:3.7rem"
+            @change="$emit('updated', [props.row.item])" />
           </div>
       </b-table-column>
 
       <b-table-column field="nb" sortable :label="$t('words.quantity')" numeric v-slot="props">
         <span class="unit" v-if="props.row.id !== 'add'" @click="stop_sorting">
-          <input class="input is-small inline-number" v-model.number="props.row.item.nb" type="number" min="0" max="99999" step="1" style="width:3.5em" />
+          <input class="input is-small inline-number" v-model.number="props.row.item.nb" type="number" min="0" max="99999" step="1" style="width:3.5em"
+            @change="$emit('updated', [props.row.item])" />
         </span>
         <button class="trash has-text-grey" v-if="props.row.id !== 'add'" @click="delete_row(props.row.item)" >
           <b-icon icon="trash" />
@@ -237,13 +239,14 @@
         numeric v-slot="props">
         <span class="unit" v-if="is_valid_type(props.row.item.type)" @click="stop_sorting">
           <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="999" step="0.5" style="width: 2.9rem"
-             @change="function () { if (!props.row.item.lifetime_unlocked) props.row.item['lifetime2'] = props.row.item.lifetime * params.lifetime_factor }"
+             @change="function () { if (!props.row.item.lifetime_unlocked) props.row.item['lifetime2'] = props.row.item.lifetime * params.lifetime_factor; $emit('updated', [props.row.item]) }"
               />
         </span>
         <template v-if="is_valid_type(props.row.item.type) && optionalColumns.includes('objective')">
           &nbsp;/&nbsp;
           <locker :onchange="function (x) { props.row.item['lifetime_unlocked'] = x }">
-            <input class="input is-small inline-number" v-model.number="props.row.item.lifetime2" type="number" min="1" max="999" step="0.5" style="width: 2.9rem" disabled />
+            <input class="input is-small inline-number" v-model.number="props.row.item.lifetime2" type="number" min="1" max="999" step="0.5" style="width: 2.9rem" disabled
+              @change="$emit('updated', [props.row.item])" />
           </locker>
         </template>
       </b-table-column>
@@ -259,7 +262,7 @@
           </select>
           </div>
           <b-tooltip label="fabrication + transport + fin de vie" append-to-body>
-          fabrication &amp; transport
+            fabrication &amp; transport
           </b-tooltip>
         </template>
         <template v-slot="props">
@@ -305,7 +308,7 @@ import messages from '../i18n'
 export default {
   name: 'ecodiag-hybrid-device-table',
 
-  emits: [ 'changeReferenceYear' ],
+  emits: [ 'changeReferenceYear', 'updated' ],
 
   components: {
     'ecodiag-select-type': () => import('./type_selector.vue'),
@@ -461,18 +464,23 @@ export default {
     },
 
     update_estimated_screens () {
+      let self = this
       let nb_additional_screens = this.nb_estimated_screens()
       // check whether there is already an entry
       let item = this.get_estimated_screen_item()
       if (item) {
         this.$buefy.dialog.confirm({
           message: 'Remplacer l\'estimation précédente de ' + item.nb + ' écrans par la nouvelle estimation de ' + nb_additional_screens + ' ?',
-          onConfirm: function () { item.nb = nb_additional_screens }
+          onConfirm: function () {
+            item.nb = nb_additional_screens
+            self.$emit('updated', [item])
+          }
         })
       } else {
         item = this.add_new_item('screen')
         item.origin = -1
         item.nb = nb_additional_screens
+        self.$emit('updated', [item])
       }
     },
 
@@ -480,15 +488,18 @@ export default {
       let item = this.create_device_item(type)
       item.year = this.referenceYear
       this.devicelist.push(item)
+      this.$emit('updated', [item])
       return item
     },
 
     delete_row: function (item) {
       item.score = -1
+      this.$emit('deleted', [item])
     },
 
     validate_row: function (item) {
       item.score = 3
+      this.$emit('updated', [item])
     },
 
     delete_empty_year: function () {
@@ -544,19 +555,27 @@ export default {
           headermap['filename'] = filename
           // remove previously imported data
           self.filemap.splice(0, self.filemap.length)
+          let deleted_items = []
           for (let i = 0; i < self.devicelist.length; ++i) {
             let item = self.devicelist[i]
             if ('origin' in item && (item.origin === 0 || item.origin === -1)) {
+              deleted_items.push(item)
               self.devicelist.splice(i, 1)
               i--
             }
           }
+          this.$emit('deleted', deleted_items)
+
           self.filemap.push(headermap)
           const fileid = self.filemap.length - 1
+          let updated_items = []
           csvdata.forEach(function (e) {
             e['origin'] = fileid
             self.devicelist.push(e)
+            updated_items.push(e)
           })
+
+          this.$emit('updated', updated_items)
 
           if (self.devicelist.filter(e => self.year_ok(e.year)).length === 0) {
             // there is nothing for the current year,
@@ -612,12 +631,14 @@ export default {
         }
       }
       copy = this.csv_merge_wrt_keys(copy)
+      this.$emit('deleted', this.devicelist)
       this.devicelist.splice(0, this.devicelist.length)
       for (let i in copy) {
         let item = copy[i]
         this.devicelist.push(this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.referenceYear }))
       }
       this.filemap.splice(0, this.filemap.length)
+      this.$emit('updated', this.devicelist)
     }
   },
 
