@@ -239,12 +239,14 @@ export const device_utils = {
       }
     },
 
+    is_valid (item, method, ref_year) {
+      let status = this.compute_status(item, method, ref_year)
+      return item.score >= 0 && ((status === this.status.user_ok) || (status === this.status.csv_ok))
+    },
+
     extract_valid_items (items, method, ref_year) {
       let self = this
-      return items.filter( function (item) {
-        let status = self.compute_status(item, method, ref_year)
-        return item.score >= 0 && ((status === self.status.user_ok) || (status === self.status.csv_ok))
-      } )
+      return items.filter(e => self.is_valid(e, method, ref_year))
     },
 
     // Computes the estimated CO2e emissions of the input item,
