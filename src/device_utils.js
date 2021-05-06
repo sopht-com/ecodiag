@@ -6,6 +6,15 @@ import * as d3 from "d3-dsv"
 import { devices } from './devices.js'
 import { v4 as uuidv4 } from 'uuid';
 
+var params = {
+  includes_empty_year: false, // used in the "flux" method
+  damping_factor: 1,          // in years, used in the "flux" method
+  lifetime_factor: 1.5,       // used in the "flux" method to simulate a longer lifetime, or in the "stock" method to compute the default extended lifetime
+  default_uncertainty: 30,
+  lifetime_uncertainty: 1,
+  kWh_to_CO2e: 0.084
+}
+
 export const device_utils = {
   data () {
     return {
@@ -16,14 +25,7 @@ export const device_utils = {
         invalid_year: 8,
         csv_ok: 10
       },
-      params: {
-        includes_empty_year: false, // used in the "flux" method
-        damping_factor: 1,          // in years, used in the "flux" method
-        lifetime_factor: 1.5,       // used in the "flux" method to simulate a longer lifetime, or in the "stock" method to compute the default extended lifetime
-        default_uncertainty: 30,
-        lifetime_uncertainty: 1,
-        kWh_to_CO2e: 0.084
-      }
+      params: params
     }
   },
 
@@ -100,7 +102,7 @@ export const device_utils = {
         if (el.mean) { return el.mean } else { return el }
       }
       let getstd = function (el) {
-        if (el.std) { return el.std } else { return this.params.default_uncertainty / 100 } // default is 30%
+        if (el.std) { return el.std } else { return params.default_uncertainty / 100 } // default is 30%
       }.bind(this)
 
       if (!(type in devices)) {
@@ -192,7 +194,7 @@ export const device_utils = {
         model: model,
         nb: item.nb ? item.nb : item,
         lifetime: lifetime,
-        lifetime2:          item.lifetime2          ? item.lifetime2          : lifetime * (+this.params.lifetime_factor),
+        lifetime2:          item.lifetime2          ? item.lifetime2          : lifetime * (+params.lifetime_factor),
         yearly_consumption: item.yearly_consumption ? item.yearly_consumption : this.get_device_attribute(type, model, 'yearly_consumption'),
         usage:              item.usage              ? item.usage              : this.get_device_attribute(type, model, 'usage')
       }
@@ -202,7 +204,7 @@ export const device_utils = {
 
     update_item_from_type_and_model: function (item) {
       item.lifetime = this.get_device_attribute(item.type, item.model, 'duration')
-      item.lifetime2 = item.lifetime * (+this.params.lifetime_factor)
+      item.lifetime2 = item.lifetime * (+params.lifetime_factor)
       item.yearly_consumption = this.get_device_attribute(item.type, item.model, 'yearly_consumption')
       item.usage = this.get_device_attribute(item.type, item.model, 'usage')
     },
@@ -225,7 +227,7 @@ export const device_utils = {
     },
     
     is_valid_year (y, method, ref_year) {
-      return method === 'stock' || (this.params.includes_empty_year && this.is_empty_year(y)) || (y <= ref_year && y > (ref_year - this.params.damping_factor))
+      return method === 'stock' || (params.includes_empty_year && this.is_empty_year(y)) || (y <= ref_year && y > (ref_year - params.damping_factor))
     },
 
     compute_status: function (item, method, ref_year) {
@@ -254,10 +256,10 @@ export const device_utils = {
     // - method should be either 'stock' or 'flux'
     compute_device_co2e (item, method, confidences) {
       const device_factor = this.get_device_factor(item.type, item.model)
-      const lt = (method == 'stock') ? item.lifetime : +this.params.damping_factor
+      const lt = (method == 'stock') ? item.lifetime : +params.damping_factor
       const greyCO2 = item.nb * device_factor.mean / lt
 
-      const lt_bis = method == 'stock' ? item.lifetime2 : (+this.params.damping_factor * (+this.params.lifetime_factor))
+      const lt_bis = method == 'stock' ? item.lifetime2 : (+params.damping_factor * (+params.lifetime_factor))
       const greyCO2_bis = item.nb * device_factor.mean / lt_bis
 
       let infs = []
@@ -273,7 +275,7 @@ export const device_utils = {
           sups[i] = item.nb * distrib.inv(0.5 + 0.5 * confidences[i] / 100) / lt
         }
       }
-      const useCO2 = item.nb * this.get_yearly_consumption(item) * this.params.kWh_to_CO2e
+      const useCO2 = item.nb * this.get_yearly_consumption(item) * params.kWh_to_CO2e
 
       return {
         grey: greyCO2, // mean
