@@ -216,10 +216,14 @@
 
       <b-table-column field="year" :visible="method=='flux'" sortable :label="$t('words.purchase_year')" numeric v-slot="props">
         <div @click="stop_sorting">
-          <input class="input is-small inline-number" v-if="props.row.id !== 'add'" v-model.number="props.row.item.year"
-            type="number" min="1900" max="2100" step="1" style="width:3.7rem"
-            @change="$emit('updated', [props.row.item])" />
-          </div>
+          <ecodiag-select-year
+              v-model="props.row.item.year"
+              v-show="props.row.id !== 'add'"
+              :min-year="2000"
+              :max-year="max_selectable_year"
+              @change="$emit('updated', [props.row.item])">
+          </ecodiag-select-year>
+        </div>
       </b-table-column>
 
       <b-table-column field="nb" sortable :label="$t('words.quantity')" numeric v-slot="props">
@@ -313,7 +317,8 @@ export default {
   components: {
     'ecodiag-select-type': () => import('./type_selector.vue'),
     'ecodiag-select-model': () => import('./model_selector.vue'),
-    'locker': () => import('./locker.vue')
+    'locker': () => import('./locker.vue'),
+    'ecodiag-select-year': () => import('./year_picker.vue')
   },
 
   props: {
@@ -333,6 +338,9 @@ export default {
   mixins: [device_utils],
 
   computed: {
+    max_selectable_year () {
+      return Math.max((new Date().getFullYear()) + 1, this.compute_max_year())
+    },
     valid_devices_list () {
       return this.extract_valid_items(this.devicelist, this.method, this.referenceYear)
     },
@@ -520,6 +528,10 @@ export default {
       this.$refs.ecodiagTable.initSort()
     },
 
+    compute_max_year () {
+      return this.devicelist.map(e => e.year).filter(y => +y > 0).reduce((prev, curr) => Math.max(prev, curr), 0)
+    },
+
     item_type_changed: function (id, item) {
       if (id === 'add') {
         this.devicelist.push(item)
@@ -580,7 +592,7 @@ export default {
           if (self.devicelist.filter(e => self.year_ok(e.year)).length === 0) {
             // there is nothing for the current year,
             // try to guess
-            let max_year = self.devicelist.map(e => e.year).filter(y => +y > 0).reduce((prev, curr) => Math.max(prev, curr), 0)
+            let max_year = self.compute_max_year()
             if (max_year > 0) {
               self.$buefy.dialog.confirm({
                 message: 'Aucune entrée trouvée pour l\'année courante (' + self.referenceYear +
