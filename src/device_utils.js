@@ -140,6 +140,7 @@ export const device_utils = {
         nb: 1,
         lifetime: null,
         lifetime2: null,
+        year: null,
         score: 0
       }
 

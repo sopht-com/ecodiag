@@ -117,16 +117,21 @@
               Afficher les {{nb_outofperiod_rows}} lignes hors période
             </b-checkbox>
           </b-field>
-          <b-field v-if="method === 'flux' && nb_emptyyear_rows > 0 && !hide_empty_year">
-            <b-checkbox v-model="params.includes_empty_year">
-              Inclure les {{nb_emptyyear_rows}} lignes sans année dans le bilan
-            </b-checkbox>
-          </b-field>
-          <b-field v-if="method === 'flux' && nb_emptyyear_rows > 0">
-            <b-checkbox v-if="!params.includes_empty_year" v-model="hide_empty_year">
-              Masquer les {{nb_emptyyear_rows}} lignes sans année
-            </b-checkbox>
-          </b-field>
+          <template v-if="method === 'flux' && nb_emptyyear_rows > 0">
+            Il y a {{nb_emptyyear_rows}} lignes sans année :
+            <div class="buttons">
+              <b-button v-show="!params.includes_empty_year"
+                @click="toggle_hide_empty_year"
+                type="is-info is-light"
+                :icon-left="hide_empty_year ? 'eye-slash' : 'eye'">
+                <span v-if="hide_empty_year">Afficher</span>
+                <span v-else>Masquer</span>
+              </b-button>
+              <b-button v-show="!hide_empty_year" @click="handle_date_emptyyears" type="is-success">
+                <span>Les dater</span>
+              </b-button>
+            </div>
+          </template>
           <b-field>
             <button @click="simplify_data" class="button is-primary">
               <span>Simplifier la table</span>
@@ -427,6 +432,29 @@ export default {
   },
 
   methods: {
+
+    toggle_hide_empty_year: function () {
+      this.hide_empty_year = !this.hide_empty_year
+    },
+
+    handle_date_emptyyears: function () {
+      this.$buefy.dialog.prompt({
+        message: 'Fixer l\'année d\'achat des ' + this.nb_emptyyear_rows + ' lignes sans date à l\'année :',
+        inputAttrs: {
+          type: 'number',
+          placeholder: '...',
+          value: this.referenceYear,
+          maxlength: 2,
+          min: 2000,
+          max: this.max_selectable_year
+        },
+        trapFocus: true,
+        onConfirm: (value) => this.devicelist.filter(e => e.score >= 0 && this.is_empty_year(e.year)).forEach(
+          function (item) {
+            item.year = value
+          })
+      })
+    },
 
     is_valid_type: function (type) {
       return type in this.devices
