@@ -13,7 +13,7 @@
         <section class="modal-card-body">
           <div class="block">Choisissez une des options suivantes :</div>
           <table class="table is-striped is-hoverable is-fullwidth">
-            <tr :class="nb_screen_method === 'from_nb_PCs' ? 'is-selected' : ''">
+            <tr :class="nb_screen_method === 'from_nb_PCs' ? 'has-background-primary-light' : ''">
                 <td class="vcenter">
                   <b-field>
                     <b-radio v-model="nb_screen_method"
@@ -28,7 +28,7 @@
               soit une estimation de <strong>{{nb_estimated_screens('from_nb_PCs')}}</strong> écrans achetés sur la période.
                 </td>
               </tr>
-            <tr :class="nb_screen_method === 'from_nb_users' ? 'is-selected' : ''">
+            <tr :class="nb_screen_method === 'from_nb_users' ? 'has-background-primary-light' : ''">
               <td class="vcenter">
                 <b-field>
                   <b-radio v-model="nb_screen_method"
@@ -46,7 +46,7 @@
                 soit une estimation de <strong>{{nb_estimated_screens('from_nb_users')}}</strong> écrans achetés sur la période.
               </td>
             </tr>
-            <tr :class="nb_screen_method === 'none' ? 'is-selected' : ''">
+            <tr :class="nb_screen_method === 'none' ? 'has-background-primary-light' : ''">
               <td class="vcenter">
                 <b-field>
                   <b-radio v-model="nb_screen_method" native-value="none">
@@ -580,7 +580,6 @@ export default {
         self.nb_screens_in_csv = self.count_items_of_file(self.filemap.length - 1, e => e.type === 'screen')
         if (self.nb_screens_in_csv === 0) {
           if (self.method === 'flux') {
-            self.nb_screen_method = 'from_nb_PCs'
             self.show_nb_screen_modal = true
           } else {
             self.$buefy.dialog.alert({
