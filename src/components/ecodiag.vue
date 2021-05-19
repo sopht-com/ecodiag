@@ -198,7 +198,7 @@
 </p>
 
 <b-modal
-  v-model="isMethodPickerActive"
+  :active.sync="isMethodPickerActive"
   has-modal-card
   trap-focus
   :destroy-on-hide="true"
