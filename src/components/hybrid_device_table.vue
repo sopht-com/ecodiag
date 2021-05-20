@@ -587,9 +587,44 @@ export default {
           }
         }
       }
+
+      let keep_going = function (headermap, csvdata) {
+        self.filemap.push(headermap)
+        const fileid = self.filemap.length - 1
+        let updated_items = []
+        csvdata.forEach(function (e) {
+          e['origin'] = fileid
+          self.devicelist.push(e)
+          updated_items.push(e)
+        })
+
+        self.$emit('updated', updated_items)
+
+        if (self.devicelist.filter(e => self.year_ok(e.year)).length === 0) {
+          // there is nothing for the current year,
+          // try to guess
+          let max_year = self.compute_max_year()
+          if (max_year > 0) {
+            self.$buefy.dialog.confirm({
+              message: 'Aucune entrée trouvée pour l\'année courante (' + self.referenceYear +
+                '). Changer l\'année du bilan pour ' + max_year + ' ?',
+              onConfirm: function () {
+                self.$emit('changeReferenceYear', max_year)
+                handle_screens()
+              },
+              onCancel: function () {
+                handle_screens()
+              }
+            })
+          }
+        } else {
+          handle_screens()
+        }
+      }
+
       reader.onload = (function (/* f */) {
         return function (e) {
-          let [csvdata, headermap] = this.parse_raw_csv(e.target.result)
+          let [csvdata, headermap, error] = self.parse_raw_csv(e.target.result)
 
           headermap['filename'] = filename
           // remove previously imported data
@@ -603,41 +638,53 @@ export default {
               i--
             }
           }
-          this.$emit('deleted', deleted_items)
+          self.$emit('deleted', deleted_items)
 
-          self.filemap.push(headermap)
-          const fileid = self.filemap.length - 1
-          let updated_items = []
-          csvdata.forEach(function (e) {
-            e['origin'] = fileid
-            self.devicelist.push(e)
-            updated_items.push(e)
-          })
-
-          this.$emit('updated', updated_items)
-
-          if (self.devicelist.filter(e => self.year_ok(e.year)).length === 0) {
-            // there is nothing for the current year,
-            // try to guess
-            let max_year = self.compute_max_year()
-            if (max_year > 0) {
+          // check headers
+          let headers_ok = headermap.in_type && headermap.in_model && (headermap.in_year || self.method === 'flux')
+          let nb_item_type_ok = csvdata.filter(e => e.type !== undefined).length
+          if ((!headers_ok) || nb_item_type_ok === 0) {
+            // We can still continue if:
+            //  - we detected some items
+            //  - or we detected the type or model columns and the file is not empty
+            // Otherwise there is really nothing to do!
+            let can_continue = (nb_item_type_ok > 0) || ((Boolean(headermap.in_type) || Boolean(headermap.in_model)) && csvdata.length > 0)
+            let pb_list = (headermap.in_type ? '' : '<li>Colonne "Type" manquante ou non reconnue.</li>') +
+                          (headermap.in_model ? '' : '<li>Colonne "Modèle" manquante ou non reconnue.</li>') +
+                          (headermap.in_year ? '' : '<li>Colonne "Date d\'achat" manquante ou non reconnue.</li>') +
+                          (nb_item_type_ok > 0 ? '' : '<li>Aucune entrée n\'a été reconnue, même partiellement.</li>')
+            if (can_continue) {
               self.$buefy.dialog.confirm({
-                message: 'Aucune entrée trouvée pour l\'année courante (' + self.referenceYear +
-                  '). Changer l\'année du bilan pour ' + max_year + ' ?',
+                title: 'Fichier incomplet',
+                message: '<div class="content">Nous avons rencontrer le(s) problème(s) suivant(s) :<ul>' +
+                         pb_list +
+                         '</ul><p>Vous pouvez metre à jour votre fichier avant de retenter un import, ou bien continuer tel quel.</p></div>',
+                cancelText: 'Abandonner',
+                confirmText: 'Continuer',
                 onConfirm: function () {
-                  self.$emit('changeReferenceYear', max_year)
-                  handle_screens()
+                  keep_going(headermap, csvdata)
                 },
                 onCancel: function () {
-                  handle_screens()
                 }
+              })
+            } else if (error === 'bad separator') {
+              self.$buefy.dialog.alert({
+                title: 'Format de fichier invalide',
+                message: '<div class="content"><p>Le séparateur de colonne doit être l\'un des caractères suivant : <code>,</code>, <code>;</code>, <code>tab</code>.</p></div>'
+              })
+            } else {
+              self.$buefy.dialog.alert({
+                title: 'Fichier invalide',
+                message: '<div class="content">Nous avons rencontrer les problèmes suivants :<ul>' +
+                         pb_list +
+                         '</ul><p>Cela peut venir d\'un mauvais nommage des colonnes, ou bien d\'un mauvais formattage du fichier.</p></div>'
               })
             }
           } else {
-            handle_screens()
+            keep_going(headermap, csvdata)
           }
-        }.bind(this)
-      }.bind(this))(file)
+        }
+      })(file)
 
       reader.readAsText(file)
     },

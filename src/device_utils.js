@@ -473,7 +473,24 @@ export const device_utils = {
     },
 
     parse_raw_csv (csv_text) {
-      let csv_data = d3.csvParse(csv_text)
+      // Find separator from first line
+      let header_line = csv_text.split('\n')[0]
+      let separators = [',', ';', '\t']
+      let best_sep = undefined
+      let best_sep_count = 0
+      for (let sep of separators) {
+        let count = (header_line.match(new RegExp(sep, "gi")) || []).length
+        if (count > best_sep_count) {
+          best_sep_count = count
+          best_sep = sep
+        }
+      }
+      if (!best_sep) {
+        return [[], {}, 'bad separator']
+      }
+
+      let psv = d3.dsvFormat(best_sep)
+      let csv_data = psv.parse(csv_text)
 
       let header_map = this.csv_parse_headers(csv_data)
 
@@ -481,8 +498,15 @@ export const device_utils = {
         let item = csv_data[i]
         csv_data[i] = {csvdata: item}
       }
+
+      if (!(header_map.in_type || header_map.in_model)) {
+        return [[], header_map, 'no type or model']
+      }
+
       // console.log(csv_data['header_map']);
-      this.csv_parse_dates(csv_data, header_map.in_date)
+      if (header_map.in_date) {
+        this.csv_parse_dates(csv_data, header_map.in_date)
+      }
       csv_data = this.csv_merge_raw_items(csv_data, header_map)
 
       for (let i in csv_data) {
@@ -494,7 +518,7 @@ export const device_utils = {
       // sort according to scores
       csv_data = csv_data.sort((b, a) => a.score - b.score)
 
-      return [csv_data, header_map]
+      return [csv_data, header_map, 'ok']
     },
 
     LogNormalFromMeanAndRelStdev (mean, relative_stdev) {
