@@ -174,7 +174,7 @@
       show-detail-icon
       custom-row-key="id"
       :opened-detailed="devicelist.filter(e => e.score===0).map(e => e.id)"
-      :sort-icon="l1p5 ? 'sui-angle-up' : 'angle-up'"
+      sort-icon="angle-up"
       :default-sort="default_sort"
       @sort="sort_items"
       :backend-sorting="true"
@@ -332,8 +332,7 @@ export default {
     'nbUsers': Number,
     'referenceYear': { type: Number, default: 2020 },
     'optionalColumns': { type: Array, default: () => [] },
-    'autoAdd': { type: Boolean, default: true },
-    'l1p5': { type: Boolean, default: false }
+    'autoAdd': { type: Boolean, default: true }
   },
 
   i18n: {
@@ -417,17 +416,6 @@ export default {
       } else {
         return 0
       }
-    }
-  },
-
-  updated () {
-    if (this.l1p5) {
-      window.$('.chevron-right').addClass('sui-chevron-right')
-      window.$('i.trash').addClass('sui-trash')
-      window.$('i.pencil').addClass('sui-pencil')
-      window.$('i.check').addClass('sui-check')
-      window.$('i.upload').addClass('sui-upload')
-      window.$('i.ban').addClass('sui-ban')
     }
   },
 
