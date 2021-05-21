@@ -238,13 +238,18 @@ export const device_utils = {
 
     compute_status: function (item, method, ref_year) {
       /* eslint-disable indent */
+      let self = this
+      let check_year = function (ok) {
+        return (!self.is_valid_year(item.year, method, ref_year)) ? (
+          self.is_empty_year(item.year) ? self.status.unknown_year : self.status.invalid_year)
+        : ok
+      }
       if (!item.csvdata) {
-        return Object.keys(devices).includes(item._type) ? this.status.user_ok : this.status.user_ko
+        return Object.keys(devices).includes(item._type) ? check_year(this.status.user_ok)
+                : this.status.user_ko
       } else {
         return item.score < 1 ? this.status.unknown
-           : (!this.is_valid_year(item.year, method, ref_year)) && item.score < 3 ? (
-            this.is_empty_year(item.year) ? this.status.unknown_year : this.status.invalid_year)
-           : this.status.csv_ok
+                : check_year(this.status.csv_ok)
       }
     },
 
