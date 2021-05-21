@@ -181,7 +181,7 @@
       :backend-sorting="true"
       :row-class="(row, index) => Boolean(row.item.csvdata) && filemap.length>0 ? '' : 'ed-hide-detail'"
       :paginated="displayed_devicelist.length>200"
-      narrowed
+      :narrowed='narrowed'
       per-page="200"
     >
 
@@ -333,7 +333,8 @@ export default {
     'nbUsers': Number,
     'referenceYear': { type: Number, default: 2020 },
     'optionalColumns': { type: Array, default: () => [] },
-    'autoAdd': { type: Boolean, default: true }
+    'autoAdd': { type: Boolean, default: true },
+    'narrowed': { type: Boolean, default: true }
   },
 
   i18n: {
