@@ -405,8 +405,7 @@ export const device_utils = {
     //
     // NOTE: csv_data is modified in-place!
     csv_parse_dates (csv_data, in_date) {
-      for (var i in csv_data) {
-        var item = csv_data[i]
+      for (var item of csv_data) {
         item['year'] = ''
         if (in_date) {
           const date = item.csvdata[in_date]
