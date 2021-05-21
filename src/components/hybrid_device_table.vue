@@ -194,7 +194,7 @@
            order anytime an input field is clicked. -->
       <b-table-column field="bakedorder" sortable :visible="false" />
 
-      <b-table-column field="status" sortable label="Status" v-slot="props">
+      <b-table-column field="status" sortable label="Validité" v-slot="props">
         <span v-if="props.row.id !== 'add'">
           <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide (csv)</b-tag>
