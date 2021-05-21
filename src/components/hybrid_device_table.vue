@@ -68,9 +68,9 @@
 
     <div class="columns is-multiline">
 
-      <div class="column is-5">
-        <article v-if="filemap.length > 0" class="notification">
-          <p>Fichier : {{filemap[0].filename}}</p>
+      <div v-if="filemap.length > 0" class="column is-5">
+        <article class="notification">
+          <p>Synthèse du listing : {{filemap[0].filename}}</p>
           <table class="table is-fullwidth condensed is-small">
             <tr v-if="method === 'flux'"><th></th>
               <th class="has-text-right">
@@ -105,8 +105,28 @@
               </td>
               <td v-show="!params.includes_empty_year"></td>
             </tr>
-        </table>
+          </table>
         </article>
+      </div>
+
+      <div class="column is-3">
+        <b-upload
+          v-model="dropFile"
+          drag-drop
+          expanded
+          type="is-info"
+        >
+          <section class="section">
+            <div class="content has-text-centered">
+              <p>
+                <b-icon icon="upload" size="is-large" />
+              </p>
+              <p>
+                Téléverser un fichier (.csv) <br/>
+              </p>
+            </div>
+          </section>
+        </b-upload>
       </div>
 
       <div class="column is-4">
@@ -140,25 +160,6 @@
         </article>
       </div>
 
-      <div class="column is-3">
-        <b-upload
-          v-model="dropFile"
-          drag-drop
-          expanded
-          type="is-info"
-        >
-          <section class="section">
-            <div class="content has-text-centered">
-              <p>
-                <b-icon icon="upload" size="is-large" />
-              </p>
-              <p>
-                Téléverser un fichier (.csv) <br/>
-              </p>
-            </div>
-          </section>
-        </b-upload>
-      </div>
     </div>
 
     <div id="ecodiagtable" v_if="devicelist.header_map">
