@@ -747,7 +747,7 @@ export default {
         { label: 'PC fixes :', condition: e => e.type === 'desktop' },
         { label: 'Laptops :', condition: e => e.type === 'laptop' },
         { label: 'Ecrans :', condition: e => e.type === 'screen' },
-        { label: 'Autres :', condition: e => !['server', 'deskptop', 'laptop', 'screen'].includes(e.type) },
+        { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen'].includes(e.type)) },
         { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0 },
         { label: '<em>Non reconnus :</em>', condition: e => e.score === 0 }
       ]
