@@ -198,7 +198,8 @@
         <span v-if="props.row.id !== 'add'">
           <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide (csv)</b-tag>
-          <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">Année invalide</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">Hors période</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.unknown_year" type="is-warning">Année manquante</b-tag>
           <b-tag rounded v-else type="is-danger">Inconnue</b-tag>
         </span>
       </b-table-column>
