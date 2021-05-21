@@ -8,10 +8,10 @@
     >
       <div class="modal-card" style="width: 800px; height: auto">
         <header class="modal-card-head">
-          <p class="modal-card-title">La liste fournie ne contient aucun écran !</p>
+          <p class="modal-card-title">La liste fournie ne contient aucun écran d'ordinateur !</p>
         </header>
         <section class="modal-card-body">
-          <div class="block">Choisissez une des options suivantes :</div>
+          <div class="block">Pour estimer le nombre d’écrans achetés dans votre unité sur la période, choisissez une des 3 options suivantes :</div>
           <table class="table is-striped is-hoverable is-fullwidth">
             <tr :class="nb_screen_method === 'from_nb_PCs' ? 'has-background-primary-light' : ''">
                 <td class="vcenter">
@@ -39,9 +39,9 @@
               <td>
                 Comptabiliser
                 <input v-model.number="nbUsers_actual" type="number" min="0" max="99999" step="1" size="is-small" class="inline-number w5" />
-                agents, avec en moyenne
+                agents dans l'unité, avec en moyenne
                 <input v-model.number="nb_screens_per_user" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" />
-                écrans par agent,<br/> et une durée de vie moyenne de
+                écrans par agent,<br/> et une durée de vie moyenne des écrans
                 <input v-model.number="screen_lifetime" type="number" min="1" max="99" step="0.5" size="is-small" class="inline-number w4" /> années,<br/>
                 soit une estimation de <strong>{{nb_estimated_screens('from_nb_users')}}</strong> écrans achetés sur la période.
               </td>
@@ -54,7 +54,7 @@
                 </b-field>
               </td>
               <td>
-                Aucun écran acheté sur la période, ou bien je rajoute moi même les écrans via le bouton "ajouter" en bas du tableau.
+                Aucun écran acheté sur la période, ou bien j'ajoute moi même les écrans (nombre, type, année) via le bouton "ajouter" tout en bas du tableau de la fenêtre de saisie.
               </td>
             </tr>
           </table>
