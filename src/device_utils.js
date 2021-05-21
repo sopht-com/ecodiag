@@ -22,6 +22,7 @@ export const device_utils = {
         user_ko: 2,
         user_ok: 4,
         unknown: 6,
+        unknown_year: 7,
         invalid_year: 8,
         csv_ok: 10
       },
@@ -241,7 +242,8 @@ export const device_utils = {
         return Object.keys(devices).includes(item._type) ? this.status.user_ok : this.status.user_ko
       } else {
         return item.score < 1 ? this.status.unknown
-           : (!this.is_valid_year(item.year, method, ref_year)) && item.score < 3 ? this.status.invalid_year
+           : (!this.is_valid_year(item.year, method, ref_year)) && item.score < 3 ? (
+            this.is_empty_year(item.year) ? this.status.unknown_year : this.status.invalid_year)
            : this.status.csv_ok
       }
     },

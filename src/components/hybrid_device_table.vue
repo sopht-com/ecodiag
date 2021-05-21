@@ -174,7 +174,7 @@
       detail-key="id"
       show-detail-icon
       custom-row-key="id"
-      :opened-detailed="devicelist.filter(e => e.score===0).map(e => e.id)"
+      :opened-detailed="devicelist.filter(e => open_condition(e)).map(e => e.id)"
       sort-icon="angle-up"
       :default-sort="default_sort"
       @sort="sort_items"
@@ -421,6 +421,12 @@ export default {
   },
 
   methods: {
+
+    open_condition (e) {
+      let status = this.compute_status(e)
+      let filemap = this.filemap[e.origin]
+      return e.score === 0 || ((status === this.status.unknown_year) && filemap && e.csvdata && !this.is_empty_year(e.csvdata[filemap.in_date]))
+    },
 
     toggle_hide_empty_year: function () {
       this.hide_empty_year = !this.hide_empty_year
