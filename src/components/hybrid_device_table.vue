@@ -194,7 +194,7 @@
            order anytime an input field is clicked. -->
       <b-table-column field="bakedorder" sortable :visible="false" />
 
-      <b-table-column field="status" sortable label="status" v-slot="props">
+      <b-table-column field="status" sortable label="Status" v-slot="props">
         <span v-if="props.row.id !== 'add'">
           <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide (csv)</b-tag>
@@ -203,7 +203,7 @@
         </span>
       </b-table-column>
 
-      <b-table-column field="type" sortable :label="$t('words.type')" v-slot="props">
+      <b-table-column field="type" sortable :label="capitalize($t('words.type'))" v-slot="props">
         <div @click="stop_sorting">
           <ecodiag-select-type expanded
             v-model="props.row.item.type"
@@ -213,14 +213,14 @@
         </div>
       </b-table-column>
 
-      <b-table-column field="model" sortable :label="$t('words.model')" v-slot="props" :td-attrs="()=>({style:{'width': '12rem'}})">
+      <b-table-column field="model" sortable :label="capitalize($t('words.model'))" v-slot="props" :td-attrs="()=>({style:{'width': '12rem'}})">
         <div @click="stop_sorting">
           <ecodiag-select-model expanded v-model="props.row.item.model" :item_type="props.row.item.type" @input="item_model_changed(props.row.item)">
           </ecodiag-select-model>
         </div>
       </b-table-column>
 
-      <b-table-column field="year" :visible="method=='flux'" sortable :label="$t('words.purchase_year')" numeric v-slot="props">
+      <b-table-column field="year" :visible="method=='flux'" sortable :label="capitalize($t('words.purchase_year'))" numeric v-slot="props">
         <div @click="stop_sorting">
           <ecodiag-select-year
               v-model="props.row.item.year"
@@ -232,7 +232,7 @@
         </div>
       </b-table-column>
 
-      <b-table-column field="nb" sortable :label="$t('words.quantity')" numeric v-slot="props">
+      <b-table-column field="nb" sortable :label="capitalize($t('words.quantity'))" numeric v-slot="props">
         <span class="unit" v-if="props.row.id !== 'add'" @click="stop_sorting">
           <input class="input is-small inline-number" v-model.number="props.row.item.nb" type="number" min="0" max="99999" step="1" style="width:3.5em"
             @change="$emit('updated', [props.row.item])" />
@@ -244,7 +244,7 @@
 
       <b-table-column field="item.lifetime"
         :visible="method=='stock'"
-        :label="$t('words.lifetime') + (optionalColumns.includes('objective') ? ' (actuel/objectif)' : '')"
+        :label="capitalize($t('words.lifetime')) + (optionalColumns.includes('objective') ? ' (actuel/objectif)' : '')"
         :width="optionalColumns.includes('objective') ? '8.8rem' : '4rem'"
         numeric v-slot="props">
         <span class="unit" v-if="is_valid_type(props.row.item.type)" @click="stop_sorting">

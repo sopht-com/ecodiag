@@ -58,6 +58,10 @@ export const device_utils = {
       return result
     },
 
+    capitalize (str) {
+      return str[0].toUpperCase() + str.substring(1)
+    },
+
     // Returns "type/model" unless model is null or "default" in which case we simply return type
     make_device_name (type, model) {
       if (model && model != '' && model != 'default') { return type + '/' + model }
