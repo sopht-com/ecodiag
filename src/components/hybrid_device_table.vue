@@ -240,9 +240,15 @@
           <input class="input is-small inline-number" v-model.number="props.row.item.nb" type="number" min="0" max="99999" step="1" style="width:3.5em"
             @change="$emit('updated', [props.row.item])" />
         </span>
-        <button class="trash has-text-grey" v-if="props.row.id !== 'add'" @click="delete_row(props.row.item)" >
+        <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.id !== 'add'" @click="delete_row(props.row.item)" >
           <b-icon icon="trash" />
         </button>
+      </b-table-column>
+
+      <b-table-column v_if="GES1p5" v-slot="props">
+        <b-button v-if="GES1p5 && props.row.id !== 'add'" size="is-small" @click="delete_row(props.row.item)" >
+          <b-icon icon="trash" style="font-size: 16px;" />
+        </b-button>
       </b-table-column>
 
       <b-table-column field="item.lifetime"
