@@ -218,7 +218,12 @@
 
       <b-table-column field="model" sortable :label="capitalize($t('words.model'))" v-slot="props" :td-attrs="()=>({style:{'width': '12rem'}})">
         <div @click="stop_sorting">
-          <ecodiag-select-model expanded v-model="props.row.item.model" :item_type="props.row.item.type" @input="item_model_changed(props.row.item)">
+          <ecodiag-select-model
+            expanded
+            :always-visible="GES1p5"
+            v-model="props.row.item.model"
+            :item_type="props.row.item.type"
+            @input="item_model_changed(props.row.item)">
           </ecodiag-select-model>
         </div>
       </b-table-column>
