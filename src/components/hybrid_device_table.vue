@@ -55,7 +55,7 @@
                 </b-field>
               </td>
               <td>
-                Aucun écran acheté sur la période, ou bien j'ajoute moi même les écrans (nombre, type, année) via le bouton "ajouter" tout en bas du tableau de la fenêtre de saisie.
+                Aucun écran acheté sur la période, ou bien ajoutez vous-même les écrans (nombre, type, année) via le bouton "ajouter" tout en bas du tableau de la fenêtre de saisie.
               </td>
             </tr>
           </table>
@@ -656,9 +656,9 @@ export default {
             if (can_continue) {
               self.$buefy.dialog.confirm({
                 title: 'Fichier incomplet',
-                message: '<div class="content">Nous avons rencontrer le(s) problème(s) suivant(s) :<ul>' +
+                message: '<div class="content">Nous avons rencontré le(s) problème(s) suivant(s) :<ul>' +
                          pb_list +
-                         '</ul><p>Vous pouvez metre à jour votre fichier avant de retenter un import, ou bien continuer tel quel.</p></div>',
+                         '</ul><p>Vous pouvez mettre à jour votre fichier avant de retenter un téléversement, ou bien continuer tel quel.</p></div>',
                 cancelText: 'Abandonner',
                 confirmText: 'Continuer',
                 onConfirm: function () {
@@ -670,12 +670,12 @@ export default {
             } else if (error === 'bad separator') {
               self.$buefy.dialog.alert({
                 title: 'Format de fichier invalide',
-                message: '<div class="content"><p>Le séparateur de colonne doit être l\'un des caractères suivant : <code>,</code>, <code>;</code>, <code>tab</code>.</p></div>'
+                message: '<div class="content"><p>Le séparateur de colonnes doit être l\'un des caractères suivants : <code>,</code>, <code>;</code>, <code>tab</code>.</p></div>'
               })
             } else {
               self.$buefy.dialog.alert({
                 title: 'Fichier invalide',
-                message: '<div class="content">Nous avons rencontrer les problèmes suivants :<ul>' +
+                message: '<div class="content">Nous avons rencontré les problèmes suivants :<ul>' +
                          pb_list +
                          '</ul><p>Cela peut venir d\'un mauvais nommage des colonnes, ou bien d\'un mauvais formattage du fichier.</p></div>'
               })
