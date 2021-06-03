@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <b-select v-model="computedValue" :placeholder="msg ? msg : '...'" v-bind="$attrs" size="is-small">
+    <b-select v-model="computedValue" :placeholder="msg ? msg : '...'" v-bind="$attrs" :size="size">
         <option v-for="(item,key) in devices" :key="key" :value="key">
         {{tr_label(item,key)}}
         </option>
@@ -18,7 +18,10 @@ import base_selector from './base_selector'
 
 export default {
   name: 'ecodiag-select-type',
-  props: ['msg'],
+  props: {
+    msg: { type: String, default: '' },
+    size: { type: String, default: 'is-small' }
+  },
   inheritAttrs: false,
   mixins: [base_selector],
   updated () {

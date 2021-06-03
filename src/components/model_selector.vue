@@ -5,9 +5,9 @@
     <b-select v-if="item_type in devices && devices[item_type].models"
       v-model="computedValue"
       v-bind="$attrs"
-      size="is-small" >
         <option v-if="!(devices[item_type].models && devices[item_type].models.default)" value="default">{{$t('labels.default')}}</option>
         <option v-for="(item,key) in devices[item_type].models" :key="key" :value="key">
+      :size="size" >
             {{tr_label(item,key)}}
         </option>
     </b-select>
@@ -25,6 +25,7 @@ export default {
   inheritAttrs: false,
   props: {
     item_type: { type: String, default: null }
+    size: { type: String, default: 'is-small' },
   },
   mixins: [base_selector]
 }
