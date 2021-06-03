@@ -6,7 +6,8 @@
       has-modal-card
       :can-cancel="['escape', 'x']"
     >
-      <div class="modal-card" style="width: 800px; height: auto">
+      <div class="dialog"  style="width: 800px; height: auto">
+      <div class="modal-card"  style="max-width: 100%">
         <header class="modal-card-head">
           <p class="modal-card-title">La liste fournie ne contient aucun écran d'ordinateur !</p>
         </header>
@@ -63,6 +64,7 @@
         <footer class="modal-card-foot">
           <b-button label="OK" type="is-primary" @click="$emit('close'); show_nb_screen_modal=false; update_estimated_screens()" />
         </footer>
+      </div>
       </div>
     </b-modal>
 
