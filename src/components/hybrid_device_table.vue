@@ -335,7 +335,8 @@ export default {
     'referenceYear': { type: Number, default: 2020 },
     'optionalColumns': { type: Array, default: () => [] },
     'autoAdd': { type: Boolean, default: true },
-    'narrowed': { type: Boolean, default: true }
+    'narrowed': { type: Boolean, default: true },
+    'GES1p5': { type: Boolean, default: false }
   },
 
   i18n: {
