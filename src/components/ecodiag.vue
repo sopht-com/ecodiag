@@ -182,6 +182,31 @@
 
       </tab>
 
+      <tab :name="$t('title.help')">
+        <div class='content'>
+          <p>
+            Vous pouvez directement téléverser votre listing sous la forme d'un tableau au format <code>.csv</code> ou <code>.tsv</code>, c'est à dire dans un format texte où les colonnes sont séparées par une virgule ou une tabulation.
+            L'outil va rechercher les informations dans les colonnes suivantes :
+          </p>
+          <ul>
+            <li><b>Type</b>, où l'outil va rechercher des mots clefs ressemblant à (liste non exhaustive) : PC, fixe, ordinateur, tour, unité centrale, serveur, desktop, portable, laptop, écran, videoprojecteur, notebook, tablette, pad, smartphone, mobile, imprimante, hub wifi, etc.</li>
+            <li><b>Modèle</b>, où l'outil va rechercher des mots clefs ressemblant à (liste non exhaustive) : Latitude 5280, PowerEdge T640, Precision Tower 3630, etc.</li>
+            <li><b>Date d'achat</b>, où l'outil va rechercher l'année sur quatre chiffres, ex. <code>03/04/2020</code>, ou <code>3 avril 2020</code>, ou encore <code>2020</code>.</li>
+          </ul>
+          <p>
+            Le listing doit bien sûr fournir au minimum l'une des colonnes <code>Type</code> ou <code>Modèle</code>, ou encore mieux, les deux.
+            La colonne <code>Date d'achat</code> est inutile dans la méthode par <i>inventaire</i>, et n'est donc potentiellement utile que pour la méthode par <i>liste des achats</i> dans l'éventualité où le listing téléversé contient plusieurs années.
+          </p>
+          <p>
+            <b>Attention</b> : dans la méthode par <i>liste des achats</i>, si vous choisissez une période d'amortissement <code>N</code> supérieur à 1 an, alors le listing doit inclure les achats sur l'année du bilan plus les <code>N-1</code> années précédentes.
+          </p>
+          <p>
+            <b>Astuce</b> : si les informations de type "Type" et "Modèle" sont confondues dans une seule colonne, vous pouvez simplement dédoubler cette colonne dans votre tableur avant export au format .csv.<br/>
+            Si votre listing contient les achats sur plusieurs années, vous devez alors aussi fournir une colonne :
+          </p>
+        </div>
+      </tab>
+
     </tabs>
 
   </tab>

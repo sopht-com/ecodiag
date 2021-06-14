@@ -22,7 +22,8 @@ export default {
       device_list: 'Devices',
       data: 'Options',
       about: 'About',
-      csv_import: 'CSV import'
+      csv_import: 'CSV import',
+      help: 'Help'
     },
     labels: {
       fabrication: 'fabrication nl and transport',
@@ -62,7 +63,8 @@ export default {
       device_list: 'Équipement',
       data: 'Options',
       about: 'À propos',
-      csv_import: 'Importer CSV'
+      csv_import: 'Importer CSV',
+      help: 'Aide'
     },
     labels: {
       fabrication: 'fabrication nl et transport',
