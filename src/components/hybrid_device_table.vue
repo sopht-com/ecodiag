@@ -182,9 +182,9 @@
       @sort="sort_items"
       :backend-sorting="true"
       :row-class="(row, index) => Boolean(row.item.csvdata) && filemap.length>0 ? '' : 'ed-hide-detail'"
-      :paginated="displayed_devicelist.length>200"
+      :paginated="displayed_devicelist.length>perPage"
       :narrowed='narrowed'
-      per-page="200"
+      :per-page="perPage"
     >
 
       <!-- This hidden column is a hack to enable column sorting while editing items.
@@ -349,7 +349,8 @@ export default {
     'optionalColumns': { type: Array, default: () => [] },
     'autoAdd': { type: Boolean, default: true },
     'narrowed': { type: Boolean, default: true },
-    'GES1p5': { type: Boolean, default: false }
+    'GES1p5': { type: Boolean, default: false },
+    'perPage': { type: Number, default: 200 }
   },
 
   i18n: {
