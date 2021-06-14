@@ -316,7 +316,10 @@
           <td></td>
           <td></td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ props.row.item.csvdata ? props.row.item.csvdata[filemap[props.row.item.origin].in_type] : '' }}</span></td>
-          <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ props.row.item.csvdata ? props.row.item.csvdata[filemap[props.row.item.origin].in_model] : '' }}</span></td>
+          <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
+            {{ props.row.item.csvdata ?
+               smart_cat(props.row.item.csvdata[filemap[props.row.item.origin].in_brand],
+                         props.row.item.csvdata[filemap[props.row.item.origin].in_model]) : '' }}</span></td>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="has-text-right">{{ props.row.item.csvdata ? props.row.item.csvdata[filemap[props.row.item.origin].in_date] : '' }}</span></td>
           <td></td>
           <td></td>
@@ -464,6 +467,16 @@ export default {
 
     toggle_hide_empty_year: function () {
       this.hide_empty_year = !this.hide_empty_year
+    },
+
+    smart_cat: function (a, b) {
+      if (!a) {
+        return b
+      } else if (!b) {
+        return a
+      } else {
+        return a + ' - ' + b
+      }
     },
 
     handle_date_emptyyears: function () {
