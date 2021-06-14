@@ -124,7 +124,7 @@
                 <b-icon icon="upload" size="is-large" />
               </p>
               <p>
-                Téléverser un fichier (.csv) <br/>
+                Téléverser un fichier (.{{GES1p5?'t':'c'}}sv) <br/>
               </p>
             </div>
           </section>
@@ -199,7 +199,7 @@
       <b-table-column field="status" sortable label="Validité" v-slot="props">
         <span v-if="props.row.id !== 'add'">
           <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
-          <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide (csv)</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide ({{GES1p5?'t':'c'}}sv)</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">Hors période</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.unknown_year" type="is-warning">Année manquante</b-tag>
           <b-tag rounded v-else type="is-danger">Inconnue</b-tag>
@@ -681,7 +681,9 @@ export default {
             } else if (error === 'bad separator') {
               self.$buefy.dialog.alert({
                 title: 'Format de fichier invalide',
-                message: '<div class="content"><p>Le séparateur de colonnes doit être l\'un des caractères suivants : <code>,</code>, <code>;</code>, <code>tab</code>.</p></div>'
+                message: this.GES1p5
+                  ? '<div class="content"><p>Les colonnes doivent être séparées par une tabulation.</p></div>'
+                  : '<div class="content"><p>Le séparateur de colonnes doit être l\'un des caractères suivants : <code>,</code>, <code>;</code>, <code>tab</code>.</p></div>'
               })
             } else {
               self.$buefy.dialog.alert({
