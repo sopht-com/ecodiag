@@ -73,7 +73,7 @@
       <div v-if="filemap.length > 0" class="column is-5">
         <article class="notification">
           <p>Synthèse du listing : {{filemap[0].filename}}</p>
-          <table class="table is-fullwidth condensed is-small">
+          <table class="table is-fullwidth condensed is-small" v-if="!params.ignore_year">
             <tr v-if="method === 'flux'"><th></th>
               <th class="has-text-right">
                 <b-icon icon="check" size="is-small" />
@@ -106,6 +106,23 @@
                 </b-button>
               </td>
               <td v-show="!params.includes_empty_year"></td>
+            </tr>
+          </table>
+          <table class="table is-fullwidth condensed is-small" v-else>
+            <tr v-for="row in csvsummary_items" :key="row.label">
+              <td v-html="row.label"></td>
+              <td class="has-text-right">
+                {{count_items_of_file(0, e => row.condition(e))}}
+              </td>
+            </tr>
+            <tr v-if="method === 'flux' && nb_screens_in_csv === 0">
+              <td>Ecrans suppl. <strong>estimés</strong> :</td>
+              <td class="has-text-right">
+                {{current_estimated_screens}}
+                <b-button size="is-tiny" @click="show_nb_screen_modal=true">
+                  <b-icon icon="pencil"/>
+                </b-button>
+              </td>
             </tr>
           </table>
         </article>
@@ -228,7 +245,7 @@
         </div>
       </b-table-column>
 
-      <b-table-column field="year" :visible="method=='flux'" sortable :label="capitalize($t('words.purchase_year'))" numeric v-slot="props">
+      <b-table-column field="year" :visible="method=='flux' && !params.ignore_year" sortable :label="capitalize($t('words.purchase_year'))" numeric v-slot="props">
         <div @click="stop_sorting">
           <ecodiag-select-year
               v-model="props.row.item.year"

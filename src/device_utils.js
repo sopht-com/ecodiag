@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 var params = {
   includes_empty_year: false, // used in the "flux" method
   damping_factor: 1,          // in years, used in the "flux" method
+  ignore_year: false,         // used in the "flux" method
   lifetime_factor: 1.5,       // used in the "flux" method to simulate a longer lifetime, or in the "stock" method to compute the default extended lifetime
   default_uncertainty: 30,
   lifetime_uncertainty: 1,
@@ -233,7 +234,9 @@ export const device_utils = {
     },
     
     is_valid_year (y, method, ref_year) {
-      return method === 'stock' || (params.includes_empty_year && this.is_empty_year(y)) || (y <= ref_year && y > (ref_year - params.damping_factor))
+      return method === 'stock' ||
+             params.ignore_year || 
+             (params.includes_empty_year && this.is_empty_year(y)) || (y <= ref_year && y > (ref_year - params.damping_factor))
     },
 
     compute_status: function (item, method, ref_year) {
