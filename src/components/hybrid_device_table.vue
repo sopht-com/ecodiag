@@ -148,7 +148,7 @@
         </b-upload>
       </div>
 
-      <div class="column is-4">
+      <div class="column is-4" v-if="!hideTools">
         <article v-if="devicelist.length > 0" class="notification">
           <p>Outils et options</p>
           <b-field v-if="nb_outofperiod_rows > 0">
@@ -370,6 +370,7 @@ export default {
     'autoAdd': { type: Boolean, default: true },
     'narrowed': { type: Boolean, default: true },
     'GES1p5': { type: Boolean, default: false },
+    'hideTools': { type: Boolean, default: false },
     'perPage': { type: Number, default: 200 }
   },
 
