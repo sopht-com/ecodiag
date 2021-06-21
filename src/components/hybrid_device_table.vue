@@ -371,6 +371,7 @@ export default {
     'narrowed': { type: Boolean, default: true },
     'GES1p5': { type: Boolean, default: false },
     'hideTools': { type: Boolean, default: false },
+    'autoSimplify': { type: Boolean, default: false },
     'perPage': { type: Number, default: 200 }
   },
 
@@ -641,7 +642,14 @@ export default {
           updated_items.push(e)
         })
 
-        self.$emit('updated', updated_items)
+        if (self.autoSimplify) {
+          self.devicelist.forEach(function (item, i) {
+            item['bakedorder'] = i
+          })
+          self.simplify_data(true)
+        } else {
+          self.$emit('updated', updated_items)
+        }
 
         if (self.devicelist.filter(e => self.year_ok(e.year)).length === 0) {
           // there is nothing for the current year,
@@ -751,13 +759,23 @@ export default {
     /* This function merge all valid entries with respect to type/model (ignoring actual purchase year),
        while removing all invalid entries (unknown, out of period, etc.).
        The purchase year of valid entries is rewriteen as the current reference year */
-    simplify_data () {
-      var copy = []
-      for (let i in this.valid_devices_list) {
-        let item = this.clone_obj(this.valid_devices_list[i])
+    simplify_data (conservative = false) {
+      let copy = []
+      let devicelist = conservative ? this.devicelist : this.valid_devices_list
+      for (let in_item of devicelist) {
+        let item = this.clone_obj(in_item)
         let status = this.compute_status(item, this.method, this.referenceYear)
-        if (item && (status === this.status.user_ok || status === this.status.csv_ok) && item.nb > 0) {
+        let ok = (status === this.status.user_ok || status === this.status.csv_ok)
+        if (ok && 'csvdata' in item) {
+          delete item.csvdata
+        }
+        if (item && ok && item.nb > 0) {
           item.key = item._type.concat(item._model)
+          copy.push(item)
+        } else if (conservative) {
+          if (!('key' in item)) {
+            item['key'] = item._type.concat(item._model)
+          }
           copy.push(item)
         }
       }
@@ -766,9 +784,22 @@ export default {
       this.devicelist.splice(0, this.devicelist.length)
       for (let i in copy) {
         let item = copy[i]
-        this.devicelist.push(this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.referenceYear }))
+        if (conservative) {
+          let tmp = this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.referenceYear, origin: item.origin, score: item.score })
+          if ('csvdata' in item) {
+            tmp['csvdata'] = item.csvdata
+          }
+          if ('bakedorder' in item) {
+            tmp['bakedorder'] = item.bakedorder
+          }
+          this.devicelist.push(tmp)
+        } else {
+          this.devicelist.push(this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.referenceYear }))
+        }
       }
-      this.filemap.splice(0, this.filemap.length)
+      if (!conservative) {
+        this.filemap.splice(0, this.filemap.length)
+      }
       this.$emit('updated', this.devicelist)
     }
   },
