@@ -181,7 +181,7 @@ export const device_utils = {
       // now, let's update them if provided by params,
       // that is, copy all parameters but 'type' and 'model':
       for (let key in params) {
-        if (key !== 'type' && key !== 'model' && params[key]) {
+        if (key !== 'type' && key !== 'model' && key !== '_type' && key !== '_model') {
           const val = params[key]
           item[key] = val
         }
@@ -434,8 +434,7 @@ export const device_utils = {
 
       // insert while summing up duplicates
       var new_data = []
-      for (var i in csv_data) {
-        var item = csv_data[i]
+      for (let item of csv_data) {
 
         // skip empty lines
         if (item.key === '') {
