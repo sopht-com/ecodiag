@@ -72,7 +72,11 @@
 
       <div v-if="filemap.length > 0" class="column is-5">
         <article class="notification">
-          <p>Synthèse du listing : {{filemap[0].filename}}</p>
+          <b-select v-model="current_file" :disabled="filemap.length===0">
+            <option v-for="(file,key) in filemap" :key="key" :value="key">
+                {{file.filename}}
+              </option>
+          </b-select>
           <table class="table is-fullwidth condensed is-small" v-if="!params.ignore_year">
             <tr v-if="method === 'flux'"><th></th>
               <th class="has-text-right">
@@ -86,18 +90,20 @@
               </th>
             </tr>
             <tr v-for="row in csvsummary_items" :key="row.label">
-              <td v-html="row.label"></td>
-              <td class="has-text-right">
-                {{count_items_of_file(0, e => year_ok(e.year) && row.condition(e))}}
-              </td>
-              <td class="has-text-right" v-show="method === 'flux' && !params.includes_empty_year">
-                {{count_items_of_file(0, e => is_empty_year(e.year) &&  row.condition(e))}}
-              </td>
-              <td class="has-text-right" v-show="method === 'flux'">
-                {{count_items_of_file(0, e => (!year_ok(e.year)) && (!is_empty_year(e.year)) &&  row.condition(e))}}
-              </td>
+              <template v-if="row.show()">
+                <td v-html="row.label"></td>
+                <td class="has-text-right">
+                  {{count_items_of_file(current_file, e => year_ok(e.year) && row.condition(e))}}
+                </td>
+                <td class="has-text-right" v-show="method === 'flux' && !params.includes_empty_year">
+                  {{count_items_of_file(current_file, e => is_empty_year(e.year) &&  row.condition(e))}}
+                </td>
+                <td class="has-text-right" v-show="method === 'flux'">
+                  {{count_items_of_file(current_file, e => (!year_ok(e.year)) && (!is_empty_year(e.year)) &&  row.condition(e))}}
+                </td>
+              </template>
             </tr>
-            <tr v-if="method === 'flux' && nb_screens_in_csv === 0">
+            <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
               <td>Ecrans suppl. <strong>estimés</strong> :</td>
               <td class="has-text-right">{{current_estimated_screens}}</td>
               <td>
@@ -110,12 +116,14 @@
           </table>
           <table class="table is-fullwidth condensed is-small" v-else>
             <tr v-for="row in csvsummary_items" :key="row.label">
-              <td v-html="row.label"></td>
-              <td class="has-text-right">
-                {{count_items_of_file(0, e => row.condition(e))}}
-              </td>
+              <template v-if="row.show()">
+                <td v-html="row.label"></td>
+                <td class="has-text-right">
+                  {{count_items_of_file(current_file, e => row.condition(e))}}
+                </td>
+              </template>
             </tr>
-            <tr v-if="method === 'flux' && nb_screens_in_csv === 0">
+            <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
               <td>Ecrans suppl. <strong>estimés</strong> :</td>
               <td class="has-text-right">
                 {{current_estimated_screens}}
@@ -193,12 +201,14 @@
       detail-key="id"
       show-detail-icon
       custom-row-key="id"
-      :opened-detailed="devicelist.filter(e => open_condition(e)).map(e => e.id)"
+      :opened-detailed="displayed_devicelist.filter(open_condition).map(e => e.id)"
+      @details-open="row => row.item['opened'] = true"
+      @details-close="row => row.item['opened'] = false"
       sort-icon="angle-up"
       :default-sort="default_sort"
       @sort="sort_items"
       :backend-sorting="true"
-      :row-class="(row, index) => Boolean(row.item.csvdata) && filemap.length>0 ? '' : 'ed-hide-detail'"
+      :row-class="(row, index) => row.item.details.length > 0 ? '' : 'ed-hide-detail'"
       :paginated="displayed_devicelist.length>perPage"
       :narrowed='narrowed'
       :per-page="perPage"
@@ -228,7 +238,7 @@
           <ecodiag-select-type expanded
             v-model="props.row.item.type"
             :msg="props.row.id === 'add' ? 'ajouter un élément' : '...'"
-            @input="item_type_changed(props.row.id, props.row.item)">
+            @input="item_type_changed(props.row)">
           </ecodiag-select-type>
         </div>
       </b-table-column>
@@ -240,7 +250,7 @@
             :always-visible="GES1p5"
             v-model="props.row.item.model"
             :item_type="props.row.item.type"
-            @input="item_model_changed(props.row.item)">
+            @input="validate_disp_row(props.row)">
           </ecodiag-select-model>
         </div>
       </b-table-column>
@@ -259,16 +269,16 @@
 
       <b-table-column field="nb" sortable :label="capitalize($t('words.quantity'))" numeric v-slot="props">
         <span class="unit" v-if="props.row.id !== 'add'" @click="stop_sorting">
-          <input class="input is-small inline-number" v-model.number="props.row.item.nb" type="number" min="0" max="99999" step="1" style="width:3.5em"
+          <input class="input is-small inline-number" v-model.number="props.row.nb" type="number" min="0" max="99999" step="1" style="width:3.5em"
             @change="$emit('updated', [props.row.item])" />
         </span>
-        <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.id !== 'add'" @click="delete_row(props.row.item)" >
+        <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.id !== 'add'" @click="delete_row(props.row)" >
           <b-icon icon="trash" />
         </button>
       </b-table-column>
 
       <b-table-column v_if="GES1p5" v-slot="props">
-        <b-button v-if="GES1p5 && props.row.id !== 'add'" size="is-small" @click="delete_row(props.row.item)" >
+        <b-button v-if="GES1p5 && props.row.id !== 'add'" size="is-small" @click="delete_row(props.row)" >
           <b-icon icon="trash" style="font-size: 16px;" />
         </b-button>
       </b-table-column>
@@ -312,18 +322,37 @@
       </b-table-column>
 
       <template slot="detail" slot-scope="props">
-        <tr v-if="props.row.item.csvdata && filemap.length>0" class="ed-detail">
-          <td></td>
-          <td></td>
-          <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ props.row.item.csvdata ? props.row.item.csvdata[filemap[props.row.item.origin].in_type] : '' }}</span></td>
-          <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
-            {{ props.row.item.csvdata ?
-               smart_cat(props.row.item.csvdata[filemap[props.row.item.origin].in_brand],
-                         props.row.item.csvdata[filemap[props.row.item.origin].in_model]) : '' }}</span></td>
-          <td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="has-text-right">{{ props.row.item.csvdata ? props.row.item.csvdata[filemap[props.row.item.origin].in_date] : '' }}</span></td>
-          <td></td>
-          <td></td>
-        </tr>
+        <template v-if="props.row.item.details.length>0">
+          <tr v-for="el in get_details(props.row.item)" :key="el.key" class="ed-detail">
+            <template v-if="el.csvdata">
+              <td></td>
+              <td><span class="has-text-right">{{ el.csvdata[filemap[el.origin].in_date] }}</span></td>
+              <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ el.csvdata[filemap[el.origin].in_type] }}</span></td>
+              <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
+                {{ smart_cat(el.csvdata[filemap[el.origin].in_brand],
+                            el.csvdata[filemap[el.origin].in_model]) }}</span></td>
+              <td class="has-text-right"><span>{{el.nb}}</span>
+                <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
+                  <b-icon icon="trash" />
+                </button>
+              </td>
+              <td v-if="GES1p5">
+                <b-button v-if="props.row.item.details.length>1" size="is-small" @click="delete_subrow(props.row.item, el)" >
+                  <b-icon icon="trash" style="font-size: 16px;" />
+                </b-button>
+              </td>
+              <td></td>
+              <td></td>
+            </template>
+            <template v-else>
+              <td></td>
+              <td></td>
+              <td colspan="2">Définie par l'utilisateur</td>
+              <td v-if="GES1p5"></td>
+              <td></td>
+            </template>
+          </tr>
+        </template>
       </template>
 
       <section slot="empty" class="section">
@@ -348,6 +377,7 @@
 import { devices } from '../devices'
 import { device_utils } from '../device_utils'
 import messages from '../i18n'
+import { v4 as uuidv4 } from 'uuid'
 
 export default {
   name: 'ecodiag-hybrid-device-table',
@@ -395,15 +425,28 @@ export default {
         /* this is to make 'status' dynamic while enabling sorting based on status */
         .map(function (e) {
           let res = {
-            id: e.id,
-            type: e.type,
-            model: e.model,
-            year: e.year,
             item: e,
-            nb: e.nb,
             score: e.score,
             status: self.compute_status(e, self.method, self.referenceYear),
             grey: self.compute_grey(e) }
+
+          Object.defineProperty(res, 'type', {
+            get: function () { return res.item.type }
+          })
+          Object.defineProperty(res, 'model', {
+            get: function () { return res.item.model }
+          })
+          Object.defineProperty(res, 'year', {
+            get: function () { return res.item.year }
+          })
+          Object.defineProperty(res, 'id', {
+            get: function () { return res.item.id }
+          })
+          Object.defineProperty(res, 'nb', {
+            set: function (v) { res.item.nb = v },
+            get: function () { return res.item.nb }
+          })
+
           return res
         })
 
@@ -461,10 +504,22 @@ export default {
 
   methods: {
 
+    get_details (item) {
+      if (item.details.length > 0) {
+        for (let d of item.details) {
+          if (!('key' in d)) {
+            d['key'] = uuidv4()
+          }
+        }
+      }
+      return item.details
+    },
+
     open_condition (e) {
-      let status = this.compute_status(e)
-      let filemap = this.filemap[e.origin]
-      return e.score === 0 || ((status === this.status.unknown_year) && filemap && e.csvdata && !this.is_empty_year(e.csvdata[filemap.in_date]))
+      let self = this
+      return e.score === 0 ||
+        (e.item.opened) ||
+        ((e.status === this.status.unknown_year) && e.item.details.filter(d => d.origin > 0 && d.csvdata && !self.is_empty_year(d.csvdata[self.filemap[d.origin].in_date])).length > 0)
     },
 
     toggle_hide_empty_year: function () {
@@ -516,7 +571,12 @@ export default {
     },
 
     count_items_of_file: function (file_id, filter) {
-      return this.count_items(e => Boolean(e.csvdata) && e.origin === file_id && filter(e))
+      if (file_id === 0) {
+        return this.count_items(filter)
+      } else {
+        return this.devicelist.filter(e => e.score >= 0 && filter(e) && e.details.length > 0)
+          .reduce((r, e) => e.details.filter(d => d.origin === file_id).reduce((a, d) => a + d.nb, r), 0)
+      }
     },
 
     nb_estimated_screens: function (method) {
@@ -572,14 +632,28 @@ export default {
       return item
     },
 
-    delete_row: function (item) {
-      item.score = -1
-      this.$emit('deleted', [item])
+    delete_row: function (row) {
+      if ('item' in row) {
+        row = row.item
+      }
+      row.score = -1
+      this.$emit('deleted', [row])
     },
 
-    validate_row: function (item) {
-      item.score = 3
+    delete_subrow: function (item, el) {
+      let i = item.details.indexOf(el)
+      if (i >= 0) {
+        item.nb = Math.max(0, item.nb - el.nb)
+        item.details.splice(i, 1)
+      } else {
+        console.log('Ecodiag error: in delete_subrow, sub item not found')
+      }
       this.$emit('updated', [item])
+    },
+
+    validate_row: function (row) {
+      row.score = 3
+      this.$emit('updated', [row])
     },
 
     delete_empty_year: function () {
@@ -604,14 +678,33 @@ export default {
       return this.devicelist.map(e => e.year).filter(y => +y > 0).reduce((prev, curr) => Math.max(prev, curr), 0)
     },
 
-    item_type_changed: function (id, item) {
-      if (id === 'add') {
-        this.devicelist.push(item)
-      }
-      this.validate_row(item)
+    validate_disp_row: function (disp_item) {
+      this.validate_row(disp_item.item)
     },
-    item_model_changed: function (item) {
-      this.validate_row(item)
+    item_type_changed: function (disp_item) {
+      if (disp_item.id === 'add') {
+        this.devicelist.push(disp_item.item)
+      }
+      this.validate_disp_row(disp_item)
+    },
+
+    delete_file: function (file_id) {
+      // remove previously imported data
+      let deleted_items = []
+      for (let i = 0; i < self.devicelist.length; ++i) {
+        let item = self.devicelist[i]
+        if ('origin' in item) {
+          if (item.origin > file_id) {
+            item.origin--
+          } else if (item.origin === file_id) {
+            deleted_items.push(item)
+            self.devicelist.splice(i, 1)
+            i--
+          }
+        }
+      }
+      self.filemap.splice(file_id, 1)
+      self.$emit('deleted', deleted_items)
     },
     load_csv: function (file) {
       var reader = new FileReader()
@@ -635,9 +728,11 @@ export default {
       let keep_going = function (headermap, csvdata) {
         self.filemap.push(headermap)
         const fileid = self.filemap.length - 1
+        self.current_file = fileid
         let updated_items = []
         csvdata.forEach(function (e) {
-          e['origin'] = fileid
+          e.details.push({ origin: fileid, csvdata: e.csvdata, nb: e.nb })
+          delete e.csvdata
           self.devicelist.push(e)
           updated_items.push(e)
         })
@@ -678,18 +773,6 @@ export default {
           let [csvdata, headermap, error] = self.parse_raw_csv(e.target.result)
 
           headermap['filename'] = filename
-          // remove previously imported data
-          self.filemap.splice(0, self.filemap.length)
-          let deleted_items = []
-          for (let i = 0; i < self.devicelist.length; ++i) {
-            let item = self.devicelist[i]
-            if ('origin' in item && (item.origin === 0 || item.origin === -1)) {
-              deleted_items.push(item)
-              self.devicelist.splice(i, 1)
-              i--
-            }
-          }
-          self.$emit('deleted', deleted_items)
 
           // check headers
           let headers_ok = headermap.in_type && headermap.in_model && (headermap.in_year || self.method === 'flux')
@@ -749,7 +832,7 @@ export default {
     display_predicate (item) {
       return (item.score >= 0) && /* negative means soft deleted */
             (
-              (!item.csvdata) || /* we show all user entered rows */
+              (item.details.length === 0) || /* we show all user entered rows */
               (this.method === 'stock') || /* in this case the purchase year is irrelevant */
               (this.year_ok(item.year)) ||
               (this.is_empty_year(item.year) && !this.hide_empty_year) ||
@@ -758,7 +841,7 @@ export default {
 
     /* This function merge all valid entries with respect to type/model (ignoring actual purchase year),
        while removing all invalid entries (unknown, out of period, etc.).
-       The purchase year of valid entries is rewriteen as the current reference year */
+       The purchase year of valid entries is rewritten as the current reference year */
     simplify_data (conservative = false) {
       let copy = []
       let devicelist = conservative ? this.devicelist : this.valid_devices_list
@@ -766,8 +849,8 @@ export default {
         let item = this.clone_obj(in_item)
         let status = this.compute_status(item, this.method, this.referenceYear)
         let ok = (status === this.status.user_ok || status === this.status.csv_ok)
-        if (ok && 'csvdata' in item) {
-          delete item.csvdata
+        if (ok && (!conservative)) {
+          item.details.splice(0, item.details.length)
         }
         if (item && ok && item.nb > 0) {
           item.key = item._type.concat(item._model)
@@ -779,18 +862,33 @@ export default {
           copy.push(item)
         }
       }
-      copy = this.csv_merge_wrt_keys(copy)
+
+      // sort items
+      copy = copy.sort((a, b) => a.key.localeCompare(b.key))
+      // insert while summing up duplicates
+      var new_list = []
+      for (let el of copy) {
+        if (new_list.length > 0 && new_list[new_list.length - 1].key === el.key) {
+          let common_el = new_list[new_list.length - 1]
+          common_el.nb += el.nb
+          common_el.details = common_el.details.concat(el.details)
+        } else {
+          new_list.push(el)
+        }
+      }
+      copy = new_list
+
       this.$emit('deleted', this.devicelist)
       this.devicelist.splice(0, this.devicelist.length)
       for (let i in copy) {
         let item = copy[i]
         if (conservative) {
-          let tmp = this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.referenceYear, origin: item.origin, score: item.score })
-          if ('csvdata' in item) {
-            tmp['csvdata'] = item.csvdata
-          }
+          let tmp = this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.referenceYear, origin: item.origin, score: item.score, details: item.details })
           if ('bakedorder' in item) {
             tmp['bakedorder'] = item.bakedorder
+          }
+          if ('key' in item) {
+            tmp['key'] = item.key
           }
           this.devicelist.push(tmp)
         } else {
@@ -798,7 +896,7 @@ export default {
         }
       }
       if (!conservative) {
-        this.filemap.splice(0, this.filemap.length)
+        this.filemap.splice(1, this.filemap.length)
       }
       this.$emit('updated', this.devicelist)
     }
@@ -817,7 +915,7 @@ export default {
       sort_field: 'bakedorder',
       default_sort: 'bakedorder',
       devices: devices,
-      filemap: [],
+      filemap: [{ filename: 'Synthèse globale' }],
       hide_empty_year: false,
       show_outofperiod: false,
       nb_screens_in_csv: 0,
@@ -830,14 +928,15 @@ export default {
       nb_screens_per_user: 1,
       normalization_list: ['year', 'unit'],
       normalization: 'year',
+      current_file: 0,
       csvsummary_items: [
-        { label: 'Serveurs :', condition: e => e.type === 'server' },
-        { label: 'PC fixes :', condition: e => e.type === 'desktop' },
-        { label: 'Laptops :', condition: e => e.type === 'laptop' },
-        { label: 'Ecrans :', condition: e => e.type === 'screen' },
-        { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen'].includes(e.type)) },
-        { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0 },
-        { label: '<em>Non reconnus :</em>', condition: e => e.score === 0 }
+        { label: 'Serveurs :', condition: e => e.type === 'server', show: () => true },
+        { label: 'PC fixes :', condition: e => e.type === 'desktop', show: () => true },
+        { label: 'Laptops :', condition: e => e.type === 'laptop', show: () => true },
+        { label: 'Ecrans :', condition: e => e.type === 'screen', show: () => true },
+        { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen'].includes(e.type)), show: () => true },
+        { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0, show: () => this.current_file > 0 },
+        { label: '<em>Non reconnus :</em>', condition: e => e.score === 0, show: () => this.current_file > 0 }
       ]
     }
   },

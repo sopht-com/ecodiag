@@ -4,7 +4,7 @@
 // import { i18n } from '@/plugins/i18n.js'
 import * as d3 from "d3-dsv"
 import { devices } from './devices.js'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 
 var params = {
   includes_empty_year: false, // used in the "flux" method
@@ -147,7 +147,8 @@ export const device_utils = {
         lifetime: null,
         lifetime2: null,
         year: null,
-        score: 0
+        score: 0,
+        details: []
       }
 
       let self = this
@@ -247,7 +248,7 @@ export const device_utils = {
           self.is_empty_year(item.year) ? self.status.unknown_year : self.status.invalid_year)
         : ok
       }
-      if (!item.csvdata) {
+      if (item.details.filter(e => Boolean(e.csvdata)).length === 0) {
         return Object.keys(devices).includes(item._type) ? check_year(this.status.user_ok)
                 : this.status.user_ko
       } else {
