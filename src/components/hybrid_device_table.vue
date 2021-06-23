@@ -72,11 +72,20 @@
 
       <div v-if="filemap.length > 0" class="column is-5">
         <article class="notification">
-          <b-select v-model="current_file" :disabled="filemap.length===0">
-            <option v-for="(file,key) in filemap" :key="key" :value="key">
-                {{file.filename}}
-              </option>
-          </b-select>
+          <div class="columns">
+            <div class="column">
+              <b-select v-model="current_file" :disabled="filemap.length===0">
+                <option v-for="(file,key) in filemap" :key="key" :value="key">
+                    {{file.filename}}
+                  </option>
+              </b-select>
+            </div>
+            <div class="column">
+              <b-button @click="delete_file(current_file)">
+                <b-icon icon="trash" />
+              </b-button>
+            </div>
+          </div>
           <table class="table is-fullwidth condensed is-small" v-if="!params.ignore_year">
             <tr v-if="method === 'flux'"><th></th>
               <th class="has-text-right">
@@ -688,22 +697,53 @@ export default {
     },
 
     delete_file: function (file_id) {
-      // remove previously imported data
-      let deleted_items = []
-      for (let i = 0; i < self.devicelist.length; ++i) {
-        let item = self.devicelist[i]
-        if ('origin' in item) {
-          if (item.origin > file_id) {
-            item.origin--
-          } else if (item.origin === file_id) {
-            deleted_items.push(item)
-            self.devicelist.splice(i, 1)
-            i--
+      if (file_id === 0) {
+        // delete everything !
+        let self = this
+        self.$buefy.dialog.confirm({
+          message: 'Etes vous sûr de vouloir supprimer toutes les lignes ?',
+          onConfirm: function () {
+            self.current_file = 0
+            self.filemap.splice(1, self.filemap.length - 1)
+            self.$emit('deleted', self.devicelist)
+            self.devicelist.splice(0, self.devicelist.length)
+          } })
+      } else {
+        let deleted_items = []
+        let updated_items = []
+        for (let i = 0; i < this.devicelist.length; ++i) {
+          let item = this.devicelist[i]
+          let to_remove = 0 // count the number of sub-items to remove
+          for (let j = 0; j < item.details.length; ++j) {
+            let sub = item.details[j]
+            if ('origin' in sub) {
+              if (sub.origin > file_id) {
+                sub.origin--
+              } else if (sub.origin === file_id) {
+                item.details.splice(j, 1)
+                to_remove += sub.nb
+                j--
+              }
+            }
+          }
+          if (to_remove > 0) {
+            if (to_remove >= item.nb) {
+              deleted_items.push(item)
+              this.devicelist.splice(i, 1)
+              i--
+            } else {
+              updated_items.push(item)
+              item.nb -= to_remove
+            }
           }
         }
+        this.filemap.splice(file_id, 1)
+        if (file_id >= this.current_file) {
+          this.current_file = 0
+        }
+        this.$emit('deleted', deleted_items)
+        this.$emit('updated', updated_items)
       }
-      self.filemap.splice(file_id, 1)
-      self.$emit('deleted', deleted_items)
     },
     load_csv: function (file) {
       var reader = new FileReader()
