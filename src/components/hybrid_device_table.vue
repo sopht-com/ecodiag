@@ -878,6 +878,19 @@ export default {
               ((!this.is_empty_year(item.year)) && this.show_outofperiod))
     },
 
+    delete_invalids () {
+      let deleted_items = []
+      for (let i = 0; i < this.devicelist.length; ++i) {
+        let item = this.devicelist[i]
+        if (!this.is_valid(item, this.method, this.referenceYear)) {
+          deleted_items.push(item)
+          this.devicelist.splice(i, 1)
+          i--
+        }
+      }
+      this.$emit('deleted', deleted_items)
+    },
+
     /* This function merge all valid entries with respect to type/model (ignoring actual purchase year),
        while removing all invalid entries (unknown, out of period, etc.).
        The purchase year of valid entries is rewritten as the current reference year */
