@@ -225,7 +225,7 @@
       <b-table-column field="status" sortable label="Validité" v-slot="props">
         <span v-if="props.row.id !== 'add'">
           <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
-          <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide ({{GES1p5?'t':'c'}}sv)</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide{{GES1p5?'':'(csv)'}}</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">Hors période</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.unknown_year" type="is-warning">Année manquante</b-tag>
           <b-tag rounded v-else type="is-danger">Inconnue</b-tag>
