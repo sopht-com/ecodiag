@@ -12,7 +12,7 @@
           <p class="modal-card-title">La liste fournie ne contient aucun écran d'ordinateur !</p>
         </header>
         <section class="modal-card-body">
-          <div class="block">Pour estimer le nombre d’écrans achetés dans votre unité sur la période, choisissez une des 3 options suivantes :</div>
+          <div class="block">Pour estimer le nombre d’écrans achetés dans votre unité sur la période, choisissez une des {{GES1p5 ? 2 : 3}} options suivantes :</div>
           <table class="table is-striped is-hoverable is-fullwidth">
             <tr :class="(!GES1p5) && nb_screen_method === 'from_nb_PCs' ? 'has-background-primary-light' : ''">
                 <td class="vcenter">
@@ -29,7 +29,7 @@
               soit une estimation de <strong>{{nb_estimated_screens('from_nb_PCs')}}</strong> écrans achetés sur la période.
                 </td>
               </tr>
-            <tr :class="(!GES1p5) && nb_screen_method === 'from_nb_users' ? 'has-background-primary-light' : ''">
+            <tr :class="(!GES1p5) && nb_screen_method === 'from_nb_users' ? 'has-background-primary-light' : ''" v-show="!GES1p5">
               <td class="vcenter">
                 <b-field>
                   <b-radio v-model="nb_screen_method"
