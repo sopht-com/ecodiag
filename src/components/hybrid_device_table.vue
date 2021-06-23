@@ -775,7 +775,7 @@ export default {
 
           // check headers
           let headers_ok = headermap.in_type && headermap.in_model && (headermap.in_year || self.method === 'flux')
-          let nb_item_type_ok = csvdata.filter(e => e.type !== undefined).length
+          let nb_item_type_ok = csvdata.filter(e => e.type !== undefined).reduce((r, e) => r + e.nb, 0)
           if ((!headers_ok) || nb_item_type_ok === 0) {
             // We can still continue if:
             //  - we detected some items
@@ -784,15 +784,15 @@ export default {
             let can_continue = (nb_item_type_ok > 0) || ((Boolean(headermap.in_type) || Boolean(headermap.in_model)) && csvdata.length > 0)
             let pb_list = (headermap.in_type ? '' : '<li>Colonne "Type" manquante ou non reconnue.</li>') +
                           (headermap.in_model ? '' : '<li>Colonne "Modèle" manquante ou non reconnue.</li>') +
-                          (headermap.in_year ? '' : '<li>Colonne "Date d\'achat" manquante ou non reconnue.</li>') +
+                          (headermap.in_year || self.method === 'stock' || self.params.ignore_year ? '' : '<li>Colonne "Date d\'achat" manquante ou non reconnue.</li>') +
                           (nb_item_type_ok > 0 ? '' : '<li>Aucune entrée n\'a été reconnue, même partiellement.</li>')
             if (can_continue) {
               self.$buefy.dialog.confirm({
-                title: 'Fichier incomplet',
-                message: '<div class="content">Nous avons rencontré le(s) problème(s) suivant(s) :<ul>' +
+                title: 'Attention',
+                message: '<div class="content">Bien que ' + nb_item_type_ok + ' éléments aient été reconnus, nous avons détecté le(s) manque(s) suivant(s) :<ul>' +
                          pb_list +
-                         '</ul><p>Vous pouvez mettre à jour votre fichier avant de retenter un téléversement, ou bien continuer tel quel.</p></div>',
-                cancelText: 'Abandonner',
+                         '</ul><p>Si vous pensez qu\'il s\'agit d\'une erreur dans votre fichier, vous pouvez abandonner l\'importation et le mettre à jour, sinon vous pouvez continuer le bilan tel quel.</p></div>',
+                cancelText: 'Abandonner l\'importation',
                 confirmText: 'Continuer',
                 onConfirm: function () {
                   keep_going(headermap, csvdata)
