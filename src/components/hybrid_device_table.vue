@@ -186,7 +186,6 @@
           </b-field>
         </article>
       </div>
-
     </div>
 
     <div id="ecodiagtable" v_if="devicelist.header_map">
@@ -337,9 +336,9 @@
                 </button>
               </td>
               <td v-if="GES1p5">
-                <b-button v-if="props.row.item.details.length>1" size="is-small" @click="delete_subrow(props.row.item, el)" >
-                  <b-icon icon="trash" style="font-size: 16px;" />
-                </b-button>
+                <button class="trash has-text-grey" v-if="props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
+                  <b-icon icon="trash" style="font-size: 12px;top:-7px" />
+                </button>
               </td>
               <td></td>
               <td></td>
@@ -950,7 +949,8 @@ export default {
   border-collapse: collapse
 }
 tr.ed-detail td {
-  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0;
   font-size: 80%;
   font-style: italic;
   border-top: 2px solid transparent ;
