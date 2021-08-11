@@ -7,6 +7,6 @@
 <script>
 export default {
   name: 'ml',
-  props: ['en','fr']
+  props: ['en', 'fr']
 }
 </script>

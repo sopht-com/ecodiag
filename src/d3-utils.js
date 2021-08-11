@@ -1,12 +1,14 @@
 
-import * as d3 from "d3-selection"
+import * as d3 from 'd3-selection'
 import { device_utils } from './device_utils'
+
+/* eslint-disable */
 
 export var d3_insert_line_breaks = function(d) {
   var el = d3.select(this)
   if(d && d.data)
   {
-    d = d.value>1 ? device_utils.methods.tr_label(d.data.type) : ""
+    d = d.value>1 ? device_utils.methods.tr_label(d.data.type) : ''
   } else if(!d) {
     d = el.text()
   }

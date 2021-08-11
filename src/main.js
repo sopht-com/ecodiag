@@ -8,17 +8,17 @@ import './ecodiag.css'
 
 Vue.config.productionTip = false
 Vue.use(VueI18n)
-Vue.use(Buefy, {defaultIconPack: 'fa'})
+Vue.use(Buefy, { defaultIconPack: 'fa' })
 
-Vue.component('span-en', {template: /*html*/`<span v-if="$root.$i18n.locale=='en'"><slot></slot></span>`})
-Vue.component('span-fr', {template: /*html*/`<span v-if="$root.$i18n.locale=='fr'"><slot></slot></span>`})
+Vue.component('span-en', { template: /* html */`<span v-if="$root.$i18n.locale=='en'"><slot></slot></span>` })
+Vue.component('span-fr', { template: /* html */`<span v-if="$root.$i18n.locale=='fr'"><slot></slot></span>` })
 
 const i18n = new VueI18n({
   locale: 'fr',
-  fallbackLocale: "fr",
+  fallbackLocale: 'fr',
   messages: messages
 })
 
-new Vue({i18n,
-  render: h => h(App),
+new Vue({ i18n,
+  render: h => h(App)
 }).$mount('#app')
