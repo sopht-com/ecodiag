@@ -70,12 +70,13 @@
 
     <div class="columns is-multiline">
 
-      <div v-if="filemap.length > 0" class="column is-5">
+      <div v-if="filemap.length > 0" class="column is-7">
         <article class="notification">
           <div class="columns">
             <div class="column">
               <b-select v-model="current_file" :disabled="filemap.length===0">
                 <option v-for="(file,key) in filemap" :key="key" :value="key">
+                    <template v-if="key !== 0">Synthèse du fichier </template>
                     {{file.filename}}
                   </option>
               </b-select>
@@ -86,62 +87,70 @@
               </b-button>
             </div>
           </div>
-          <table class="table is-fullwidth condensed is-small" v-if="!params.ignore_year">
-            <tr v-if="method === 'flux'"><th></th>
-              <th class="has-text-right">
-                <b-icon icon="check" size="is-small" />
-              </th>
-              <th class="has-text-right" v-show="!params.includes_empty_year">
-                <span>sans date</span>
-              </th>
-              <th class="has-text-right">
-                <span>hors période</span>
-              </th>
-            </tr>
-            <tr v-for="row in csvsummary_items" :key="row.label">
-              <template v-if="row.show()">
-                <td v-html="row.label"></td>
-                <td class="has-text-right">
-                  {{count_items_of_file(current_file, e => year_ok(e.year) && row.condition(e))}}
+          <template v-if="!params.ignore_year">
+            <table class="table is-fullwidth condensed is-small">
+              <tr v-if="method === 'flux'"><th></th>
+                <th class="has-text-right">
+                  <b-icon icon="check" size="is-small" />
+                </th>
+                <th class="has-text-right" v-show="!params.includes_empty_year">
+                  <span>sans date</span>
+                </th>
+                <th class="has-text-right">
+                  <span>hors période</span>
+                </th>
+              </tr>
+              <tr v-for="row in csvsummary_items" :key="row.label">
+                <template v-if="row.show()">
+                  <td v-html="row.label"></td>
+                  <td class="has-text-right">
+                    {{count_items_of_file(current_file, e => year_ok(e.year) && row.condition(e))}}
+                  </td>
+                  <td class="has-text-right" v-show="method === 'flux' && !params.includes_empty_year">
+                    {{count_items_of_file(current_file, e => is_empty_year(e.year) &&  row.condition(e))}}
+                  </td>
+                  <td class="has-text-right" v-show="method === 'flux'">
+                    {{count_items_of_file(current_file, e => (!year_ok(e.year)) && (!is_empty_year(e.year)) &&  row.condition(e))}}
+                  </td>
+                </template>
+              </tr>
+              <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
+                <td>Ecrans suppl. <strong>estimés</strong> :</td>
+                <td class="has-text-right">{{current_estimated_screens}}</td>
+                <td>
+                  <b-button size="is-tiny" @click="show_nb_screen_modal=true">
+                    <b-icon icon="pencil"/>
+                  </b-button>
                 </td>
-                <td class="has-text-right" v-show="method === 'flux' && !params.includes_empty_year">
-                  {{count_items_of_file(current_file, e => is_empty_year(e.year) &&  row.condition(e))}}
-                </td>
-                <td class="has-text-right" v-show="method === 'flux'">
-                  {{count_items_of_file(current_file, e => (!year_ok(e.year)) && (!is_empty_year(e.year)) &&  row.condition(e))}}
-                </td>
-              </template>
-            </tr>
-            <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
-              <td>Ecrans suppl. <strong>estimés</strong> :</td>
-              <td class="has-text-right">{{current_estimated_screens}}</td>
-              <td>
-                <b-button size="is-tiny" @click="show_nb_screen_modal=true">
-                  <b-icon icon="pencil"/>
-                </b-button>
-              </td>
-              <td v-show="!params.includes_empty_year"></td>
-            </tr>
-          </table>
-          <table class="table is-fullwidth condensed is-small" v-else>
-            <tr v-for="row in csvsummary_items" :key="row.label">
-              <template v-if="row.show()">
-                <td v-html="row.label"></td>
-                <td class="has-text-right">
-                  {{count_items_of_file(current_file, e => row.condition(e))}}
-                </td>
-              </template>
-            </tr>
-            <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
-              <td>Ecrans suppl. <strong>estimés</strong> :</td>
-              <td class="has-text-right">
-                {{current_estimated_screens}}
-                <b-button size="is-tiny" @click="show_nb_screen_modal=true">
-                  <b-icon icon="pencil"/>
-                </b-button>
-              </td>
-            </tr>
-          </table>
+                <td v-show="!params.includes_empty_year"></td>
+              </tr>
+            </table>
+          </template>
+          <template v-else>
+            <div class="columns">
+              <div :class="'column ' + (colId ? 'is-7' : 'is-5')" v-for="colId in [0, 1]" :key="colId">
+                <table class="table is-fullwidth condensed is-small">
+                  <tr v-for="row in csvsummary_items" :key="row.label">
+                    <template v-if="row.show() && row.col === colId">
+                      <td v-html="row.label"></td>
+                      <td class="has-text-right">
+                        {{count_items_of_file(current_file, e => row.condition(e))}}
+                      </td>
+                    </template>
+                  </tr>
+                  <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0 && colId === 1">
+                    <td>Ecrans suppl. <strong>estimés</strong> :</td>
+                    <td class="has-text-right">
+                      <b-button size="is-tiny" @click="show_nb_screen_modal=true">
+                        <b-icon icon="pencil"/>
+                      </b-button>
+                      {{current_estimated_screens}}
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </template>
         </article>
       </div>
 
@@ -197,9 +206,9 @@
       </div>
     </div>
 
-    <p v-if="GES1p5">
+    <!-- <p v-if="GES1p5">
       Liste complête et détaillée des équipements :
-    </p>
+    </p> -->
 
     <div id="ecodiagtable" v_if="devicelist.header_map">
 
@@ -986,15 +995,15 @@ export default {
       normalization: 'year',
       current_file: 0,
       csvsummary_items: [
-        { label: 'Serveurs :', condition: e => e.type === 'server', show: () => true },
-        { label: 'PC fixes :', condition: e => e.type === 'desktop', show: () => true },
-        { label: 'Laptops :', condition: e => e.type === 'laptop', show: () => true },
-        { label: 'Ecrans :', condition: e => e.type === 'screen', show: () => true },
-        { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen'].includes(e.type)), show: () => true },
-        { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0, show: () => (!this.GES1p5) && this.current_file > 0 },
-        { label: '<em>Non reconnus :</em>', condition: e => e.score === 0, show: () => (!this.GES1p5) && this.current_file > 0 },
-        { label: '<strong>Total validés :</strong>', condition: e => e.score > 0, show: () => (this.GES1p5) && this.current_file > 0 },
-        { label: '<em>Non validés :</em>', condition: e => e.score === 0, show: () => (this.GES1p5) && this.current_file > 0 }
+        { label: 'Serveurs :', condition: e => e.type === 'server', show: () => true, col: 0 },
+        { label: 'PC fixes :', condition: e => e.type === 'desktop', show: () => true, col: 0 },
+        { label: 'Laptops :', condition: e => e.type === 'laptop', show: () => true, col: 0 },
+        { label: 'Ecrans :', condition: e => e.type === 'screen', show: () => true, col: 0 },
+        { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen'].includes(e.type)), show: () => true, col: 0 },
+        { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
+        { label: '<em>Non reconnus :</em>', condition: e => e.score === 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
+        { label: '<strong>Total validés :</strong>', condition: e => e.score > 0, show: () => (this.GES1p5) && this.current_file > 0, col: 1 },
+        { label: '<em>Non validés :</em>', condition: e => e.score === 0, show: () => (this.GES1p5) && this.current_file > 0, col: 1 }
       ]
     }
   },
