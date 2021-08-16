@@ -62,7 +62,7 @@
         </section>
 
         <footer class="modal-card-foot">
-          <b-button label="OK" type="is-primary" @click="$emit('close'); show_nb_screen_modal=false; update_estimated_screens()" />
+          <b-button label="OK" type="is-primary" :disabled="!Boolean(nb_screen_method)" @click="$emit('close'); show_nb_screen_modal=false; update_estimated_screens()" />
         </footer>
       </div>
       </div>
@@ -196,6 +196,10 @@
         </article>
       </div>
     </div>
+
+    <p v-if="GES1p5">
+      Liste complête et détaillée des équipements :
+    </p>
 
     <div id="ecodiagtable" v_if="devicelist.header_map">
 
@@ -701,7 +705,7 @@ export default {
         // delete everything !
         let self = this
         self.$buefy.dialog.confirm({
-          message: 'Etes vous sûr de vouloir supprimer toutes les lignes ?',
+          message: 'Êtes-vous sûr de vouloir supprimer toutes les lignes ?',
           onConfirm: function () {
             self.current_file = 0
             self.filemap.splice(1, self.filemap.length - 1)
@@ -831,7 +835,7 @@ export default {
                 title: 'Attention',
                 message: '<div class="content">Bien que ' + nb_item_type_ok + ' éléments aient été reconnus, nous avons détecté le(s) manque(s) suivant(s) :<ul>' +
                          pb_list +
-                         '</ul><p>Si vous pensez qu\'il s\'agit d\'une erreur dans votre fichier, vous pouvez abandonner l\'importation et le mettre à jour, sinon vous pouvez continuer le bilan tel quel.</p></div>',
+                         '</ul><p>Si vous pensez qu\'il s\'agit d\'une erreur dans votre fichier, vous pouvez abandonner l\'importation et le mettre à jour. Sinon, vous pouvez continuer : l\'outil retiendra les valeurs par défaut.</p></div>',
                 cancelText: 'Abandonner l\'importation',
                 confirmText: 'Continuer',
                 onConfirm: function () {
@@ -972,7 +976,7 @@ export default {
       show_outofperiod: false,
       nb_screens_in_csv: 0,
       show_nb_screen_modal: false,
-      nb_screen_method: 'none',
+      nb_screen_method: undefined,
       nb_screens_per_desktop: 1,
       nb_screens_per_laptop: 0.5,
       screen_lifetime: 7,
@@ -987,8 +991,10 @@ export default {
         { label: 'Laptops :', condition: e => e.type === 'laptop', show: () => true },
         { label: 'Ecrans :', condition: e => e.type === 'screen', show: () => true },
         { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen'].includes(e.type)), show: () => true },
-        { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0, show: () => this.current_file > 0 },
-        { label: '<em>Non reconnus :</em>', condition: e => e.score === 0, show: () => this.current_file > 0 }
+        { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0, show: () => (!this.GES1p5) && this.current_file > 0 },
+        { label: '<em>Non reconnus :</em>', condition: e => e.score === 0, show: () => (!this.GES1p5) && this.current_file > 0 },
+        { label: '<strong>Total validés :</strong>', condition: e => e.score > 0, show: () => (this.GES1p5) && this.current_file > 0 },
+        { label: '<em>Non validés :</em>', condition: e => e.score === 0, show: () => (this.GES1p5) && this.current_file > 0 }
       ]
     }
   },
