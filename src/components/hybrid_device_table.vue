@@ -256,7 +256,9 @@
 
       <b-table-column field="type" sortable :label="capitalize($t('words.type'))" v-slot="props">
         <div @click="stop_sorting">
-          <ecodiag-select-type expanded
+          <ecodiag-select-type
+            narrowed
+            expanded
             v-model="props.row.item.type"
             :msg="props.row.id === 'add' ? 'ajouter un élément' : '...'"
             @input="item_type_changed(props.row)">
@@ -267,6 +269,7 @@
       <b-table-column field="model" sortable :label="capitalize($t('words.model'))" v-slot="props" :td-attrs="()=>({style:{'width': '12rem'}})">
         <div @click="stop_sorting">
           <ecodiag-select-model
+            narrowed
             expanded
             :always-visible="GES1p5"
             v-model="props.row.item.model"
@@ -1053,5 +1056,20 @@ button.trash {
   background: none;
   cursor: pointer;
 }
-
+.vcondensed .select:not(.is-small) select {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  height: 1.9rem;
+  margin: 0;
+}
+.vcondensed .select:not(.is-small) {
+  height: 1.9rem;
+}
+input.input.inline-number:not(.is-small) {
+  padding-left: 4px;
+  padding-right: 2px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  height: 1.9rem;
+}
 </style>

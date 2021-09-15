@@ -3,6 +3,7 @@
 <template>
   <div>
     <b-select
+      :class="narrowed?'vcondensed':''"
       v-show="alwaysVisible || has_models"
       v-model="computedValue"
       :disabled="disabled || !has_models"

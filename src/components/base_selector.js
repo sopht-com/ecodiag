@@ -10,7 +10,8 @@ export default {
     value: {
       type: [String, Number, Boolean, Object, Array, Function],
       default: null
-    }
+    },
+    narrowed: { type: Boolean, default: false }
   },
 
   mixins: [device_utils],

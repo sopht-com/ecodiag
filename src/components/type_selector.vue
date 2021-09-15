@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <b-select v-model="computedValue" :placeholder="msg ? msg : '...'" v-bind="$attrs" :size="size">
+    <b-select :class="narrowed?'vcondensed':''" v-model="computedValue" :placeholder="msg ? msg : '...'" v-bind="$attrs" :size="size">
         <option v-for="(item,key) in devices" :key="key" :value="key">
         {{tr_label(item,key)}}
         </option>
@@ -25,7 +25,7 @@ export default {
   inheritAttrs: false,
   mixins: [base_selector],
   updated () {
-    // This is required when nested wihtin a b-table:
+    // This is required when nested within a b-table:
     // if a change of the b-select element trigger a change of the b-table,
     // then this b-select element won't be properly updated
     // (because the changes occurs during an @input event of the select element)
