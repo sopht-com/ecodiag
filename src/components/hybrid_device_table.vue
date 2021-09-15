@@ -74,14 +74,14 @@
         <article class="notification">
           <div class="columns">
             <div class="column">
-              <b-select v-model="current_file" :disabled="filemap.length===0">
+              <b-select expanded v-model="current_file" :disabled="filemap.length===0">
                 <option v-for="(file,key) in filemap" :key="key" :value="key">
                     <template v-if="key !== 0">Synthèse du fichier </template>
                     {{file.filename}}
                   </option>
               </b-select>
             </div>
-            <div class="column">
+            <div class="column is-narrow">
               <b-button @click="delete_file(current_file)">
                 <b-icon icon="trash" />
               </b-button>
