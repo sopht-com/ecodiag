@@ -67,14 +67,14 @@ export default {
       help: 'Aide'
     },
     labels: {
-      fabrication: 'fabrication nl et transport',
-      fabrication_vs_objective: 'fabrication nl et transport nl (actuel vs objectif)',
-      fabrication_actual: 'fabrication nl et transport nl (actuel)',
-      fabrication_objective: 'fabrication nl et transport nl (objectif)',
-      fabrication_uncertainty: 'fabrication nl et transport nl (moyenne + nl bornes nl d\'incertitudes)',
-      use: 'consommation nl électrique nl (usage)',
-      'default': 'défaut',
-      'other': 'autre'
+      fabrication: 'Fabrication nl et transport',
+      fabrication_vs_objective: 'Fabrication nl et transport nl (actuel vs objectif)',
+      fabrication_actual: 'Fabrication nl et transport nl (actuel)',
+      fabrication_objective: 'Fabrication nl et transport nl (objectif)',
+      fabrication_uncertainty: 'Fabrication nl et transport nl (moyenne + nl bornes nl d\'incertitudes)',
+      use: 'Consommation nl électrique nl (usage)',
+      'default': 'Défaut',
+      'other': 'Autre'
     },
     message: {
       lifetime_saving: 'Économies réalisables par l\'augmentation de la durée de vie de mes équipements : <span class=\'value\'>{amount}</span> kgCO2e par an.'
