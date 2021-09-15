@@ -24,8 +24,8 @@
                 </td>
                 <td>
                   Comptabiliser en moyenne :<br/>
-              <input v-model.number="nb_screens_per_desktop" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" /> écran acheté par PC-fixe acheté, et<br/>
-              <input v-model.number="nb_screens_per_laptop" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" /> écran acheté par portable acheté, <br/>
+              <input v-model.number="nb_screens_per_desktop" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" /> écran acheté par PC-fixe acheté, et<br/>
+              <input v-model.number="nb_screens_per_laptop" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" /> écran acheté par portable acheté, <br/>
               soit une estimation de <strong>{{nb_estimated_screens('from_nb_PCs')}}</strong> écrans achetés sur la période.
                 </td>
               </tr>
@@ -39,11 +39,11 @@
               </td>
               <td>
                 Comptabiliser
-                <input v-model.number="nbUsers_actual" type="number" min="0" max="99999" step="1" size="is-small" class="inline-number w5" />
+                <input v-model.number="nbUsers_actual" type="number" min="0" max="99999" step="1" :size="size" class="inline-number w5" />
                 agents dans l'unité, avec en moyenne
-                <input v-model.number="nb_screens_per_user" type="number" min="0" max="10" step="0.1" size="is-small" class="inline-number w3" />
+                <input v-model.number="nb_screens_per_user" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" />
                 écrans par agent,<br/> et une durée de vie moyenne des écrans
-                <input v-model.number="screen_lifetime" type="number" min="1" max="99" step="0.5" size="is-small" class="inline-number w4" /> années,<br/>
+                <input v-model.number="screen_lifetime" type="number" min="1" max="99" step="0.5" :size="size" class="inline-number w4" /> années,<br/>
                 soit une estimation de <strong>{{nb_estimated_screens('from_nb_users')}}</strong> écrans achetés sur la période.
               </td>
             </tr>
@@ -88,10 +88,10 @@
             </div>
           </div>
           <template v-if="!params.ignore_year">
-            <table class="table is-fullwidth condensed is-small">
+            <table :class="'table is-fullwidth condensed '+size">
               <tr v-if="method === 'flux'"><th></th>
                 <th class="has-text-right">
-                  <b-icon icon="check" size="is-small" />
+                  <b-icon icon="check" :size="size" />
                 </th>
                 <th class="has-text-right" v-show="!params.includes_empty_year">
                   <span>sans date</span>
@@ -129,7 +129,7 @@
           <template v-else>
             <div class="columns">
               <div :class="'column ' + (colId ? 'is-7' : 'is-5')" v-for="colId in [0, 1]" :key="colId">
-                <table class="table is-fullwidth condensed is-small">
+                <table :class="'table is-fullwidth condensed '+size">
                   <tr v-for="row in csvsummary_items" :key="row.label">
                     <template v-if="row.show() && row.col === colId">
                       <td v-html="row.label"></td>
@@ -259,6 +259,7 @@
           <ecodiag-select-type
             narrowed
             expanded
+            :size="size"
             v-model="props.row.item.type"
             :msg="props.row.id === 'add' ? 'ajouter un élément' : '...'"
             @input="item_type_changed(props.row)">
@@ -271,6 +272,7 @@
           <ecodiag-select-model
             narrowed
             expanded
+            :size="size"
             :always-visible="GES1p5"
             v-model="props.row.item.model"
             :item_type="props.row.item.type"
@@ -293,7 +295,7 @@
 
       <b-table-column field="nb" sortable :label="capitalize($t('words.quantity'))" numeric v-slot="props">
         <span class="unit" v-if="props.row.id !== 'add'" @click="stop_sorting">
-          <input class="input is-small inline-number" v-model.number="props.row.nb" type="number" min="0" max="99999" step="1" style="width:3.5em"
+          <input :class="'input inline-number '+size" v-model.number="props.row.nb" type="number" min="0" max="99999" step="1" style="width:3.5em"
             @change="$emit('updated', [props.row.item])" />
         </span>
         <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.id !== 'add'" @click="delete_row(props.row)" >
@@ -313,14 +315,14 @@
         :width="optionalColumns.includes('objective') ? '8.8rem' : '4rem'"
         numeric v-slot="props">
         <span class="unit" v-if="is_valid_type(props.row.item.type)" @click="stop_sorting">
-          <input class="input is-small inline-number" v-model.number="props.row.item.lifetime" type="number" min="1" max="999" step="0.5" style="width: 2.9rem"
+          <input :class="'input inline-number '+size" v-model.number="props.row.item.lifetime" type="number" min="1" max="999" step="0.5" style="width: 2.9rem"
              @change="function () { if (!props.row.item.lifetime_unlocked) props.row.item['lifetime2'] = props.row.item.lifetime * params.lifetime_factor; $emit('updated', [props.row.item]) }"
               />
         </span>
         <template v-if="is_valid_type(props.row.item.type) && optionalColumns.includes('objective')">
           &nbsp;/&nbsp;
           <locker :onchange="function (x) { props.row.item['lifetime_unlocked'] = x }">
-            <input class="input is-small inline-number" v-model.number="props.row.item.lifetime2" type="number" min="1" max="999" step="0.5" style="width: 2.9rem" disabled
+            <input :class="'input inline-number '+size" v-model.number="props.row.item.lifetime2" type="number" min="1" max="999" step="0.5" style="width: 2.9rem" disabled
               @change="$emit('updated', [props.row.item])" />
           </locker>
         </template>
@@ -426,7 +428,8 @@ export default {
     'GES1p5': { type: Boolean, default: false },
     'hideTools': { type: Boolean, default: false },
     'autoSimplify': { type: Boolean, default: false },
-    'perPage': { type: Number, default: 200 }
+    'perPage': { type: Number, default: 200 },
+    'size': { type: String, default: '' },
   },
 
   i18n: {
