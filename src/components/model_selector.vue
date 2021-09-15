@@ -35,7 +35,7 @@ export default {
   mixins: [base_selector],
   computed: {
     has_models () {
-      return this.item_type in this.devices && this.devices[this.item_type].models
+      return this.item_type in this.devices && 'models' in this.devices[this.item_type]
     },
     add_default () {
       let has_default = this.has_models && 'default' in this.devices[this.item_type].models
@@ -47,6 +47,11 @@ export default {
       } else {
         return {}
       }
+    }
+  },
+  mounted () {
+    if (this.alwaysVisible && !this.has_models) {
+      this.computedValue = 'default'
     }
   },
   watch: {
