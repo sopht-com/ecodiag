@@ -975,7 +975,9 @@ export default {
 
   watch: {
     dropFile: function () {
-      this.load_csv(this.dropFile)
+      if (this.dropFile) {
+        this.load_csv(this.dropFile)
+      }
     }
   },
 
