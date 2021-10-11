@@ -636,13 +636,15 @@ export default {
       // check whether there is already an entry
       let item = this.get_estimated_screen_item()
       if (item) {
-        this.$buefy.dialog.confirm({
-          message: 'Remplacer l\'estimation précédente de ' + item.nb + ' écrans par la nouvelle estimation de ' + nb_additional_screens + ' ?',
-          onConfirm: function () {
-            item.nb = nb_additional_screens
-            self.$emit('updated', [item])
-          }
-        })
+        if (item.nb !== nb_additional_screens) {
+          this.$buefy.dialog.confirm({
+            message: 'Remplacer l\'estimation précédente de ' + item.nb + ' écrans par la nouvelle estimation de ' + nb_additional_screens + ' ?',
+            onConfirm: function () {
+              item.nb = nb_additional_screens
+              self.$emit('updated', [item])
+            }
+          })
+        }
       } else {
         item = this.add_new_item('screen')
         item.origin = -1
