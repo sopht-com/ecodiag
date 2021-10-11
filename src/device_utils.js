@@ -6,6 +6,18 @@ import * as d3 from "d3-dsv"
 import { devices } from './devices.js'
 import { v4 as uuidv4 } from 'uuid'
 
+function get_default_model_ecodiag (type) {
+  if (devices[type] && devices[type].models) {
+    var res = {
+      'desktop': 'ecodiag_avg_PC',
+      'printer': 'office_40_99kg' }[type]
+    if (res) { return res }
+    return 'default'
+  } else {
+    return undefined
+  }
+}
+
 var params = {
   includes_empty_year: false, // used in the "flux" method
   damping_factor: 1,          // in years, used in the "flux" method
@@ -13,7 +25,8 @@ var params = {
   lifetime_factor: 1.5,       // used in the "flux" method to simulate a longer lifetime, or in the "stock" method to compute the default extended lifetime
   default_uncertainty: 30,
   lifetime_uncertainty: 1,
-  kWh_to_CO2e: 0.084
+  kWh_to_CO2e: 0.084,
+  get_default_model: get_default_model_ecodiag
 }
 
 export const device_utils = {
@@ -156,7 +169,6 @@ export const device_utils = {
         set : function(v){
           if(item._type != v) {
             item._type = v
-            // TODO make get_default_model configurable
             item.model = self.get_default_model(item._type)
             self.update_item_from_type_and_model(item)
           }
@@ -218,16 +230,7 @@ export const device_utils = {
     },
 
     get_default_model (type) {
-      if (devices[type] && devices[type].models) {
-        var res = {
-          'desktop': 'ecodiag_avg_PC',
-          'laptop': 'ecodiag_avg_laptop',
-          'printer': 'office_40_99kg' }[type]
-        if (res) { return res }
-        return 'default'
-      } else {
-        return undefined
-      }
+      return params.get_default_model(type)
     },
 
     is_empty_year(y) {
