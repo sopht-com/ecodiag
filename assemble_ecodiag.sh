@@ -59,7 +59,7 @@ function configure {
   echo "VERDATE: $VERDATE"
   sedi 's/\%version_hash\%/'$VERHASH'/g' $TARGET
   sedi 's/\%version_date\%/'$VERDATE'/g' $TARGET
-  grep "EcoDiag version" $TARGET/index.html
+  grep "EcoDiag version" $TARGET
 }
 
 REV=`cat stable_version.txt`
