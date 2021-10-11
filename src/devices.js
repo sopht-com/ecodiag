@@ -23,7 +23,7 @@ export const devices = {
     power_consumption:  0.2,  // kW     (seems to be reasonable regarding DELL's CO2 sheets)
     duration:           4,    // years,
     usage:              365,
-    yearly_consumption: 300, /* au pif entre ecodiag PC et ecodiag WS */
+    yearly_consumption: 250, /* moyenne pondérée entre ecodiag avg PC et Workstation */
 
     models: {
       // basic:                {grey_CO2: {mean:250,std:hypot([0.3,0.12 /*semble faible*/])}, yearly_consumption: 189 /* ecodiag*/},
@@ -69,9 +69,9 @@ export const devices = {
     label_en:           "Laptop",
     regex:              /(laptop|portable|notebook|ordinateur)/i,
     power_consumption:  0.025,  // kW
-    duration:           4,      // years
+    duration:           3,      // years
     usage:              9,
-    grey_CO2:           260,
+    grey_CO2:           {mean:260,std:hypot([0.2,0.56])},
     yearly_consumption: 48,     // ecodiag, match 0.025 kW * 9h * 220j :)
 
     models: {
@@ -158,9 +158,9 @@ export const devices = {
       //   grey_CO2: {mean:330,std:hypot([0.2 /* arbitrary */, 0.18])}},
 
       // last entry to play the role of fallback
-      ecodiag_avg_laptop: {
-        label_fr: "Moyenne",
-        label_en: "Average",
+      default: {
+        label_fr: "Défaut",
+        label_en: "Default",
         regex:    /(latitude|(z.*|elite)book|mac\s?book|thinkpad)/i,
         grey_CO2: {mean:260,std:hypot([0.2,0.56])}, yearly_consumption: 48, lifetime: 3},
     }
@@ -200,7 +200,7 @@ export const devices = {
     // https://www.bilans-ges.ademe.fr/fr/basecarbone/donnees-consulter/liste-element?recherche=vid%C3%A9o+projecteur
     grey_CO2:           94,   // TODO : 75% d'incertitude !!
     power_consumption:  0.3,  // source : recherche rapide de quelques modèles standards d'Epson
-    duration:           7,    // pif
+    duration:           7,    // arbitraire
     yearly_consumption: 120   /* = 2h * 200j * 0.3kW */, // ecodiag 1752 pour 500h/an => ça ne colle pas ! y'a un bug !
     usage:              3,    // 3h par jour ouvré
     
@@ -215,11 +215,11 @@ export const devices = {
       projector_room:     {
         label_fr: 'Pour salle',
         label_en: 'For meeting/class room',
-        grey_CO2: 150 /* pif */  , duration: 10, power_consumption: 0.310, yearly_consumption: 155 /* 0.310*2*250 */},
+        grey_CO2: 150 /* heuristic conservative sur le poids */  , duration: 10, power_consumption: 0.310, yearly_consumption: 155 /* 0.310*2*250 */},
       projector_large:    {
         label_fr: 'Pour amphi',
         label_en: 'For conference room',
-        grey_CO2: 200 /* pif */  , duration: 10, power_consumption: 0.700, yearly_consumption: 280 /* 0.700*2*200 */},
+        grey_CO2: 200 /* heuristic conservative sur le poids */  , duration: 10, power_consumption: 0.700, yearly_consumption: 280 /* 0.700*2*200 */},
     }
   },
 
@@ -265,7 +265,7 @@ export const devices = {
     label_fr: 'Imprimante',
     label_en: 'Printer',
     regex:    /(imprimante|printer)/i,
-    grey_CO2: 100,        // TODO  [90:200] http://bilans-ges.ademe.fr/fr/basecarbone/donnees-consulter/liste-element?recherche=imprimante
+    grey_CO2: 200 /* average laser */ + 300 /* toners */,        // TODO  [90:200] http://bilans-ges.ademe.fr/fr/basecarbone/donnees-consulter/liste-element?recherche=imprimante
     power_consumption: 0, // TODO
     duration:          3, // TODO
     yearly_consumption: 71, /* ecodiag, match avg lexmark */
@@ -288,7 +288,7 @@ export const devices = {
     label_en:           'IP phone',
     grey_CO2:           17, // ecodiag
     power_consumption:  40/(24*365), // to match yearly_consumption
-    duration:           10, // pif
+    duration:           10, // arbitraire
     yearly_consumption: 40, // ecodiag
     usage:             365,
   },
@@ -371,6 +371,7 @@ export const devices = {
     yearly_consumption:  0,
     models: {
       default: {
+        label_fr: 'Défaut',
         regex: /(carte graphique|\Wgtx\W|\Wrtx\W|\Wquadro\W|\Wtitan\W|\Wgeforce\W|\Wgpu\W)/i
       }
     }
