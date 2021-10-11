@@ -68,141 +68,143 @@
       </div>
     </b-modal>
 
-    <div class="columns is-multiline">
-
-      <div v-if="filemap.length > 0" class="column is-7">
-        <article class="notification">
-          <div class="columns">
-            <div class="column">
-              <b-select expanded v-model="current_file" :disabled="filemap.length===0">
-                <option v-for="(file,key) in filemap" :key="key" :value="key">
-                    <template v-if="key !== 0">Synthèse du fichier </template>
-                    {{file.filename}}
-                  </option>
-              </b-select>
-            </div>
-            <div class="column is-narrow">
-              <b-button @click="delete_file(current_file)">
-                <b-icon icon="trash" />
-              </b-button>
-            </div>
-          </div>
-          <template v-if="!params.ignore_year">
-            <table :class="'table is-fullwidth condensed '+size">
-              <tr v-if="method === 'flux'"><th></th>
-                <th class="has-text-right">
-                  <b-icon icon="check" :size="size" />
-                </th>
-                <th class="has-text-right" v-show="!params.includes_empty_year">
-                  <span>sans date</span>
-                </th>
-                <th class="has-text-right">
-                  <span>hors période</span>
-                </th>
-              </tr>
-              <tr v-for="row in csvsummary_items" :key="row.label">
-                <template v-if="row.show()">
-                  <td v-html="row.label"></td>
-                  <td class="has-text-right">
-                    {{count_items_of_file(current_file, e => year_ok(e.year) && row.condition(e))}}
-                  </td>
-                  <td class="has-text-right" v-show="method === 'flux' && !params.includes_empty_year">
-                    {{count_items_of_file(current_file, e => is_empty_year(e.year) &&  row.condition(e))}}
-                  </td>
-                  <td class="has-text-right" v-show="method === 'flux'">
-                    {{count_items_of_file(current_file, e => (!year_ok(e.year)) && (!is_empty_year(e.year)) &&  row.condition(e))}}
-                  </td>
-                </template>
-              </tr>
-              <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
-                <td>Écrans suppl. <strong>estimés</strong> :</td>
-                <td class="has-text-right">{{current_estimated_screens}}</td>
-                <td>
-                  <b-button size="is-tiny" @click="show_nb_screen_modal=true">
-                    <b-icon icon="pencil"/>
-                  </b-button>
-                </td>
-                <td v-show="!params.includes_empty_year"></td>
-              </tr>
-            </table>
-          </template>
-          <template v-else>
+    <div class="tile is-ancestor">
+      <div class="tile is-parent is-7">
+        <div v-if="filemap.length > 0" class="tile is-child">
+          <article class="notification">
             <div class="columns">
-              <div v-for="colId in [0, 1]" :key="colId" :class="'column ' + (colId ? 'is-7' : 'is-5')">
-                <table :class="'table is-fullwidth condensed '+size">
-                  <tr v-for="row in csvsummary_items" :key="row.label">
-                    <template v-if="row.show() && row.col === colId">
-                      <td v-html="row.label"></td>
-                      <td class="has-text-right">
-                        {{count_items_of_file(current_file, e => row.condition(e))}}
-                      </td>
-                    </template>
-                  </tr>
-                  <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0 && colId === 1">
-                    <td>Écrans suppl. <strong>estimés</strong> :</td>
-                    <td class="has-text-right">
-                      <b-button size="is-tiny" @click="show_nb_screen_modal=true">
-                        <b-icon icon="pencil"/>
-                      </b-button>
-                      {{current_estimated_screens}}
-                    </td>
-                  </tr>
-                </table>
+              <div class="column">
+                <b-select expanded v-model="current_file" :disabled="filemap.length===0">
+                  <option v-for="(file,key) in filemap" :key="key" :value="key">
+                      <template v-if="key !== 0">Synthèse du fichier </template>
+                      {{file.filename}}
+                    </option>
+                </b-select>
+              </div>
+              <div class="column is-narrow">
+                <b-button @click="delete_file(current_file)">
+                  <b-icon icon="trash" />
+                </b-button>
               </div>
             </div>
-          </template>
-        </article>
+            <template v-if="!params.ignore_year">
+              <table :class="'table is-fullwidth condensed '+size">
+                <tr v-if="method === 'flux'"><th></th>
+                  <th class="has-text-right">
+                    <b-icon icon="check" :size="size" />
+                  </th>
+                  <th class="has-text-right" v-show="!params.includes_empty_year">
+                    <span>sans date</span>
+                  </th>
+                  <th class="has-text-right">
+                    <span>hors période</span>
+                  </th>
+                </tr>
+                <tr v-for="row in csvsummary_items" :key="row.label">
+                  <template v-if="row.show()">
+                    <td v-html="row.label"></td>
+                    <td class="has-text-right">
+                      {{count_items_of_file(current_file, e => year_ok(e.year) && row.condition(e))}}
+                    </td>
+                    <td class="has-text-right" v-show="method === 'flux' && !params.includes_empty_year">
+                      {{count_items_of_file(current_file, e => is_empty_year(e.year) &&  row.condition(e))}}
+                    </td>
+                    <td class="has-text-right" v-show="method === 'flux'">
+                      {{count_items_of_file(current_file, e => (!year_ok(e.year)) && (!is_empty_year(e.year)) &&  row.condition(e))}}
+                    </td>
+                  </template>
+                </tr>
+                <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
+                  <td>Écrans suppl. <strong>estimés</strong> :</td>
+                  <td class="has-text-right">{{current_estimated_screens}}</td>
+                  <td>
+                    <b-button size="is-tiny" @click="show_nb_screen_modal=true">
+                      <b-icon icon="pencil"/>
+                    </b-button>
+                  </td>
+                  <td v-show="!params.includes_empty_year"></td>
+                </tr>
+              </table>
+            </template>
+            <template v-else>
+              <div class="columns">
+                <div v-for="colId in [0, 1]" :key="colId" :class="'column ' + (colId ? 'is-7' : 'is-5')">
+                  <table :class="'table is-fullwidth condensed '+size">
+                    <tr v-for="row in csvsummary_items" :key="row.label">
+                      <template v-if="row.show() && row.col === colId">
+                        <td v-html="row.label"></td>
+                        <td class="has-text-right">
+                          {{count_items_of_file(current_file, e => row.condition(e))}}
+                        </td>
+                      </template>
+                    </tr>
+                    <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0 && colId === 1">
+                      <td>Écrans suppl. <strong>estimés</strong> :</td>
+                      <td class="has-text-right">
+                        <b-button size="is-tiny" @click="show_nb_screen_modal=true">
+                          <b-icon icon="pencil"/>
+                        </b-button>
+                        {{current_estimated_screens}}
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </template>
+          </article>
+        </div>
       </div>
+      <div class="tile is-vertical is-parent">
+        <div class="tile is-child">
+          <b-upload
+            v-model="dropFile"
+            drag-drop
+            expanded
+            type="is-info"
+          >
+            <section :class="'section'+(hideTools?'':' condensed')">
+              <div class="content has-text-centered">
+                <p>
+                  <b-icon icon="upload" size="is-large" />
+                </p>
+                <p>
+                  Téléverser un fichier (.{{GES1p5?'t':'c'}}sv) <br/>
+                </p>
+              </div>
+            </section>
+          </b-upload>
+        </div>
 
-      <div class="column is-3">
-        <b-upload
-          v-model="dropFile"
-          drag-drop
-          expanded
-          type="is-info"
-        >
-          <section class="section">
-            <div class="content has-text-centered">
-              <p>
-                <b-icon icon="upload" size="is-large" />
-              </p>
-              <p>
-                Téléverser un fichier (.{{GES1p5?'t':'c'}}sv) <br/>
-              </p>
-            </div>
-          </section>
-        </b-upload>
-      </div>
-
-      <div class="column is-4" v-if="!hideTools">
-        <article v-if="devicelist.length > 0" class="notification">
-          <p>Outils et options</p>
-          <b-field v-if="nb_outofperiod_rows > 0">
-            <b-checkbox v-model="show_outofperiod">
-              Afficher les {{nb_outofperiod_rows}} lignes hors période
-            </b-checkbox>
-          </b-field>
-          <template v-if="method === 'flux' && nb_emptyyear_rows > 0">
-            Il y a {{nb_emptyyear_rows}} lignes sans année :
-            <div class="buttons">
-              <b-button v-show="!params.includes_empty_year"
-                @click="toggle_hide_empty_year"
-                type="is-info is-light"
-                :icon-left="hide_empty_year ? 'eye-slash' : 'eye'">
-                <span v-if="hide_empty_year">Afficher</span>
-                <span v-else>Masquer</span>
-              </b-button>
-              <b-button v-show="!hide_empty_year" @click="handle_date_emptyyears" type="is-success">
-                <span>Les dater</span>
-              </b-button>
-            </div>
-          </template>
-          <b-field>
-            <button @click="simplify_data" class="button is-primary">
-              <span>Simplifier la table</span>
-            </button>
-          </b-field>
-        </article>
+        <div class="tile is-child" v-if="!hideTools">
+          <article v-if="devicelist.length > 0" class="notification">
+            <p>Outils et options</p>
+            <b-field v-if="nb_outofperiod_rows > 0">
+              <b-checkbox v-model="show_outofperiod">
+                Afficher les {{nb_outofperiod_rows}} lignes hors période
+              </b-checkbox>
+            </b-field>
+            <template v-if="method === 'flux' && nb_emptyyear_rows > 0">
+              Il y a {{nb_emptyyear_rows}} lignes sans année :
+              <div class="buttons">
+                <b-button v-show="!params.includes_empty_year"
+                  @click="toggle_hide_empty_year"
+                  type="is-info is-light"
+                  :icon-left="hide_empty_year ? 'eye-slash' : 'eye'">
+                  <span v-if="hide_empty_year">Afficher</span>
+                  <span v-else>Masquer</span>
+                </b-button>
+                <b-button v-show="!hide_empty_year" @click="handle_date_emptyyears" type="is-success">
+                  <span>Les dater</span>
+                </b-button>
+              </div>
+            </template>
+            <b-field>
+              <button @click="simplify_data" class="button is-primary">
+                <span>Simplifier la table</span>
+              </button>
+            </b-field>
+          </article>
+        </div>
       </div>
     </div>
 
@@ -303,7 +305,7 @@
         </button>
       </b-table-column>
 
-      <b-table-column v_if="GES1p5" v-slot="props">
+      <b-table-column :visible="GES1p5" v-slot="props">
         <b-button v-if="GES1p5 && props.row.id !== 'add'" size="is-small" @click="delete_row(props.row)" >
           <b-icon icon="trash" style="font-size: 16px;" />
         </b-button>
@@ -357,6 +359,7 @@
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
                 {{ smart_cat(el.csvdata[filemap[el.origin].in_brand],
                             el.csvdata[filemap[el.origin].in_model]) }}</span></td>
+              <td v-if="method=='flux' && !params.ignore_year"></td>
               <td class="has-text-right"><span>{{props.row.item.details.length>1 ? el.nb : ''}}</span>
                 <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
                   <b-icon icon="trash" />
@@ -1088,5 +1091,11 @@ input.input.inline-number:not(.is-small) {
   padding-top: 3px;
   padding-bottom: 3px;
   height: 1.9rem;
+}
+article.notification {
+  padding-right: 1.5rem
+}
+.upload .section.condensed {
+  padding: 1.2rem 1.5rem
 }
 </style>
