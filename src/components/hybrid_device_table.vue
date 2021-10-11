@@ -841,7 +841,7 @@ export default {
           headermap['filename'] = filename
 
           // check headers
-          let headers_ok = headermap.in_type && headermap.in_model && (headermap.in_year || self.method === 'flux')
+          let headers_ok = headermap.in_type && headermap.in_model && (headermap.in_year || self.method === 'stock' || self.params.ignore_year)
           let nb_item_type_ok = csvdata.filter(e => e.type !== undefined).reduce((r, e) => r + e.nb, 0)
           if ((!headers_ok) || nb_item_type_ok === 0) {
             // We can still continue if:
