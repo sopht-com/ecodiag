@@ -22,8 +22,7 @@ export default {
       device_list: 'Devices',
       data: 'Options',
       about: 'About',
-      csv_import: 'CSV import',
-      help: 'Help'
+      csv_import: 'CSV import'
     },
     labels: {
       fabrication: 'fabrication nl and transport',
@@ -33,7 +32,8 @@ export default {
       fabrication_uncertainty: 'fabrication nl and transport nl (mean + nl uncertainty nl bounds)',
       use: 'electricity nl consumption nl (use)',
       'default': 'default',
-      'other': 'other'
+      'default model': 'Default model',
+      'other': 'Other'
     },
     message: {
       lifetime_saving: 'Potential emission saving by increasing the lifetime of my devices: <span class=\'value\'>{amount}</span> kg.CO2e per year.'
@@ -63,8 +63,7 @@ export default {
       device_list: 'Équipement',
       data: 'Options',
       about: 'À propos',
-      csv_import: 'Importer CSV',
-      help: 'Aide'
+      csv_import: 'Importer CSV'
     },
     labels: {
       fabrication: 'Fabrication nl et transport',
@@ -74,6 +73,7 @@ export default {
       fabrication_uncertainty: 'Fabrication nl et transport nl (moyenne + nl bornes nl d\'incertitudes)',
       use: 'Consommation nl électrique nl (usage)',
       'default': 'Défaut',
+      'default_model': 'Modèle par défaut',
       'other': 'Autre'
     },
     message: {

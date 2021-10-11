@@ -63,7 +63,7 @@ export const device_utils = {
     //  - or fallback
     tr_label (obj,fallback) {
       if (typeof obj === 'string') {
-        return this.$i18n.t(translate)
+        return this.$i18n.t(obj)
       }
       var result = obj['label_'+this.$i18n.locale]
       if (!result)

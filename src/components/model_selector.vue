@@ -9,9 +9,9 @@
       :disabled="disabled || !has_models"
       v-bind="$attrs"
       :size="size" >
-        <option v-if="add_default" value="default">{{$t('labels.default')}}</option>
+        <option v-if="add_default" value="default">{{$t('labels.default_model')}}</option>
         <option v-for="(item,key) in models" :key="key" :value="key">
-            {{tr_label(item,key)}}
+            {{tr_model(item,key)}}
         </option>
     </b-select>
   </div>
@@ -63,7 +63,20 @@ export default {
         this.computedValue = 'default'
       }
     }
+  },
+  methods: {
+    tr_model (item, key) {
+      let label = this.tr_label(item, key)
+      if (label === 'Défaut') {
+        label = this.$i18n.t('labels.default_model')
+      }
+      return label
+    }
   }
 }
 
 </script>
+
+<style lang="css">
+
+</style>
