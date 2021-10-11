@@ -115,7 +115,7 @@
                 </template>
               </tr>
               <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
-                <td>Ecrans suppl. <strong>estimés</strong> :</td>
+                <td>Écrans suppl. <strong>estimés</strong> :</td>
                 <td class="has-text-right">{{current_estimated_screens}}</td>
                 <td>
                   <b-button size="is-tiny" @click="show_nb_screen_modal=true">
@@ -128,7 +128,7 @@
           </template>
           <template v-else>
             <div class="columns">
-              <div :class="'column ' + (colId ? 'is-7' : 'is-5')" v-for="colId in [0, 1]" :key="colId">
+              <div v-for="colId in [0, 1]" :key="colId" :class="'column ' + (colId ? 'is-7' : 'is-5')">
                 <table :class="'table is-fullwidth condensed '+size">
                   <tr v-for="row in csvsummary_items" :key="row.label">
                     <template v-if="row.show() && row.col === colId">
@@ -139,7 +139,7 @@
                     </template>
                   </tr>
                   <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0 && colId === 1">
-                    <td>Ecrans suppl. <strong>estimés</strong> :</td>
+                    <td>Écrans suppl. <strong>estimés</strong> :</td>
                     <td class="has-text-right">
                       <b-button size="is-tiny" @click="show_nb_screen_modal=true">
                         <b-icon icon="pencil"/>
@@ -250,7 +250,7 @@
           <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide{{GES1p5?'':'(csv)'}}</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">Hors période</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.unknown_year" type="is-warning">Année manquante</b-tag>
-          <b-tag rounded v-else type="is-danger">Inconnue</b-tag>
+          <b-tag rounded v-else type="is-danger">{{GES1p5 ? 'Invalide' : 'Inconnue'}}</b-tag>
         </span>
       </b-table-column>
 
@@ -429,7 +429,7 @@ export default {
     'hideTools': { type: Boolean, default: false },
     'autoSimplify': { type: Boolean, default: false },
     'perPage': { type: Number, default: 200 },
-    'size': { type: String, default: '' },
+    'size': { type: String, default: '' }
   },
 
   i18n: {
