@@ -648,6 +648,7 @@ export default {
       } else {
         item = this.add_new_item('screen')
         item.origin = -1
+        item.score = 2
         item.nb = nb_additional_screens
         self.$emit('updated', [item])
       }
