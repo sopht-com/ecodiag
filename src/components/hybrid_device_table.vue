@@ -918,7 +918,7 @@ export default {
     /* This function merge all valid entries with respect to type/model (ignoring actual purchase year),
        while removing all invalid entries (unknown, out of period, etc.).
        The purchase year of valid entries is rewritten as the current reference year */
-    simplify_data (conservative = false) {
+    simplify_data (conservative = false, remove_filenames = false) {
       let copy = []
       let devicelist = conservative ? this.devicelist : this.valid_devices_list
       for (let in_item of devicelist) {
@@ -936,6 +936,9 @@ export default {
             item['key'] = item._type.concat(item._model)
           }
           copy.push(item)
+        }
+        if (remove_filenames) {
+          this.origin = 0
         }
       }
 
@@ -973,6 +976,10 @@ export default {
       }
       if (!conservative) {
         this.filemap.splice(1, this.filemap.length)
+      }
+      if (remove_filenames) {
+        this.filemap.splice(1, this.filemap.length - 1)
+        this.current_file = 0
       }
       this.$emit('updated', this.devicelist)
     }
