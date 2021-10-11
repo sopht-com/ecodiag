@@ -367,8 +367,8 @@
                   <b-icon icon="trash" style="font-size: 12px;top:-7px" />
                 </button>
               </td>
-              <td></td>
-              <td></td>
+              <td v-if="method=='stock'"></td>
+              <td v-if="optionalColumns.includes('grey')"></td>
             </template>
             <template v-else>
               <td></td>
