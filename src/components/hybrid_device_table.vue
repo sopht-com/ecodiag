@@ -1022,8 +1022,8 @@ export default {
         { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen'].includes(e.type)), show: () => true, col: 0 },
         { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
         { label: '<em>Non reconnus :</em>', condition: e => e.score === 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
-        { label: '<strong>Total validés :</strong>', condition: e => e.score > 0, show: () => (this.GES1p5) && this.current_file > 0, col: 1 },
-        { label: '<em>Non validés :</em>', condition: e => e.score === 0, show: () => (this.GES1p5) && this.current_file > 0, col: 1 }
+        { label: '<strong>Total valides :</strong>', condition: e => e.score > 0, show: () => (this.GES1p5) && this.current_file >= 0, col: 1 },
+        { label: '<em>Non valides :</em>', condition: e => e.score === 0, show: () => (this.GES1p5) && this.current_file >= 0, col: 1 }
       ]
     }
   },
