@@ -202,7 +202,6 @@
           </p>
           <p>
             <b>Astuce</b> : si les informations de type "Type" et "Modèle" sont confondues dans une seule colonne, vous pouvez simplement dédoubler cette colonne dans votre tableur avant export au format .csv.<br/>
-            Si votre listing contient les achats sur plusieurs années, vous devez alors aussi fournir une colonne :
           </p>
         </div>
       </tab>
