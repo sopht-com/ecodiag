@@ -1,9 +1,9 @@
-image: alpine:latest
+image: node:15.14.0
 
 pages:
   stage: deploy
   script:
-  - ./assemble_ecodiag.sh
+  - bash assemble_ecodiag.sh
   artifacts:
     paths:
     - public

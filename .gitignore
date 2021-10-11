@@ -1,5 +1,9 @@
-public/
 tmp
 node_modules
+<<<<<<< HEAD
 dist
 *venv*
+=======
+*venv
+dist
+>>>>>>> buefy

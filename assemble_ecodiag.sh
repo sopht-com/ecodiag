@@ -53,7 +53,7 @@ git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
 git branch -f master origin/master
 git branch -f csv_import origin/csv_import
-git branch -f csv_import origin/buefy
+git branch -f buefy origin/buefy
 git checkout master
 git clone . tmp
 cd tmp
@@ -63,8 +63,9 @@ git checkout csv_import
 assemble ../public/csv_import
 
 git checkout buefy
+npm install
 npm ci
-npm run build
+NODE_ENV=production npm run build
 # mv public public-vue # GitLab Pages hooks on the public folder
 mv dist ../public/buefy # rename the dist folder (result of npm run build)
 # optionally, you can activate gzip support with the following line:
