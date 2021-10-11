@@ -709,7 +709,9 @@ export default {
     },
 
     validate_disp_row: function (disp_item) {
-      this.validate_row(disp_item.item)
+      if (this.is_valid_type(disp_item.item.type)) {
+        this.validate_row(disp_item.item)
+      }
     },
     item_type_changed: function (disp_item) {
       if (disp_item.id === 'add') {

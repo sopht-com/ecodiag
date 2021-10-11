@@ -4,7 +4,7 @@
   <div>
     <b-select
       :class="narrowed?'vcondensed':''"
-      v-show="alwaysVisible || has_models"
+      v-show="(alwaysVisible && isValidType) || has_models"
       v-model="computedValue"
       :disabled="disabled || !has_models"
       v-bind="$attrs"
@@ -34,6 +34,9 @@ export default {
   },
   mixins: [base_selector],
   computed: {
+    isValidType () {
+      return this.item_type in this.devices
+    },
     has_models () {
       return this.item_type in this.devices && 'models' in this.devices[this.item_type]
     },
@@ -50,7 +53,7 @@ export default {
     }
   },
   mounted () {
-    if (this.alwaysVisible && !this.has_models) {
+    if (this.alwaysVisible && this.isValidType && !this.has_models) {
       this.computedValue = 'default'
     }
   },
