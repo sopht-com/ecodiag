@@ -357,7 +357,7 @@
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
                 {{ smart_cat(el.csvdata[filemap[el.origin].in_brand],
                             el.csvdata[filemap[el.origin].in_model]) }}</span></td>
-              <td class="has-text-right"><span>{{el.nb}}</span>
+              <td class="has-text-right"><span>{{props.row.item.details.length>1 ? el.nb : ''}}</span>
                 <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
                   <b-icon icon="trash" />
                 </button>
