@@ -106,7 +106,7 @@
           <tr>
             <td><ml fr="Afficher les incertitudes :">Show uncertainty:</ml></td>
             <td><input type="checkbox" v-model="uncertainty" /> </td>
-            <td>en béta test</td>
+            <td></td>
           </tr>
 
             <tr v-show="uncertainty">
