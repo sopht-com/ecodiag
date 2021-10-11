@@ -679,6 +679,7 @@ export default {
         item.nb = Math.max(0, item.nb - el.nb)
         item.details.splice(i, 1)
       } else {
+        /* eslint-disable no-console */
         console.log('Ecodiag error: in delete_subrow, sub item not found')
       }
       this.$emit('updated', [item])
