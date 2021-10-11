@@ -45,9 +45,30 @@ function assemble {
   grep "EcoDiag version" $TARGET/index.html
 }
 
+function configure {
+  TARGET=$1
+
+  echo "target:"
+  ls -lR $TARGET
+  echo ""
+  echo ""
+
+  VERHASH=`git rev-parse --short HEAD`
+  VERDATE=`git log -1 --pretty=format:"%ci" | cut -f 1 -d " "`
+  echo "VERHASH: $VERHASH"
+  echo "VERDATE: $VERDATE"
+  sedi 's/\%version_hash\%/'$VERHASH'/g' $TARGET
+  sedi 's/\%version_date\%/'$VERDATE'/g' $TARGET
+  grep "EcoDiag version" $TARGET/index.html
+}
+
 REV=`cat stable_version.txt`
 
-assemble public/head
+configure src/components/ecodiag.vue
+npm install
+npm ci
+NODE_ENV=production npm run build
+mv dist public/head
 
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
@@ -59,8 +80,8 @@ git clone . tmp
 cd tmp
 git checkout $REV
 assemble ../public
-git checkout csv_import
-assemble ../public/csv_import
+# git checkout csv_import
+# assemble ../public/csv_import
 
 git checkout buefy
 npm install
