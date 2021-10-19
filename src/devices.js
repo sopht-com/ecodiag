@@ -65,7 +65,7 @@ export const devices = {
   // ecodiag: 210
 
   laptop:{
-    label_fr:           "Laptop",
+    label_fr:           "PC portable",
     label_en:           "Laptop",
     regex:              /(laptop|portable|notebook|ordinateur)/i,
     power_consumption:  0.025,  // kW
