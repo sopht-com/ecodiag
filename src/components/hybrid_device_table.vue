@@ -26,7 +26,7 @@
                   Comptabiliser en moyenne :<br/>
               <input v-model.number="nb_screens_per_desktop" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" /> écran acheté par PC-fixe acheté, et<br/>
               <input v-model.number="nb_screens_per_laptop" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" /> écran acheté par portable acheté, <br/>
-              soit une estimation de <strong>{{nb_estimated_screens('from_nb_PCs')}}</strong> écrans achetés sur la période.
+              soit une estimation de <strong>{{nb_estimated_screens(current_file,'from_nb_PCs')}}</strong> écrans achetés sur la période.
                 </td>
               </tr>
             <tr :class="(!GES1p5) && nb_screen_method === 'from_nb_users' ? 'has-background-primary-light' : ''" v-show="!GES1p5">
@@ -44,7 +44,7 @@
                 <input v-model.number="nb_screens_per_user" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" />
                 écrans par agent,<br/> et une durée de vie moyenne des écrans
                 <input v-model.number="screen_lifetime" type="number" min="1" max="99" step="0.5" :size="size" class="inline-number w4" /> années,<br/>
-                soit une estimation de <strong>{{nb_estimated_screens('from_nb_users')}}</strong> écrans achetés sur la période.
+                soit une estimation de <strong>{{nb_estimated_screens(current_file,'from_nb_users')}}</strong> écrans achetés sur la période.
               </td>
             </tr>
             <tr :class="(!GES1p5) && nb_screen_method === 'none' ? 'has-background-primary-light' : ''">
@@ -62,7 +62,7 @@
         </section>
 
         <footer class="modal-card-foot">
-          <b-button label="OK" type="is-primary" :disabled="!Boolean(nb_screen_method)" @click="$emit('close'); show_nb_screen_modal=false; update_estimated_screens()" />
+          <b-button label="OK" type="is-primary" :disabled="!Boolean(nb_screen_method)" @click="$emit('close'); show_nb_screen_modal=false; update_estimated_screens(current_file)" />
         </footer>
       </div>
       </div>
@@ -114,7 +114,7 @@
                     </td>
                   </template>
                 </tr>
-                <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0">
+                <tr v-if="method === 'flux' && current_file > 0 && get_estimated_screen_item(current_file)">
                   <td>Écrans suppl. <strong>estimés</strong> :</td>
                   <td class="has-text-right">{{current_estimated_screens}}</td>
                   <td>
@@ -138,7 +138,7 @@
                         </td>
                       </template>
                     </tr>
-                    <tr v-if="method === 'flux' && nb_screens_in_csv === 0 && current_file > 0 && colId === 1">
+                    <tr v-if="method === 'flux' && current_file > 0 && get_estimated_screen_item(current_file) && colId === 1">
                       <td>Écrans suppl. <strong>estimés</strong> :</td>
                       <td class="has-text-right">
                         <b-button size="is-tiny" @click="show_nb_screen_modal=true">
@@ -523,7 +523,7 @@ export default {
       return this.devicelist.filter(e => e.score >= 0 && this.is_empty_year(e.year)).length
     },
     current_estimated_screens () {
-      let item = this.get_estimated_screen_item()
+      let item = this.get_estimated_screen_item(this.current_file)
       if (item) {
         return item.nb
       } else {
@@ -609,14 +609,14 @@ export default {
       }
     },
 
-    nb_estimated_screens: function (method) {
+    nb_estimated_screens: function (origin, method) {
       if (!method) {
         method = this.nb_screen_method
       }
       let round = x => Math.round(x * 10) / 10
       if (method === 'from_nb_PCs') {
-        return round(this.count_items_of_file(0, e => this.year_ok(e.year) && e.type === 'desktop') * this.nb_screens_per_desktop +
-                     this.count_items_of_file(0, e => this.year_ok(e.year) && e.type === 'laptop') * this.nb_screens_per_laptop)
+        return round(this.count_items_of_file(origin, e => this.year_ok(e.year) && e.type === 'desktop') * this.nb_screens_per_desktop +
+                     this.count_items_of_file(origin, e => this.year_ok(e.year) && e.type === 'laptop') * this.nb_screens_per_laptop)
       } else if (method === 'from_nb_users') {
         return round(this.nbUsers_actual * this.nb_screens_per_user / this.screen_lifetime * this.params.damping_factor)
       } else {
@@ -624,8 +624,8 @@ export default {
       }
     },
 
-    get_estimated_screen_item () {
-      let estimated_entries = this.devicelist.filter(e => Boolean(e.origin) && (e.origin === -1))
+    get_estimated_screen_item (origin) {
+      let estimated_entries = this.devicelist.filter(e => Boolean(e.origin) && (e.origin === -origin))
       if (estimated_entries.length > 0) {
         return estimated_entries[0]
       } else {
@@ -633,11 +633,11 @@ export default {
       }
     },
 
-    update_estimated_screens () {
+    update_estimated_screens (origin) {
       let self = this
-      let nb_additional_screens = this.nb_estimated_screens()
+      let nb_additional_screens = this.nb_estimated_screens(origin)
       // check whether there is already an entry
-      let item = this.get_estimated_screen_item()
+      let item = this.get_estimated_screen_item(origin)
       if (item) {
         if (item.nb !== nb_additional_screens) {
           this.$buefy.dialog.confirm({
@@ -650,7 +650,7 @@ export default {
         }
       } else {
         item = this.add_new_item('screen')
-        item.origin = -1
+        item.origin = -origin
         item.score = 2
         item.nb = nb_additional_screens
         self.$emit('updated', [item])
@@ -747,14 +747,20 @@ export default {
             if ('origin' in sub) {
               if (sub.origin > file_id) {
                 sub.origin--
-              } else if (sub.origin === file_id) {
+              } else if (sub.origin < file_id) {
+                sub.origin++
+              } else if (Math.abs(sub.origin) === file_id) {
                 item.details.splice(j, 1)
                 to_remove += sub.nb
                 j--
               }
             }
           }
-          if (to_remove > 0) {
+          if ('origin' in item && item.origin === -file_id) {
+            deleted_items.push(item)
+            this.devicelist.splice(i, 1)
+            i--
+          } else if (to_remove > 0) {
             if (to_remove >= item.nb) {
               deleted_items.push(item)
               this.devicelist.splice(i, 1)
@@ -934,10 +940,16 @@ export default {
         }
         if (item && ok && item.nb > 0) {
           item.key = item._type.concat(item._model)
+          if (item.origin < 0) {
+            item.key = String(item.origin) + item.key
+          }
           copy.push(item)
         } else if (conservative) {
           if (!('key' in item)) {
             item['key'] = item._type.concat(item._model)
+          }
+          if (item.origin < 0) {
+            item.key = String(item.origin) + item.key
           }
           copy.push(item)
         }
@@ -953,6 +965,11 @@ export default {
       for (let el of copy) {
         if (new_list.length > 0 && new_list[new_list.length - 1].key === el.key) {
           let common_el = new_list[new_list.length - 1]
+          if (common_el.details.length > 0 && el.details.length === 0) {
+            el.details.push({ origin: 0, nb: el.nb })
+          } else if (el.details.length > 0 && common_el.details.length === 0) {
+            common_el.details.push({ origin: 0, nb: common_el.nb })
+          }
           common_el.nb += el.nb
           common_el.details = common_el.details.concat(el.details)
         } else {
