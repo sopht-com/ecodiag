@@ -359,27 +359,25 @@
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
                 {{ smart_cat(el.csvdata[filemap[el.origin].in_brand],
                             el.csvdata[filemap[el.origin].in_model]) }}</span></td>
-              <td v-if="method=='flux' && !params.ignore_year"></td>
-              <td class="has-text-right"><span>{{props.row.item.details.length>1 ? el.nb : ''}}</span>
-                <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
-                  <b-icon icon="trash" />
-                </button>
-              </td>
-              <td v-if="GES1p5">
-                <button class="trash has-text-grey" v-if="props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
-                  <b-icon icon="trash" style="font-size: 12px;top:-7px" />
-                </button>
-              </td>
-              <td v-if="method=='stock'"></td>
-              <td v-if="optionalColumns.includes('grey')"></td>
             </template>
             <template v-else>
               <td></td>
               <td></td>
-              <td colspan="2">Définie par l'utilisateur</td>
-              <td v-if="GES1p5"></td>
-              <td></td>
+              <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;Ajouté par l'utilisateur</td>
             </template>
+            <td v-if="method=='flux' && !params.ignore_year"></td>
+            <td class="has-text-right"><span>{{props.row.item.details.length>1 ? el.nb : ''}}</span>
+              <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
+                <b-icon icon="trash" />
+              </button>
+            </td>
+            <td v-if="GES1p5">
+              <button class="trash has-text-grey" v-if="props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
+                <b-icon icon="trash" style="font-size: 12px;top:-7px" />
+              </button>
+            </td>
+            <td v-if="method=='stock'"></td>
+            <td v-if="optionalColumns.includes('grey')"></td>
           </tr>
         </template>
       </template>
@@ -1003,6 +1001,9 @@ export default {
         this.current_file = 0
       }
       this.$emit('updated', this.devicelist)
+    },
+    item_added () {
+      this.nb_added_items += 1
     }
   },
 
@@ -1010,6 +1011,15 @@ export default {
     dropFile: function () {
       if (this.dropFile) {
         this.load_csv(this.dropFile)
+      }
+    },
+    devicelist: function () {
+      if (this.nb_added_items > 0 && this.autoSimplify) {
+        this.nb_added_items = 0
+        this.devicelist.forEach(function (item, i) {
+          item['bakedorder'] = i
+        })
+        this.simplify_data(true)
       }
     }
   },
@@ -1035,6 +1045,7 @@ export default {
       normalization_list: ['year', 'unit'],
       normalization: 'year',
       current_file: 0,
+      nb_added_items: 0,
       csvsummary_items: [
         { label: 'Serveurs :', condition: e => e.type === 'server', show: () => true, col: 0 },
         { label: 'PC fixes :', condition: e => e.type === 'desktop', show: () => true, col: 0 },
