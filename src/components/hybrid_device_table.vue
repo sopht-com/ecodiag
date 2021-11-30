@@ -812,6 +812,18 @@ export default {
             self.$buefy.dialog.alert({
               message: 'Aucun écran trouvé dans le listing, pensez à les rajouter !' })
           }
+        } else {
+          let nb_PCs = self.count_items_of_file(self.filemap.length - 1, e => self.year_ok(e.year) && e.type === 'desktop')
+          let nb_laptops = self.count_items_of_file(self.filemap.length - 1, e => self.year_ok(e.year) && e.type === 'laptop')
+          if (self.nb_screens_in_csv < 0.5 * (nb_PCs + nb_laptops * 0.5)) {
+            self.$buefy.dialog.alert({
+              message: '<div class="content"><p>Le nombre d’écrans identifiés (' +
+                self.nb_screens_in_csv +
+                ') semble faible vis à vis du nombre de PC et portables (' +
+                (nb_PCs + nb_laptops) +
+                ').</p><p>Pensez à vérifiez vos achats d’écrans et, le cas échéant, à ajouter les écrans manquants (nombre, type, année) via le bouton "ajouter" tout en bas du tableau de la fenêtre de saisie.</p></div>'
+            })
+          }
         }
       }
 
