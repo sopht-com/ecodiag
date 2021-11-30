@@ -16,7 +16,7 @@ function hypot(vals) {
 export const devices = {
 
   desktop:{
-    label_fr:           "PC fixe",
+    label_fr:           "PC fixe sans écran",
     label_en:           "Desktop",
     regex:              /(pc.*fix|desktop|poste.*fix|ordinateur|computer|fixe|tour|tower|unite centrale)/i,
     grey_CO2:           {mean:350,std:hypot([0.3,0.72])},
@@ -45,10 +45,6 @@ export const devices = {
       precision_tower_7xxx: {label: 'Precision Tower 7xxx', regex: /pr.cision.*7\d{3}/i,grey_CO2: {mean:646,std:hypot([0.3,0.06])}, yearly_consumption: 760 /* DELL */ },
 
       mac_mini:             {label: 'Mac mini', regex: /mac.*mini/i,grey_CO2: 270},
-      imac_21:              {label: 'iMac 21"', regex: /imac.*21/i,grey_CO2: 290},
-      imac_21_retina:       {label: 'iMac 21" retina', regex: /imac.*21/i,grey_CO2: 300},
-      imac_27_retina:       {label: 'iMac 27" retina', regex: /imac.*27/i,grey_CO2: 450},
-      imac_pro:             {label: 'iMac pro', regex: /imac.*pro/i,grey_CO2: 700},
       mac_pro:              {label: 'Mac pro', regex: /mac(?!.*book).*pro/i,grey_CO2: 900},
       // mac_pro_all_options: 2300,
 
@@ -61,9 +57,30 @@ export const devices = {
     }
   },
 
+  allinone: {
+    label_fr:           "PC fixe tout-en-un",
+    label_en:           "All-in-One",
+    regex:              /(all.*in.*one|tout.*en.*un)/i,
+    grey_CO2:           {mean:352,std:hypot([0.3,0.51])},
+    power_consumption:  0.2,
+    duration:           4,
+    usage:              365,
+    yearly_consumption: 78,
 
-  // ecodiag: 210
+    models: {
+      optiplex_allinone_3xxx: {label: 'Optiplex All-in-One 3xxx', regex: /optiplex.*((all.*in.*one|aio).*3\d{3}|3\d{3}.*(all.*in.*one|aio))/i, grey_CO2: {mean:241,std:hypot([0.3,0.19])}, yearly_consumption: 62 },
+      optiplex_allinone_5xxx: {label: 'Optiplex All-in-One 5xxx', regex: /optiplex.*((all.*in.*one|aio).*5\d{3}|5\d{3}.*(all.*in.*one|aio))/i, grey_CO2: {mean:318,std:hypot([0.3,0.22])}, yearly_consumption: 75 },
+      optiplex_allinone_7xxx: {label: 'Optiplex All-in-One 7xxx', regex: /optiplex.*((all.*in.*one|aio).*7\d{3}|7\d{3}.*(all.*in.*one|aio))/i, grey_CO2: {mean:382,std:hypot([0.3,0.32])}, yearly_consumption: 90 },
 
+      imac_21:              {label: 'iMac 21"', regex: /imac.*21/i,grey_CO2: 290},
+      imac_21_retina:       {label: 'iMac 21" retina', regex: /imac.*21/i,grey_CO2: 300},
+      imac_27_retina:       {label: 'iMac 27" retina', regex: /imac.*27/i,grey_CO2: 450},
+      imac_pro:             {label: 'iMac pro', regex: /imac.*pro/i,grey_CO2: 700},
+      mac_pro:              {label: 'Mac pro', regex: /mac(?!.*book).*pro/i,grey_CO2: 900}
+    }
+  },
+
+  // old value: 210
   laptop:{
     label_fr:           "PC portable",
     label_en:           "Laptop",
@@ -166,7 +183,7 @@ export const devices = {
     }
   },
 
-  // ecodiag: 350
+  // old value: 350
   screen:{
     label_fr:           "Écran",
     label_en:           "Screen",
@@ -231,7 +248,7 @@ export const devices = {
   //   usage:                3,
   // },
 
-  // ecodiag: 80
+  // old value: 80
   pad: {
     label_fr:           'Tablette',
     label_en:           'Pad',
@@ -242,7 +259,7 @@ export const devices = {
     yearly_consumption: 5,  // ecodiag
   },
 
-  // ecodiag: 63
+  // old value: 63
   // http://bilans-ges.ademe.fr/fr/basecarbone/donnees-consulter/liste-element?recherche=t%C3%A9l%C3%A9phone
   // - [16:40] +/- 50%
   smartphone: {

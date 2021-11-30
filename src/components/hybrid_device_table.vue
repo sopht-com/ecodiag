@@ -1089,10 +1089,10 @@ export default {
       nb_added_items: 0,
       csvsummary_items: [
         { label: 'Serveurs :', condition: e => e.type === 'server', show: () => true, col: 0 },
-        { label: 'PC fixes :', condition: e => e.type === 'desktop', show: () => true, col: 0 },
+        { label: 'PC fixes :', condition: e => e.type === 'desktop' || e.type === 'allinone', show: () => true, col: 0 },
         { label: 'Laptops :', condition: e => e.type === 'laptop', show: () => true, col: 0 },
         { label: 'Ecrans :', condition: e => e.type === 'screen', show: () => true, col: 0 },
-        { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen'].includes(e.type)), show: () => true, col: 0 },
+        { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen', 'allinone'].includes(e.type)), show: () => true, col: 0 },
         { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
         { label: '<em>Non reconnus :</em>', condition: e => e.score === 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
         { label: '<strong>Total valides :</strong>', condition: e => e.score > 0, show: () => (this.GES1p5) && this.current_file >= 0, col: 1 },
