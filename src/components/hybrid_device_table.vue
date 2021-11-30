@@ -365,7 +365,7 @@
           <tr v-for="el in get_details(props.row.item)" :key="el.key" class="ed-detail">
             <template v-if="el.csvdata">
               <td></td>
-              <td><span class="has-text-right">{{ el.csvdata[filemap[el.origin].in_date] }}</span></td>
+              <td><span class="has-text-right" v-if="method=='flux' && !params.ignore_year">{{ el.csvdata[filemap[el.origin].in_date] }}</span></td>
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ el.csvdata[filemap[el.origin].in_type] }}</span></td>
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
                 {{ smart_cat(el.csvdata[filemap[el.origin].in_brand],
