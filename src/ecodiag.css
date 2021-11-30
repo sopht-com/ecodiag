@@ -135,16 +135,17 @@ td,th {
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
-th {
-  background-color: #d9b38c
+
+table.highlight th {
+  background-color: #ccc
 }
-tr {
-  background-color: #f2e6d9
+table.highlight tr {
+  background-color: #f1f1f1
 }
-tr:hover {
-  background-color: #e6ccb3
+table.highlight tr:hover {
+  background-color: #e2e2e2
 }
-tr.highlight {
+table.highlight tr.highlight {
   background-color: #e6ccb3
 }
 
@@ -182,7 +183,6 @@ td.transparent , th.transparent{
 }
 
 th select {
-  background-color: #d9b38c;
   font-weight: bold;
 }
 

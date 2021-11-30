@@ -77,7 +77,7 @@
       </tab>
 
       <tab :name="$t('title.data')" >
-        <table style="width:100%">
+        <table style="width:100%" class="highlight">
 
           <tr><th style="width:33%"></th><th style="width:30%"></th><th style="width:37%"></th></tr>
 
