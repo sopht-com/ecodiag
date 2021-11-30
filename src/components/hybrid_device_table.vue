@@ -74,14 +74,14 @@
           <article class="notification">
             <div class="columns">
               <div class="column">
-                <b-select expanded v-model="current_file" :disabled="filemap.length===0">
+                <b-select expanded v-model="current_file" :disabled="filemap.length===0 || readOnly">
                   <option v-for="(file,key) in filemap" :key="key" :value="key">
                       <template v-if="key !== 0">Synthèse du fichier </template>
                       {{file.filename}}
                     </option>
                 </b-select>
               </div>
-              <div class="column is-narrow">
+              <div v-if="!readOnly" class="column is-narrow">
                 <b-button @click="delete_file(current_file)">
                   <b-icon icon="trash" />
                 </b-button>
@@ -155,7 +155,7 @@
         </div>
       </div>
       <div class="tile is-vertical is-parent">
-        <div class="tile is-child">
+        <div v-if="!readOnly" class="tile is-child">
           <b-upload
             v-model="dropFile"
             drag-drop
@@ -264,6 +264,7 @@
             :size="size"
             v-model="props.row.item.type"
             :msg="props.row.id === 'add' ? 'ajouter un élément' : '...'"
+            :disabled="readOnly"
             @input="item_type_changed(props.row)">
           </ecodiag-select-type>
         </div>
@@ -278,6 +279,7 @@
             :always-visible="GES1p5"
             v-model="props.row.item.model"
             :item_type="props.row.item.type"
+            :disabled="readOnly"
             @input="validate_disp_row(props.row)">
           </ecodiag-select-model>
         </div>
@@ -290,6 +292,7 @@
               v-show="props.row.id !== 'add'"
               :min-year="2000"
               :max-year="max_selectable_year"
+              :disabled="readOnly"
               @change="$emit('updated', [props.row.item])">
           </ecodiag-select-year>
         </div>
@@ -298,15 +301,15 @@
       <b-table-column field="nb" sortable :label="capitalize($t('words.quantity'))" numeric v-slot="props">
         <span class="unit" v-if="props.row.id !== 'add'" @click="stop_sorting">
           <input :class="'input inline-number '+size" v-model.number="props.row.nb" type="number" min="0" max="99999" step="1" style="width:3.5em"
-            @change="$emit('updated', [props.row.item])" />
+            @change="$emit('updated', [props.row.item])" :disabled="readOnly" />
         </span>
-        <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.id !== 'add'" @click="delete_row(props.row)" >
+        <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.id !== 'add' && !readOnly" @click="delete_row(props.row)" >
           <b-icon icon="trash" />
         </button>
       </b-table-column>
 
       <b-table-column :visible="GES1p5" v-slot="props">
-        <b-button v-if="GES1p5 && props.row.id !== 'add'" size="is-small" @click="delete_row(props.row)" >
+        <b-button v-if="GES1p5 && props.row.id !== 'add' && !readOnly" size="is-small" @click="delete_row(props.row)" >
           <b-icon icon="trash" style="font-size: 16px;" />
         </b-button>
       </b-table-column>
@@ -378,12 +381,12 @@
             </template>
             <td v-if="method=='flux' && !params.ignore_year"></td>
             <td class="has-text-right"><span>{{props.row.item.details.length>1 ? el.nb : ''}}</span>
-              <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
+              <button class="trash has-text-grey" v-if="(!GES1p5) && props.row.item.details.length>1 && !readOnly" @click="delete_subrow(props.row.item, el)" >
                 <b-icon icon="trash" />
               </button>
             </td>
             <td v-if="GES1p5">
-              <button class="trash has-text-grey" v-if="props.row.item.details.length>1" @click="delete_subrow(props.row.item, el)" >
+              <button class="trash has-text-grey" v-if="props.row.item.details.length>1 && !readOnly" @click="delete_subrow(props.row.item, el)" >
                 <b-icon icon="trash" style="font-size: 12px;top:-7px" />
               </button>
             </td>
@@ -441,7 +444,8 @@ export default {
     'hideTools': { type: Boolean, default: false },
     'autoSimplify': { type: Boolean, default: false },
     'perPage': { type: Number, default: 200 },
-    'size': { type: String, default: '' }
+    'size': { type: String, default: '' },
+    'readOnly': { type: Boolean, default: false }
   },
 
   i18n: {
