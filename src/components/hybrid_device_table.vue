@@ -340,8 +340,19 @@
             </option>
           </select>
           </div>
-          <b-tooltip label="fabrication + transport + fin de vie" append-to-body>
-            fabrication &amp; transport
+          <!-- fabrication &amp; transport -->
+          <b-tooltip multilined
+            :label="'total \'fabrication + transport + fin de vie\''
+              + (normalization === 'year'
+                ? (' pour les N unités' +
+                  (method === 'flux'
+                  ? (params.damping_factor === 1 ? '' : ', divisé par la période d\'amortissement de ' + params.damping_factor + ' ans')
+                  : ', divisé par la durée de vie'))
+                : ' pour une unité')"
+            type="is-info">
+              <b-tag rounded type="is-info is-light">
+                <b-icon icon="info" size="is-size-7"></b-icon> calcul
+              </b-tag>
           </b-tooltip>
         </template>
         <template v-slot="props">
@@ -1126,5 +1137,11 @@ article.notification {
 }
 .upload .section.condensed {
   padding: 1.2rem 1.5rem
+}
+.b-table .table th .th-wrap.is-numeric .tag .icon {
+  margin-right: 0
+}
+.b-table .table th .th-wrap.is-numeric .tag  {
+  margin-top: 0.3rem
 }
 </style>
