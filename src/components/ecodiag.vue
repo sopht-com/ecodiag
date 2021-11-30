@@ -17,7 +17,53 @@
 
   <tab name="Ecodiag" :selected="true" button-style="margin-left:52px">
 
-    <chart :plotdata="plotdata"></chart>
+    <div class="tile is-ancestor">
+      <div class="tile is-parent">
+        <div class="tile is-child" style="padding-right: 1rem">
+          <chart :plotdata="plotdata"></chart>
+        </div>
+        <article class="tile is-child notification is-info is-light has-text-centered" style="padding: 1rem;">
+          <p class="title is-4 has-text-centered"><b-icon icon="info"></b-icon>Règle de calcul</p>
+          <p class="subtitle is-6 has-text-centered" style="margin-bottom: 0.5rem">total fabrication &amp; transport</p>
+          <table class="is-family-code" style="margin: auto">
+              <tr style="border:none">
+                <td :rowspan="method === 'flux' && params.damping_factor === 1 ? 1 : 2"  style="vertical-align:middle;border:none;padding:0 4px">
+                  <b-tooltip label="somme sur l'ensemble des lignes 'valides'" multilined>
+                    <span style="font-size: 2rem">&Sigma;</span><span class="is-italic" style="vertical-align:sub">i</span>
+                  </b-tooltip>
+                </td>
+                <td :rowspan="method === 'flux' && params.damping_factor === 1 ? 1 : 2"  style="vertical-align:middle;border:none;padding:0 4px">
+                  <b-tooltip label="quantité">
+                    N<span class="is-italic" style="vertical-align:sub">i</span>
+                  </b-tooltip>
+                </td>
+                <td class="is-family-code"
+                  :style="method === 'flux' && params.damping_factor === 1
+                    ? 'border: none; vertical-align:middle'
+                    : 'border-bottom: 2px solid #0D68CE'">
+                  <b-tooltip label="facteur d'émission de l'élément i en kgCO2e pour 'fabrication + transport + packaging + fin-de-vie'" multilined>
+                    facteur<span class="is-italic" style="vertical-align:sub">i</span>
+                  </b-tooltip>
+                </td>
+              </tr>
+              <tr style="border:none" v-if="method !== 'flux' || params.damping_factor > 1">
+                <td class="is-family-code has-text-centered" style="border:none;padding:0">
+                  <template v-if="method === 'stock'">
+                    <b-tooltip label="durée de vie de l'élément i en années" multilined>
+                      durée_de_vie<span class="is-italic" style="vertical-align:sub">i</span>
+                    </b-tooltip>
+                  </template>
+                  <template v-else>
+                    <b-tooltip label="durée d'amortissement" multilined>
+                      {{params.damping_factor}} années
+                    </b-tooltip>
+                  </template>
+                </td>
+              </tr>
+          </table>
+        </article>
+      </div>
+    </div>
 
     <tabs>
 
@@ -30,7 +76,7 @@
           :reference-year="reference_year"
           @changeReferenceYear="(e) => reference_year = e"
           :auto-add="true" />
-        <p></p>
+        <p><br/></p>
 
         <p class="whatif" v-if="method === 'stock'">
           <ml fr="Bilan consommation électrique : ">Total electricity consumption: </ml>

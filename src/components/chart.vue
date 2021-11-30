@@ -84,7 +84,7 @@ export default {
   props: {
     'plotdata': Array,
     'height': { type: Number, default: 150 },
-    'width': { type: Number, default: 700 }
+    'width': { type: Number, default: 660 }
   },
 
   mixins: [device_utils],
