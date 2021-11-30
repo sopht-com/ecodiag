@@ -368,7 +368,11 @@
           <tr v-for="el in get_details(props.row.item)" :key="el.key" class="ed-detail">
             <template v-if="el.csvdata">
               <td></td>
-              <td><span class="has-text-right" v-if="method=='flux' && !params.ignore_year">{{ el.csvdata[filemap[el.origin].in_date] }}</span></td>
+              <td>
+                <span class="has-text-right" v-if="method==='flux' && !params.ignore_year">{{ el.csvdata[filemap[el.origin].in_date] }}</span>
+                <span>l. {{el.csvdata.lines[0] + (el.csvdata.lines.length > 1 ? ',' : '')}}</span>
+                <button v-if="el.csvdata.lines.length > 1" @click="show_lines(el.csvdata.lines, el.origin)"><span>...</span></button>
+              </td>
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ el.csvdata[filemap[el.origin].in_type] }}</span></td>
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
                 {{ smart_cat(el.csvdata[filemap[el.origin].in_brand],
@@ -936,6 +940,16 @@ export default {
         }
       }
       this.$emit('deleted', deleted_items)
+    },
+
+    show_lines (lines, fileid) {
+      this.$buefy.dialog.alert({
+        message: '<div class="content"><p>Cet élément apparaît dans le fichier ' +
+          this.filemap[fileid].filename +
+          ' aux lignes suivantes :</p><p>' +
+          lines +
+          '</p></div>'
+      })
     },
 
     /* This function merge all valid entries with respect to type/model (ignoring actual purchase year),

@@ -450,6 +450,7 @@ export const device_utils = {
         }
         if (new_data.length > 0 && new_data[new_data.length - 1].key == item.key) {
           new_data[new_data.length - 1].nb += item.nb
+          new_data[new_data.length - 1].csvdata.lines = new_data[new_data.length - 1].csvdata.lines.concat(item.csvdata.lines)
         } else {
           new_data.push(item)
         }
@@ -512,6 +513,7 @@ export const device_utils = {
 
       for (let i in csv_data) {
         let item = csv_data[i]
+        item['lines'] = [+i + 1]
         csv_data[i] = {csvdata: item}
       }
 
