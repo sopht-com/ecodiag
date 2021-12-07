@@ -369,9 +369,9 @@
             <template v-if="el.csvdata">
               <td></td>
               <td>
-                <span class="has-text-right" v-if="method==='flux' && !params.ignore_year">{{ el.csvdata[filemap[el.origin].in_date] }}</span>
+                <span class="has-text-right" v-if="method==='flux' && !params.ignore_year">{{ el.csvdata[filemap[el.origin].in_date] }} | </span>
                 <span>l. {{el.csvdata.lines[0] + (el.csvdata.lines.length > 1 ? ',' : '')}}</span>
-                <button v-if="el.csvdata.lines.length > 1" @click="show_lines(el.csvdata.lines, el.origin)"><span>...</span></button>
+                <button class="naked" v-if="el.csvdata.lines.length > 1" @click="show_lines(el.csvdata.lines, el.origin)"><span>...</span></button>
               </td>
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>{{ el.csvdata[filemap[el.origin].in_type] }}</span></td>
               <td>&nbsp;&nbsp;&nbsp;&nbsp;<span>
@@ -877,7 +877,7 @@ export default {
           headermap['filename'] = filename
 
           // check headers
-          let headers_ok = headermap.in_type && headermap.in_model && (headermap.in_year || self.method === 'stock' || self.params.ignore_year)
+          let headers_ok = headermap.in_type && headermap.in_model && (headermap.in_date || self.method === 'stock' || self.params.ignore_year)
           let nb_item_type_ok = csvdata.filter(e => e.type !== undefined).reduce((r, e) => r + e.nb, 0)
           if ((!headers_ok) || nb_item_type_ok === 0) {
             // We can still continue if:
@@ -887,7 +887,7 @@ export default {
             let can_continue = (nb_item_type_ok > 0) || ((Boolean(headermap.in_type) || Boolean(headermap.in_model)) && csvdata.length > 0)
             let pb_list = (headermap.in_type ? '' : '<li>Colonne "Type" manquante ou non reconnue.</li>') +
                           (headermap.in_model ? '' : '<li>Colonne "Modèle" manquante ou non reconnue.</li>') +
-                          (headermap.in_year || self.method === 'stock' || self.params.ignore_year ? '' : '<li>Colonne "Date d\'achat" manquante ou non reconnue.</li>') +
+                          (headermap.in_date || self.method === 'stock' || self.params.ignore_year ? '' : '<li>Colonne "Date d\'achat" manquante ou non reconnue.</li>') +
                           (nb_item_type_ok > 0 ? '' : '<li>Aucune entrée n\'a été reconnue, même partiellement.</li>')
             if (can_continue) {
               self.$buefy.dialog.confirm({
@@ -1158,6 +1158,14 @@ button.trash {
   border-style: none;
   margin-left: 0;
   padding:0;
+  background: none;
+  cursor: pointer;
+}
+button.naked {
+  border-style: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 0;
   background: none;
   cursor: pointer;
 }
