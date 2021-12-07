@@ -970,6 +970,7 @@ export default {
     simplify_data (conservative = false, remove_filenames = false) {
       let copy = []
       let devicelist = conservative ? this.devicelist : this.valid_devices_list
+      let ukey = 100000
       for (let in_item of devicelist) {
         let item = this.clone_obj(in_item)
         let status = this.compute_status(item, this.method, this.referenceYear)
@@ -977,16 +978,30 @@ export default {
         if (ok && (!conservative)) {
           item.details.splice(0, item.details.length)
         }
-        if (item && ok && item.nb > 0) {
-          item.key = item._type.concat(item._model)
+        let year_key = ''
+        if (!this.params.ignore_year) {
+          if (!this.is_empty_year(item.year)) {
+            year_key = String(item.year)
+          } else {
+            year_key = ukey.toString()
+            ukey += 1
+          }
+        }
+
+        let do_push = false
+        if ((item && ok && item.nb > 0) || (conservative && item._type in this.devices)) {
+          item.key = year_key + item._type.concat(item._model)
           if (item.origin < 0) {
             item.key = String(item.origin) + item.key
           }
-          copy.push(item)
+          do_push = true
         } else if (conservative) {
           if (!('key' in item)) {
-            item['key'] = item._type.concat(item._model)
+            item['key'] = year_key + item._type.concat(item._model)
           }
+          do_push = true
+        }
+        if (do_push) {
           if (item.origin < 0) {
             item.key = String(item.origin) + item.key
           }
@@ -1022,7 +1037,7 @@ export default {
       for (let i in copy) {
         let item = copy[i]
         if (conservative) {
-          let tmp = this.create_device_item(item._type, { model: item._model, nb: item.nb, year: this.referenceYear, origin: item.origin, score: item.score, details: item.details })
+          let tmp = this.create_device_item(item._type, { model: item._model, nb: item.nb, year: item.year, origin: item.origin, score: item.score, details: item.details })
           if ('bakedorder' in item) {
             tmp['bakedorder'] = item.bakedorder
           }

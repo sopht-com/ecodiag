@@ -464,7 +464,7 @@ export const device_utils = {
     // and record the number of items within csv_data[i].nb
     csv_merge_raw_items (csv_data, header_map) {
       // create keys
-      var ukey = 1000
+      var ukey = 100000
       for (var i in csv_data) {
         let item = csv_data[i]
         let key = ''
@@ -478,7 +478,7 @@ export const device_utils = {
           key = key.concat(item['year'])
         } else {
           if (key !== '') {
-            key = key.concat(Number.toString(ukey))
+            key = key.concat(ukey.toString())
             ukey += 1
           }
         }
