@@ -236,9 +236,10 @@
             L'outil va rechercher les informations dans les colonnes suivantes :
           </p>
           <ul>
-            <li><b>Type</b>, où l'outil va rechercher des mots clefs ressemblant à (liste non exhaustive) : PC, fixe, ordinateur, tour, unité centrale, serveur, desktop, portable, laptop, écran, videoprojecteur, notebook, tablette, pad, smartphone, mobile, imprimante, hub wifi, etc.</li>
-            <li><b>Modèle</b>, où l'outil va rechercher des mots clefs ressemblant à (liste non exhaustive) : Latitude 5280, PowerEdge T640, Precision Tower 3630, etc.</li>
-            <li><b>Date d'achat</b>, où l'outil va rechercher l'année sur quatre chiffres, ex. <code>03/04/2020</code>, ou <code>3 avril 2020</code>, ou encore <code>2020</code>.</li>
+            <li><b>Type</b>, identifiant la catégorie de l'item parmi (avec entre parenthèses quelques alias autorisés) : PC fixe (Desktop, PC, fixe, tour, unité centrale, station de travail, workstation), PC portable (laptop, portable, notebook), Serveur, Écran (screen, display), Vidéo projecteur, Tablette (pad), Smartphone (mobile), Imprimante, Borne wifi (Wifi hub), Téléphone IP, GPU, Disque dur, Clavier, Souris.</li>
+            <!-- <li><b>Fabricant</b>, c'est à dire la marque de l'item, exemples : DELL, HP, Lenovo, ACER, Apple, etc.</li> -->
+            <li><b>Modèle</b>, permettant d'identifier plus précisément l'item, exemples : Latitude 5280, PowerEdge T640, Precision Tower 3630, etc.</li>
+            <li><b>Date d'achat</b>, où l'outil va rechercher l'année sur quatre chiffres, ex. <code>03/04/2020</code>, ou <code>3 avril 2020</code>, ou encore <code>2020</code>. <i>(optionnel)</i></li>
           </ul>
           <p>
             Le listing doit bien sûr fournir au minimum l'une des colonnes <code>Type</code> ou <code>Modèle</code>, ou encore mieux, les deux.
@@ -248,7 +249,11 @@
             <b>Attention</b> : dans la méthode par <i>liste des achats</i>, si vous choisissez une période d'amortissement <code>N</code> supérieur à 1 an, alors le listing doit inclure les achats sur l'année du bilan plus les <code>N-1</code> années précédentes.
           </p>
           <p>
-            <b>Astuce</b> : si les informations de type "Type" et "Modèle" sont confondues dans une seule colonne, vous pouvez simplement dédoubler cette colonne dans votre tableur avant export au format .csv.<br/>
+            <b>Astuces</b> :
+            <ul>
+              <li>Si les informations de type "Type" et "Modèle" sont confondues dans une seule colonne, vous pouvez simplement dédoubler cette colonne dans votre tableur avant export au format <code>.csv</code>.</li>
+              <li>Si les information de type "Modèle" sont éparpillés entre plusieurs colonnes, vous pouvez les fusionner dans votre tableur favori avec une formule comme : <code>=CONTAT(B2, " ", C2)</code>.</li>
+            </ul>
           </p>
         </div>
       </tab>
