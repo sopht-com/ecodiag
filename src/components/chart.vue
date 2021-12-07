@@ -91,11 +91,22 @@ export default {
 
   methods: {
 
+    is_valid (cat) {
+      return this.plotdata.filter(d => d.label === cat.label).length > 0
+    },
     compute_y (cat, sub, k) {
-      return this.y(cat.label) + this.y.bandwidth() * (sub.widthPercent ? sub.offsetPercent : k / cat.data.length)
+      if (this.is_valid(cat)) {
+        return this.y(cat.label) + this.y.bandwidth() * (sub.widthPercent ? sub.offsetPercent : k / cat.data.length)
+      } else {
+        return 0
+      }
     },
     compute_height (cat, sub) {
-      return this.y.bandwidth() * (sub.widthPercent ? sub.widthPercent : 1.0 / cat.data.length)
+      if (this.is_valid(cat)) {
+        return this.y.bandwidth() * (sub.widthPercent ? sub.widthPercent : 1.0 / cat.data.length)
+      } else {
+        return 0
+      }
     },
 
     // a simple hack to enable :transform="translate(...)" within the template
