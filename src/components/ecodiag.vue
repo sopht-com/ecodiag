@@ -75,7 +75,8 @@
           :optional-columns="objective ? ['grey', 'objective'] : ['grey']"
           :reference-year="reference_year"
           @changeReferenceYear="(e) => reference_year = e"
-          :auto-add="true" />
+          :auto-add="true"
+          :auto-simplify="true" />
         <p><br/></p>
 
         <p class="whatif" v-if="method === 'stock'">
