@@ -76,8 +76,8 @@
               <div class="column">
                 <b-select expanded v-model="current_file" :disabled="filemap.length===0 || readOnly">
                   <option v-for="(file,key) in filemap" :key="key" :value="key">
-                      <template v-if="key !== 0">Synthèse du fichier </template>
-                      {{file.filename}}
+                      <template v-if="key !== 0"><ml fr="Synthèse du fichier">Summary of</ml> {{file.filename}}</template>
+                      <template v-else><ml fr="Synthèse globale">Global summary</ml></template>
                     </option>
                 </b-select>
               </div>
@@ -1129,7 +1129,7 @@ export default {
       sort_field: 'bakedorder',
       default_sort: 'bakedorder',
       devices: devices,
-      filemap: [{ filename: 'Synthèse globale' }],
+      filemap: [{ filename: 'user entries' }],
       hide_empty_year: false,
       show_outofperiod: false,
       nb_screens_in_csv: 0,
