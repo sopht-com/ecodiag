@@ -210,16 +210,21 @@
             <td></td>
           </tr>
 
-            <tr v-show="method=='flux'"><td><ml fr="Durée d'amortissement :">Damping factor:</ml></td>
-              <td><input v-model.number="params.damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
-              <td class="note">La liste des équipements fournis doit correspondre à la liste des achats des
-                <span v-text="params.damping_factor"></span> années précédentes, indépendamment de la durée de vie réel des équipements.</td>
-            </tr>
+          <tr v-show="method=='flux'"><td><ml fr="Durée d'amortissement :">Damping factor:</ml></td>
+            <td><input v-model.number="params.damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
+            <td class="note">La liste des équipements fournis doit correspondre à la liste des achats des
+              <span v-text="params.damping_factor"></span> années précédentes, indépendamment de la durée de vie réel des équipements.</td>
+          </tr>
 
-            <tr v-show="method=='flux'"><td><ml fr="Année du bilan:">Account year:</ml></td>
-              <td><input v-model.number="reference_year" type="number" min="2000" max="2100" step="1" /> </td>
-              <td class="note"></td>
-            </tr>
+          <tr v-show="method=='flux'"><td><ml fr="Ignorer les dates d'achat :">Ignore purchase year:</ml></td>
+            <td><input type="checkbox" v-model="params.ignore_year" /></td>
+            <td class="note"></td>
+          </tr>
+
+          <tr v-show="method === 'flux' && !params.ignore_year"><td><ml fr="Année du bilan :">Account year:</ml></td>
+            <td><input v-model.number="reference_year" type="number" min="2000" max="2100" step="1" /> </td>
+            <td class="note"></td>
+          </tr>
 
           <tr class="blank"></tr>
 
