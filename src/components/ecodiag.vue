@@ -70,6 +70,7 @@
       <tab :name="$t('title.device_list')" :selected="true">
 
         <device-table
+          ref="deviceTable"
           :devicelist="devices_list"
           :method="method"
           :optional-columns="objective ? ['grey', 'objective'] : ['grey']"
