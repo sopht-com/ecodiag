@@ -67,6 +67,7 @@ function assemble_npm {
   NODE_ENV=production ECODIAG_TARGET_PATH=$2 npm run build
   # # mv public public-vue # GitLab Pages hooks on the public folder
   mkdir -p $1
+  cp src/devices.js dist/
   mv dist/* $1/
   # # optionally, you can activate gzip support with the following line:
   # # find ../public/buefy -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
