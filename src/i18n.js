@@ -44,7 +44,10 @@ export default {
       damping_duration: 'damping duration',
       lifetime_of_el_i: 'lifetime of element i in years',
       factor_of_el_i: 'emission factor of element i in kgCO2e for \'production + transport + packaging + end-of-life\'',
-      sum_over_rows: 'sum over the set of \'valid\' rows'
+      sum_over_rows: 'sum over the set of \'valid\' rows',
+      Valid: 'Valid',
+      Out_of_period: 'Out of period',
+      Missing_year: 'Missing year'
     },
     methods: {
       'flux': 'flux',
@@ -100,7 +103,10 @@ export default {
       damping_duration: 'durée d\'amortissement',
       lifetime_of_el_i: 'durée de vie de l\'élément i en années',
       factor_of_el_i: 'facteur d\'émission de l\'élément i en kgCO2e pour \'fabrication + transport + packaging + fin-de-vie\'',
-      sum_over_rows: 'somme sur l\'ensemble des lignes \'valides\''
+      sum_over_rows: 'somme sur l\'ensemble des lignes \'valides\'',
+      Valid: 'Valide',
+      Out_of_period: 'Hors période',
+      Missing_year: 'Année manquante'
     },
     methods: {
       'flux': 'par liste d\'achat (flux)',

@@ -248,10 +248,10 @@
 
       <b-table-column field="status" sortable :label="$t('labels.validity')" v-slot="props">
         <span v-if="props.row.id !== 'add'">
-          <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
-          <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide{{GES1p5?'':'(csv)'}}</b-tag>
-          <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">Hors période</b-tag>
-          <b-tag rounded v-else-if="props.row.status === status.unknown_year" type="is-warning">Année manquante</b-tag>
+          <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">{{$t('labels.Valid')}}</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">{{$t('labels.Valid')}} {{GES1p5?'':'(csv)'}}</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.invalid_year" type="is-warning">{{$t('labels.Out_of_period')}}</b-tag>
+          <b-tag rounded v-else-if="props.row.status === status.unknown_year" type="is-warning">{{$t('labels.Missing_year')}}</b-tag>
           <b-tag rounded v-else type="is-danger">{{GES1p5 ? 'Invalide' : 'Inconnue'}}</b-tag>
         </span>
       </b-table-column>
