@@ -32,8 +32,6 @@ function assemble {
   echo "VERHASH: $VERHASH"
   echo "VERDATE: $VERDATE"
 
-  
-
   sedi 's/\%version_hash\%/'$VERHASH'/g' $TARGET/index.html
   sedi 's/\%version_date\%/'$VERDATE'/g' $TARGET/index.html
   sedi 's/deps\/vue.js/deps\/vue.min.js/g' $TARGET/index.html
@@ -62,35 +60,36 @@ function configure {
   grep "EcoDiag version" $TARGET
 }
 
+function assemble_npm {
+  TARGET=$1
+  mkdir -p $TARGET
+  configure src/components/ecodiag.vue
+  npm install
+  npm ci
+  NODE_ENV=production npm run build
+  # # mv public public-vue # GitLab Pages hooks on the public folder
+  mv dist $TARGET
+  # # optionally, you can activate gzip support with the following line:
+  # # find ../public/buefy -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
+}
+
+# generate head
+assemble_npm public/head
+
+# generate the official version
 REV=`cat stable_version.txt`
-
-configure src/components/ecodiag.vue
-npm install
-npm ci
-NODE_ENV=production npm run build
-mv dist public/head
-
 git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 git fetch origin
 git branch -f master origin/master
-git branch -f csv_import origin/csv_import
+# git branch -f csv_import origin/csv_import
 # git branch -f buefy origin/buefy
 git checkout master
 git clone . tmp
 cd tmp
+
 git checkout $REV
-assemble ../public
+assemble_npm ../public
 # git checkout csv_import
 # assemble ../public/csv_import
-
-# git checkout buefy
-# npm install
-# npm ci
-# NODE_ENV=production npm run build
-# # mv public public-vue # GitLab Pages hooks on the public folder
-# mv dist ../public/buefy # rename the dist folder (result of npm run build)
-# # optionally, you can activate gzip support with the following line:
-# # find ../public/buefy -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
-
 cd ..
 rm -rf tmp
