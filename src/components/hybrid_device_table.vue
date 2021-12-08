@@ -991,7 +991,7 @@ export default {
           item.details.splice(0, item.details.length)
         }
         let year_key = ''
-        if (!this.params.ignore_year) {
+        if (this.method === 'flux' && !this.params.ignore_year) {
           if (!this.is_empty_year(item.year)) {
             year_key = String(item.year)
           } else {
@@ -1013,14 +1013,14 @@ export default {
           }
           do_push = true
         }
+        if (remove_filenames) {
+          item.origin = 0
+        }
         if (do_push) {
           if (item.origin < 0) {
             item.key = String(item.origin) + item.key
           }
           copy.push(item)
-        }
-        if (remove_filenames) {
-          this.origin = 0
         }
       }
 
