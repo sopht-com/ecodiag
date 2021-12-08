@@ -94,15 +94,15 @@
                     <b-icon icon="check" :size="size" />
                   </th>
                   <th class="has-text-right" v-show="!params.includes_empty_year">
-                    <span>sans date</span>
+                    <span><ml fr="sans date">lacking date</ml></span>
                   </th>
                   <th class="has-text-right">
-                    <span>hors période</span>
+                    <span><ml fr="hors période">out of period</ml></span>
                   </th>
                 </tr>
-                <tr v-for="row in csvsummary_items" :key="row.label">
+                <tr v-for="row in csvsummary_items" :key="row.label_fr">
                   <template v-if="row.show()">
-                    <td v-html="row.label"></td>
+                    <td v-html="tr_label(row)"></td>
                     <td class="has-text-right">
                       {{count_items_of_file(current_file, e => year_ok(e.year) && row.condition(e))}}
                     </td>
@@ -115,7 +115,7 @@
                   </template>
                 </tr>
                 <tr v-if="method === 'flux' && current_file > 0 && get_estimated_screen_item(current_file)">
-                  <td>Écrans suppl. <strong>estimés</strong> :</td>
+                  <td><ml fr="Écrans suppl. <strong>estimés</strong> :"><strong>Estimated</strong> additional screens:</ml></td>
                   <td class="has-text-right">{{current_estimated_screens}}</td>
                   <td>
                     <b-button size="is-tiny" @click="show_nb_screen_modal=true">
@@ -130,9 +130,9 @@
               <div class="columns">
                 <div v-for="colId in [0, 1]" :key="colId" :class="'column ' + (colId ? 'is-7' : 'is-5')">
                   <table :class="'table is-fullwidth condensed '+size">
-                    <tr v-for="row in csvsummary_items" :key="row.label">
+                    <tr v-for="row in csvsummary_items" :key="row.label_fr">
                       <template v-if="row.show() && row.col === colId">
-                        <td v-html="row.label"></td>
+                        <td v-html="tr_label(row)"></td>
                         <td class="has-text-right">
                           {{count_items_of_file(current_file, e => row.condition(e))}}
                         </td>
@@ -168,7 +168,7 @@
                   <b-icon icon="upload" size="is-large" />
                 </p>
                 <p>
-                  Téléverser un fichier (.{{GES1p5?'t':'c'}}sv) <br/>
+                  <ml fr="Téléverser un fichier">File upload</ml> (.{{GES1p5?'t':'c'}}sv) <br/>
                 </p>
               </div>
             </section>
@@ -246,7 +246,7 @@
            order anytime an input field is clicked. -->
       <b-table-column field="bakedorder" sortable :visible="false" />
 
-      <b-table-column field="status" sortable label="Validité" v-slot="props">
+      <b-table-column field="status" sortable :label="$t('labels.validity')" v-slot="props">
         <span v-if="props.row.id !== 'add'">
           <b-tag rounded v-if="props.row.status === status.user_ok" type="is-success">Valide</b-tag>
           <b-tag rounded v-else-if="props.row.status === status.csv_ok" type="is-success">Valide{{GES1p5?'':'(csv)'}}</b-tag>
@@ -354,7 +354,7 @@
                 : ' pour une unité')"
             type="is-info">
               <b-tag rounded type="is-info is-light">
-                <b-icon icon="info" size="is-size-7"></b-icon> calcul
+                <b-icon icon="info" size="is-size-7"></b-icon> {{$t('words.calculation')}}
               </b-tag>
           </b-tooltip>
         </template>
@@ -433,7 +433,8 @@ export default {
     'ecodiag-select-type': () => import('./type_selector.vue'),
     'ecodiag-select-model': () => import('./model_selector.vue'),
     'locker': () => import('./locker.vue'),
-    'ecodiag-select-year': () => import('./year_picker.vue')
+    'ecodiag-select-year': () => import('./year_picker.vue'),
+    'ml': () => import('@/components/ml.vue')
   },
 
   props: {
@@ -1144,15 +1145,15 @@ export default {
       current_file: 0,
       nb_added_items: 0,
       csvsummary_items: [
-        { label: 'Serveurs :', condition: e => e.type === 'server', show: () => true, col: 0 },
-        { label: 'PC fixes :', condition: e => e.type === 'desktop' || e.type === 'allinone', show: () => true, col: 0 },
-        { label: 'Laptops :', condition: e => e.type === 'laptop', show: () => true, col: 0 },
-        { label: 'Ecrans :', condition: e => e.type === 'screen', show: () => true, col: 0 },
-        { label: 'Autres :', condition: e => !(['server', 'desktop', 'laptop', 'screen', 'allinone'].includes(e.type)), show: () => true, col: 0 },
-        { label: '<strong>Total reconnus :</strong>', condition: e => e.score > 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
-        { label: '<em>Non reconnus :</em>', condition: e => e.score === 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
-        { label: '<strong>Total valides :</strong>', condition: e => e.score > 0, show: () => (this.GES1p5) && this.current_file >= 0, col: 1 },
-        { label: '<em>Non valides :</em>', condition: e => e.score === 0, show: () => (this.GES1p5) && this.current_file >= 0, col: 1 }
+        { label_fr: 'Serveurs :', label_en: 'Servers:', condition: e => e.type === 'server', show: () => true, col: 0 },
+        { label_fr: 'PC fixes :', label_en: 'PCs:', condition: e => e.type === 'desktop' || e.type === 'allinone', show: () => true, col: 0 },
+        { label_fr: 'PC portables :', label_en: 'Laptops:', condition: e => e.type === 'laptop', show: () => true, col: 0 },
+        { label_fr: 'Écrans :', label_en: 'Screens:', condition: e => e.type === 'screen', show: () => true, col: 0 },
+        { label_fr: 'Autres :', label_en: 'Others:', condition: e => !(['server', 'desktop', 'laptop', 'screen', 'allinone'].includes(e.type)), show: () => true, col: 0 },
+        { label_fr: '<strong>Total reconnus :</strong>', label_en: '<strong>Total recognized:</strong>:', condition: e => e.score > 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
+        { label_fr: '<em>Non reconnus :</em>', label_en: '<em>Unrecognized:</em>', condition: e => e.score === 0, show: () => (!this.GES1p5) && this.current_file > 0, col: 1 },
+        { label_fr: '<strong>Total valides :</strong>', label_en: '<strong>Total valid:</strong>:', condition: e => e.score > 0, show: () => (this.GES1p5) && this.current_file >= 0, col: 1 },
+        { label_fr: '<em>Non valides :</em>', label_en: '<em>Not valid:</em>:', condition: e => e.score === 0, show: () => (this.GES1p5) && this.current_file >= 0, col: 1 }
       ]
     }
   },

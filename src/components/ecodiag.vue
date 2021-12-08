@@ -23,17 +23,17 @@
           <chart :plotdata="plotdata"></chart>
         </div>
         <article class="tile is-child notification is-info is-light has-text-centered" style="padding: 1rem;">
-          <p class="title is-4 has-text-centered"><b-icon icon="info"></b-icon>Règle de calcul</p>
-          <p class="subtitle is-6 has-text-centered" style="margin-bottom: 0.5rem">total fabrication &amp; transport</p>
+          <p class="title is-4 has-text-centered"><b-icon icon="info"></b-icon><ml fr="Règle de calcul">Compute rule</ml></p>
+          <p class="subtitle is-6 has-text-centered" style="margin-bottom: 0.5rem"><ml fr="total fabrication &amp; transport">total production &amp; transport</ml></p>
           <table class="is-family-code" style="margin: auto">
               <tr style="border:none">
                 <td :rowspan="method === 'flux' && params.damping_factor === 1 ? 1 : 2"  style="vertical-align:middle;border:none;padding:0 4px">
-                  <b-tooltip label="somme sur l'ensemble des lignes 'valides'" multilined>
+                  <b-tooltip :label="$t('labels.sum_over_rows')" multilined>
                     <span style="font-size: 2rem">&Sigma;</span><span class="is-italic" style="vertical-align:sub">i</span>
                   </b-tooltip>
                 </td>
                 <td :rowspan="method === 'flux' && params.damping_factor === 1 ? 1 : 2"  style="vertical-align:middle;border:none;padding:0 4px">
-                  <b-tooltip label="quantité">
+                  <b-tooltip :label="$t('words.quantity')">
                     N<span class="is-italic" style="vertical-align:sub">i</span>
                   </b-tooltip>
                 </td>
@@ -41,21 +41,21 @@
                   :style="method === 'flux' && params.damping_factor === 1
                     ? 'border: none; vertical-align:middle'
                     : 'border-bottom: 2px solid #0D68CE'">
-                  <b-tooltip label="facteur d'émission de l'élément i en kgCO2e pour 'fabrication + transport + packaging + fin-de-vie'" multilined>
-                    facteur<span class="is-italic" style="vertical-align:sub">i</span>
+                  <b-tooltip :label="$t('labels.factor_of_el_i')" multilined>
+                    {{$t('words.factor')}}<span class="is-italic" style="vertical-align:sub">i</span>
                   </b-tooltip>
                 </td>
               </tr>
               <tr style="border:none" v-if="method !== 'flux' || params.damping_factor > 1">
                 <td class="is-family-code has-text-centered" style="border:none;padding:0">
                   <template v-if="method === 'stock'">
-                    <b-tooltip label="durée de vie de l'élément i en années" multilined>
-                      durée_de_vie<span class="is-italic" style="vertical-align:sub">i</span>
+                    <b-tooltip :label="$t('labels.lifetime_of_el_i')" multilined>
+                      {{$t('words.lifetime')}}<span class="is-italic" style="vertical-align:sub">i</span>
                     </b-tooltip>
                   </template>
                   <template v-else>
-                    <b-tooltip label="durée d'amortissement" multilined>
-                      {{params.damping_factor}} années
+                    <b-tooltip :label="$t('labels.damping_duration')" multilined>
+                      {{params.damping_factor}} {{$t('words.years')}}
                     </b-tooltip>
                   </template>
                 </td>
@@ -212,7 +212,7 @@
           </tr>
 
           <tr v-show="method=='flux'"><td><ml fr="Durée d'amortissement :">Damping factor:</ml></td>
-            <td><input v-model.number="params.damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">années</span></td>
+            <td><input v-model.number="params.damping_factor" type="number" min="1" max="9" step="1" /> <span class="unit">{{$t('words.years')}}</span></td>
             <td class="note">La liste des équipements fournis doit correspondre à la liste des achats des
               <span v-text="params.damping_factor"></span> années précédentes, indépendamment de la durée de vie réel des équipements.</td>
           </tr>

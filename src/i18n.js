@@ -2,12 +2,14 @@ export default {
   en: {
     words: {
       year: 'year',
+      years: 'years',
       per_year: 'per year',
       lifetime: 'lifetime',
       actual: 'actual',
       objective: 'objective',
-      fabrication: 'fabrication',
+      fabrication: 'production',
       model: 'model',
+      type: 'type',
       quantity: 'quantity',
       use: 'use',
       coal: 'coal',
@@ -16,7 +18,10 @@ export default {
       stdev: 'standard deviation',
       date: 'date',
       score: 'score',
-      purchase_year: 'year'
+      purchase_year: 'year',
+      factor: 'factor',
+      lifestime_: 'lifetime',
+      calculation: 'calculation'
     },
     title: {
       device_list: 'Devices',
@@ -26,15 +31,20 @@ export default {
       help: 'Help'
     },
     labels: {
-      fabrication: 'fabrication nl and transport',
-      fabrication_vs_objective: 'fabrication nl and transport nl (actual vs objective)',
-      fabrication_actual: 'fabrication nl and transport nl (actual)',
-      fabrication_objective: 'fabrication nl and transport nl (objective)',
-      fabrication_uncertainty: 'fabrication nl and transport nl (mean + nl uncertainty nl bounds)',
+      fabrication: 'production nl and transport',
+      fabrication_vs_objective: 'production nl and transport nl (actual vs objective)',
+      fabrication_actual: 'production nl and transport nl (actual)',
+      fabrication_objective: 'production nl and transport nl (objective)',
+      fabrication_uncertainty: 'production nl and transport nl (mean + nl uncertainty nl bounds)',
       use: 'electricity nl consumption nl (use)',
       'default': 'default',
-      'default model': 'Default model',
-      'other': 'Other'
+      'default_model': 'Default model',
+      'other': 'Other',
+      validity: 'Validity',
+      damping_duration: 'damping duration',
+      lifetime_of_el_i: 'lifetime of element i in years',
+      factor_of_el_i: 'emission factor of element i in kgCO2e for \'production + transport + packaging + end-of-life\'',
+      sum_over_rows: 'sum over the set of \'valid\' rows'
     },
     methods: {
       'flux': 'flux',
@@ -48,6 +58,7 @@ export default {
   fr: {
     words: {
       year: 'an',
+      years: 'années',
       lifetime: 'durée de vie',
       actual: 'actuel',
       coal: 'charbon',
@@ -63,7 +74,10 @@ export default {
       stdev: 'écart type',
       date: 'date',
       score: 'score',
-      purchase_year: 'année'
+      purchase_year: 'année',
+      factor: 'facteur',
+      lifestime_: 'durée_de_vie',
+      calculation: 'calcul'
     },
     title: {
       device_list: 'Équipement',
@@ -81,7 +95,12 @@ export default {
       use: 'Consommation nl électrique nl (usage)',
       'default': 'Défaut',
       'default_model': 'Modèle par défaut',
-      'other': 'Autre'
+      'other': 'Autre',
+      validity: 'Validité',
+      damping_duration: 'durée d\'amortissement',
+      lifetime_of_el_i: 'durée de vie de l\'élément i en années',
+      factor_of_el_i: 'facteur d\'émission de l\'élément i en kgCO2e pour \'fabrication + transport + packaging + fin-de-vie\'',
+      sum_over_rows: 'somme sur l\'ensemble des lignes \'valides\''
     },
     methods: {
       'flux': 'par liste d\'achat (flux)',
