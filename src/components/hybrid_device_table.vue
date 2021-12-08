@@ -833,7 +833,7 @@ export default {
         self.current_file = fileid
         let updated_items = []
         csvdata.forEach(function (e) {
-          e.details.push({ origin: fileid, csvdata: e.csvdata, nb: e.nb })
+          e.details.push({ origin: fileid, csvdata: e.csvdata, nb: e.nb, year: e.year })
           delete e.csvdata
           self.devicelist.push(e)
           updated_items.push(e)
@@ -1032,9 +1032,9 @@ export default {
         if (new_list.length > 0 && new_list[new_list.length - 1].key === el.key) {
           let common_el = new_list[new_list.length - 1]
           if (common_el.details.length > 0 && el.details.length === 0) {
-            el.details.push({ origin: 0, nb: el.nb })
+            el.details.push({ origin: 0, nb: el.nb, year: el.year })
           } else if (el.details.length > 0 && common_el.details.length === 0) {
-            common_el.details.push({ origin: 0, nb: common_el.nb })
+            common_el.details.push({ origin: 0, nb: common_el.nb, year: el.year })
           }
           common_el.nb += el.nb
           common_el.details = common_el.details.concat(el.details)
