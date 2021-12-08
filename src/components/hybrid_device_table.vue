@@ -199,7 +199,7 @@
               </div>
             </template>
             <b-field>
-              <button @click="simplify_data" class="button is-primary">
+              <button @click="on_simplify_data" class="button is-primary">
                 <span>Simplifier la table</span>
               </button>
             </b-field>
@@ -961,6 +961,18 @@ export default {
           ' aux lignes suivantes :</p><p>' +
           lines +
           '</p></div>'
+      })
+    },
+
+    on_simplify_data () {
+      let self = this
+      this.$buefy.dialog.confirm({
+        message: '<p>Cette action supprime toutes les lignes non valides, supprime les dates d\'achats, et fusionne les éléments identiques.</p>',
+        cancelText: 'Abandonner',
+        confirmText: 'Continuer',
+        onConfirm: function () {
+          self.simplify_data()
+        }
       })
     },
 
