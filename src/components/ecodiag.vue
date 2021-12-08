@@ -472,7 +472,11 @@ export default {
       if (!r) {
         r = obj[key]
         var rbis = this.$i18n.messages[this.$i18n.locale].words[r]
-        if (rbis) { console.log('found ' + rbis); r = rbis }
+        if (rbis) {
+          /* eslint-disable no-console */
+          console.log('found ' + rbis);
+          r = rbis
+        }
       }
       return r
     },
