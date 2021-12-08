@@ -61,11 +61,10 @@ function configure {
 }
 
 function assemble_npm {
-  mkdir -p $1
   configure src/components/ecodiag.vue
   npm install
   npm ci
-  NODE_ENV=production npm run build
+  NODE_ENV=production ECODIAG_TARGET_PATH=$2 npm run build
   # # mv public public-vue # GitLab Pages hooks on the public folder
   mv dist $1
   # # optionally, you can activate gzip support with the following line:
@@ -73,7 +72,7 @@ function assemble_npm {
 }
 
 # generate head
-assemble_npm public/head
+assemble_npm public/head '/head/'
 
 # generate the official version
 REV=`cat stable_version.txt`
@@ -87,7 +86,7 @@ git clone . tmp
 cd tmp
 
 git checkout $REV
-assemble_npm ../public
+assemble_npm ../public '/'
 # git checkout csv_import
 # assemble ../public/csv_import
 cd ..
