@@ -36,6 +36,11 @@ export default {
       'default model': 'Default model',
       'other': 'Other'
     },
+    methods: {
+      'flux': 'flux',
+      'stock': 'stock',
+      'undefined': 'undefined'
+    },
     message: {
       lifetime_saving: 'Potential emission saving by increasing the lifetime of my devices: <span class=\'value\'>{amount}</span> kg.CO2e per year.'
     }
@@ -77,6 +82,11 @@ export default {
       'default': 'Défaut',
       'default_model': 'Modèle par défaut',
       'other': 'Autre'
+    },
+    methods: {
+      'flux': 'par liste d\'achat (flux)',
+      'stock': 'par liste d\'inventaire (stock)',
+      'undefined': 'undefined'
     },
     message: {
       lifetime_saving: 'Économies réalisables par l\'augmentation de la durée de vie de mes équipements : <span class=\'value\'>{amount}</span> kgCO2e par an.'

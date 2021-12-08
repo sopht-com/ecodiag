@@ -126,7 +126,7 @@
       <tab :name="$t('title.data')" >
         <table style="width:100%" class="highlight">
 
-          <tr><th style="width:33%"></th><th style="width:30%"></th><th style="width:37%"></th></tr>
+          <tr><th style="width:33%"></th><th style="width:33%"></th><th style="width:34%"></th></tr>
 
           <tr><td><ml fr="Importer une liste d'équipements :">Import a device list:</ml></td>
               <td><input type="file" id="import_json_file" @change="import_json_device_list($event.target.files)" /></td>
@@ -199,12 +199,13 @@
 
           <tr>
             <td><ml fr="Méthode de calcul :">Compute method:</ml></td>
-            <td>
-              <select v-model="method">
+            <td style="padding-top: 5px; padding-bottom:5px;vertical-align:middle">
+              <!-- <select v-model="method">
                 <option v-for="key in method_list" :value="key" :key="key">
                   {{key}}
                 </option>
-              </select>
+              </select> -->
+                <b-button @click="isMethodPickerActive=true" icon-right="pencil">{{$t('methods.' + method)}}</b-button>
             </td>
             <td></td>
           </tr>
@@ -277,7 +278,7 @@
   :active.sync="isMethodPickerActive"
   has-modal-card
   trap-focus
-  :destroy-on-hide="true"
+  :destroy-on-hide="false"
   :can-cancel="[]"
   aria-role="dialog"
   aria-label="Methode de calcul"
