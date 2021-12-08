@@ -283,7 +283,7 @@
   aria-label="Methode de calcul"
   aria-modal>
   <template #default="props">
-    <method-picker @close="props.close" @selected="e => method=e"></method-picker>
+    <method-picker @close="props.close" @selected="on_method_select"></method-picker>
   </template>
 </b-modal>
 
@@ -468,6 +468,12 @@ export default {
         if (rbis) { console.log('found ' + rbis); r = rbis }
       }
       return r
+    },
+
+    on_method_select (new_method) {
+      if (this.method !== new_method) {
+        this.method = new_method
+      }
     },
 
     import_json_device_list (files) {

@@ -1072,6 +1072,29 @@ export default {
     },
     item_added () {
       this.nb_added_items += 1
+    },
+
+    unsimplify () {
+      let copy = []
+      let devicelist = this.devicelist
+      for (let in_item of devicelist) {
+        if (in_item.details.length > 0) {
+          let count = 0
+          for (let sub_item of in_item.details) {
+            count += sub_item.nb
+            copy.push(this.create_device_item(in_item._type, { model: in_item._model, nb: sub_item.nb, year: sub_item.year, origin: sub_item.origin, score: in_item.score, details: [sub_item] }))
+          }
+          if (in_item.nb > count) {
+            copy.push(this.create_device_item(in_item._type, { model: in_item._model, nb: in_item.nb - count, year: in_item.year, origin: 0, score: 2 }))
+          }
+        } else {
+          copy.push(in_item)
+        }
+      }
+      this.devicelist.splice(0, this.devicelist.length)
+      for (let item of copy) {
+        this.devicelist.push(item)
+      }
     }
   },
 
@@ -1087,6 +1110,12 @@ export default {
         this.devicelist.forEach(function (item, i) {
           item['bakedorder'] = i
         })
+        this.simplify_data(true)
+      }
+    },
+    method: function (new_method, old_method) {
+      if (this.autoSimplify && new_method !== old_method) {
+        this.unsimplify()
         this.simplify_data(true)
       }
     }
