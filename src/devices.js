@@ -221,21 +221,24 @@ export const devices = {
     yearly_consumption: 120   /* = 2h * 200j * 0.3kW */, // ecodiag 1752 pour 500h/an => ça ne colle pas ! y'a un bug !
     usage:              3,    // 3h par jour ouvré
     
-    regex:              /(videoprojector|videoprojecteur)/i,
+    regex:              /(video.*projector|vid.o.*projecteur)/i,
 
     models: {
       //                                                                                                          kWh  =  kW  *h*days
       projector_portable: {
         label_fr: 'Transportable',
         label_en: 'Portable',
+        regex: /(transportable|portable)/i,
         grey_CO2:  94 /* ADEME */, duration:  7, power_consumption: 0.260, yearly_consumption: 104 /* 0.260*2*200 */},
       projector_room:     {
         label_fr: 'Pour salle',
         label_en: 'For meeting/class room',
+        regex: /(salle|meeting|class.*room)/i,
         grey_CO2: 150 /* heuristic conservative sur le poids */  , duration: 10, power_consumption: 0.310, yearly_consumption: 155 /* 0.310*2*250 */},
       projector_large:    {
         label_fr: 'Pour amphi',
         label_en: 'For conference room',
+        regex: /(amphi|conference)/i,
         grey_CO2: 200 /* heuristic conservative sur le poids */  , duration: 10, power_consumption: 0.700, yearly_consumption: 280 /* 0.700*2*200 */},
     }
   },
@@ -303,6 +306,7 @@ export const devices = {
   ipphone: {
     label_fr:           'Téléphone IP',
     label_en:           'IP phone',
+    regex:              /(telephone IP|IP phone)/i,
     grey_CO2:           17, // ecodiag
     power_consumption:  40/(24*365), // to match yearly_consumption
     duration:           10, // arbitraire
@@ -313,7 +317,7 @@ export const devices = {
   keyboard: {
     label_fr:           'Clavier',
     label_en:           'Keyboard',
-    regex:              /(keyboard|clavier).*(azerty|qwerty)/i,
+    regex:              /(keyboard|clavier)/i,
     grey_CO2:           24, // ecodiag => this seems way too high
     power_consumption:   0,
     duration:            4, // ecodiag 3
@@ -323,6 +327,7 @@ export const devices = {
   mouse: {
     label_fr:           'Souris',
     label_en:           'Mouse',
+    regex:              /(mouse|souris)/i,
     grey_CO2:            5, // ecodiag
     power_consumption:   0,
     duration:            4, // ecodiag 3
@@ -332,6 +337,7 @@ export const devices = {
   wifihub: {
     label_fr:           'Borne wifi',
     label_en:           'Wifi hub',
+    regex:              /wifi/i,
     grey_CO2:           10, // ecodiag, https://www.ece.nus.edu.sg/stfpage/bsikdar/papers/tce_bs_12.pdf
     power_consumption:   70/(24*365), // to match yearly_consumption
     duration:            6,
@@ -376,7 +382,7 @@ export const devices = {
   gpu: {
     label_fr:           'GPU puissant',
     label_en:           'Powefull GPU',
-    regex:              /carte graphique/i,
+    regex:              /(carte graphique|gpu)/i,
     grey_CO2:           {mean:80,std:hypot([0.3,0.5])},
                             // It highly depends on the GPU, but assuming only powerful GPU's are counted,
                             // and provided that on average the footprint of a motherboard is about 113 kgCO2e
@@ -389,7 +395,7 @@ export const devices = {
     models: {
       default: {
         label_fr: 'Défaut',
-        regex: /(carte graphique|\Wgtx\W|\Wrtx\W|\Wquadro\W|\Wtitan\W|\Wgeforce\W|\Wgpu\W)/i
+        regex: /(carte graphique|graphic.*card|\Wgtx\W|\Wrtx\W|\Wquadro\W|\Wtitan\W|\Wgeforce\W|\Wgpu\W)/i
       }
     }
   },
