@@ -1,4 +1,79 @@
 
+<i18n>
+{
+  "fr": {
+    "tt-for1element": " pour une unité",
+    "tt-total-grey": "total 'fabrication + transport + fin de vie'",
+    "tt-for-n-elements": " pour les N unités",
+    "tt-divided-by": ", divisé par la période d'amortissement de ",
+    "tt-divided-by-lt": ", divisé par la durée de vie",
+    "user-added": "Ajouté par l'utilisateur",
+    "Warning": "Attention",
+    "pb-notype": "Colonne 'Type' manquante ou non reconnue.",
+    "pb-nomodel": "Colonne 'Modèle' manquante ou non reconnue.",
+    "pb-nodate": "Colonne 'Date d'achat' manquante ou non reconnue.",
+    "pb-noentry": "Aucune entrée n'a été reconnue, même partiellement.",
+    "pb-tabs": "Les colonnes doivent être séparées par une tabulation.",
+    "pb-sep": "Le séparateur de colonnes doit être l'un des caractères suivants :",
+    "Cancelimport": "Abandonner l'importation",
+    "Cancel": "Abandonner",
+    "No": "Non",
+    "Continue": "Continuer",
+    "Invalidfileformat": "Format de fichier invalide",
+    "Invalidfile": "Fichier invalide",
+    "messages": {
+      "emptyyears": "Fixer l'année d'achat des {nb} lignes sans date à l'année :",
+      "confirmscreens": "Remplacer l'estimation précédente de {old} écrans par la nouvelle estimation de {new} ?",
+      "confirmdeleteall": "Êtes-vous sûr de vouloir supprimer toutes les lignes ?",
+      "alertnoscreen": "Aucun écran trouvé dans le listing, pensez à les rajouter !",
+      "alerttoofewscreens": "<div class=\"content\"><p>Le nombre d’écrans identifiés ({nbInCSV}) semble faible vis à vis du nombre de PC et portables ({nbPCs}).</p><p>Pensez à vérifiez vos achats d’écrans et, le cas échéant, à ajouter les écrans manquants (nombre, type, année) via le bouton 'ajouter' tout en bas du tableau de la fenêtre de saisie.</p></div>",
+      "confirmchangeyear": "Aucune entrée trouvée pour l'année courante ({oldYear}). Changer l'année du bilan pour {newYear} ?",
+      "pb-intro": "Bien que {nb} éléments aient été reconnus, nous avons détecté le(s) manque(s) suivant(s) :",
+      "pb-end": "Si vous pensez qu'il s'agit d'une erreur dans votre fichier, vous pouvez abandonner l'importation et le mettre à jour. Sinon, vous pouvez continuer : l'outil retiendra les valeurs par défaut.",
+      "invalidfile-intro": "Nous avons rencontré les problèmes suivants :",
+      "invalidfile-end": "Cela peut venir d'un mauvais nommage des colonnes, ou bien d'un mauvais formatage du fichier.",
+      "showlines": "Cet élément apparaît dans le fichier {file} aux lignes suivantes :",
+      "confirmsimplify": "Cette action supprime toutes les lignes non valides, supprime les dates d'achats, et fusionne les éléments identiques."
+    }
+  },
+  "en": {
+    "tt-for1element": " for a single element",
+    "tt-total-grey": "total 'production + transport + end-of-life'",
+    "tt-for-n-elements": " for the N elements",
+    "tt-divided-by": ", divided by the damping factor of ",
+    "tt-divided-by-lt": ", divided by the lifetime",
+    "user-added": "Added by the user",
+    "Warning": "Warning",
+    "pb-notype": "Column 'Type' missing or not found.",
+    "pb-nomodel": "Column 'Model' missing or not found.",
+    "pb-nodate": "Column 'Purchase year' missing or not found.",
+    "pb-noentry": "Zero entry has been found, even partially.",
+    "pb-tabs": "Columns must be separated by tabs.",
+    "pb-sep": "The column separator must be one of the following character:",
+    "Cancelimport": "Cancel import",
+    "Cancel": "Cancel",
+    "No": "No",
+    "Continue": "Continue",
+    "Invalidfileformat": "Invalid file format",
+    "Invalidfile": "Invalid file",
+    "messages": {
+      "emptyyears": "Set purchase year of the {nb} rows without valid date to the year:",
+      "confirmscreens": "Update the previous estimation of {old} monitors to the new estimation of {new}?",
+      "confirmdeleteall": "Remove all items?",
+      "alertnoscreen": "Zero monitor found in the list, do not forget to add them if any!",
+      "alerttoofewscreens": "<div class=\"content\"><p>The number of identified monitors ({nbInCSV}) seems to be rather low compared to the number of PC and laptops ({nbPCs}).</p><p>Do not forget to check your monitor purchases and, if needed, to add any missing monitors (quantity, type, year) via the 'add' button at the bottom of the main table.</p></div>",
+      "confirmchangeyear": "Zero entry found for the current year ({oldYear}). Change the reference year to {newYear} ?",
+      "pb-intro": "Even though {nb} items have been found, the tool has detected the following issues:",
+      "pb-end": "If you believe those issues reflect mistakes in your file, you can cancel the import and revise it. Otherwise, you can continue: the tool will use default values.",
+      "invalidfile-intro": "The tool identified the following issues:",
+      "invalidfile-end": "This might be explained by a bad naming of the columns, or a bad formatting of the file.",
+      "showlines": "This item occurs in the file {file} at the following lines:",
+      "confirmsimplify": "This action remove all invalid rows, purchase years, and merge identical items."
+    }
+  }
+}
+</i18n>
+
 <template>
   <div>
     <b-modal
@@ -9,10 +84,19 @@
       <div class="dialog"  style="width: 800px; height: auto">
       <div class="modal-card"  style="max-width: 100%">
         <header class="modal-card-head">
-          <p class="modal-card-title">La liste fournie ne contient aucun écran d'ordinateur !</p>
+          <p class="modal-card-title">
+            <ml fr="La liste fournie ne contient aucun écran d'ordinateur !">The input list does not contains any PC monitor!</ml></p>
         </header>
         <section class="modal-card-body">
-          <div class="block">Pour estimer le nombre d’écrans achetés dans votre unité sur la période, choisissez une des {{GES1p5 ? 2 : 3}} options suivantes :</div>
+          <div class="block">
+            <ml fr="Pour estimer le nombre d’écrans achetés dans votre unité sur la période, choisissez une des">
+              To estimate the number of purchased monitors over the period, choose one of the
+            </ml>
+            {{GES1p5 ? 2 : 3}}
+            <ml dr="options suivantes :">
+              following options:
+            </ml>
+          </div>
           <table class="table is-striped is-hoverable is-fullwidth">
             <tr :class="(!GES1p5) && nb_screen_method === 'from_nb_PCs' ? 'has-background-primary-light' : ''">
                 <td class="vcenter">
@@ -23,10 +107,14 @@
                   </b-field>
                 </td>
                 <td>
-                  Comptabiliser en moyenne :<br/>
-              <input v-model.number="nb_screens_per_desktop" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" /> écran acheté par PC-fixe acheté, et<br/>
-              <input v-model.number="nb_screens_per_laptop" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" /> écran acheté par portable acheté, <br/>
-              soit une estimation de <strong>{{nb_estimated_screens(current_file,'from_nb_PCs')}}</strong> écrans achetés sur la période.
+                  <ml fr="Comptabiliser en moyenne :">Consider an average of:</ml><br/>
+              <input v-model.number="nb_screens_per_desktop" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" />
+                <ml fr=" écran acheté par PC-fixe acheté, et"> purchased monitors per purchased PC desktop, and</ml><br/>
+              <input v-model.number="nb_screens_per_laptop" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" />
+                <ml fr=" écran acheté par portable acheté,"> purchased monitors per purchased laptop,</ml> <br/>
+              <ml fr=" soit une estimation de "> that is, and estimation of </ml>
+              <strong>{{nb_estimated_screens(current_file,'from_nb_PCs')}}</strong>
+              <ml fr=" écrans achetés sur la période."> purchased monitors over the period.</ml>
                 </td>
               </tr>
             <tr :class="(!GES1p5) && nb_screen_method === 'from_nb_users' ? 'has-background-primary-light' : ''" v-show="!GES1p5">
@@ -38,13 +126,17 @@
                 </b-field>
               </td>
               <td>
-                Comptabiliser
+                <ml fr="Comptabiliser ">Consider </ml>
                 <input v-model.number="nbUsers_actual" type="number" min="0" max="99999" step="1" :size="size" class="inline-number w5" />
-                agents dans l'unité, avec en moyenne
+                <ml fr=" agents dans l'unité, avec en moyenne "> members, with an average of </ml>
                 <input v-model.number="nb_screens_per_user" type="number" min="0" max="10" step="0.1" :size="size" class="inline-number w3" />
-                écrans par agent,<br/> et une durée de vie moyenne des écrans
-                <input v-model.number="screen_lifetime" type="number" min="1" max="99" step="0.5" :size="size" class="inline-number w4" /> années,<br/>
-                soit une estimation de <strong>{{nb_estimated_screens(current_file,'from_nb_users')}}</strong> écrans achetés sur la période.
+                <ml fr=" écrans par agent,"> monitors per member</ml><br/>
+                <ml fr="et une durée de vie moyenne des écrans de ">and an average monitor lifetime of </ml>
+                <input v-model.number="screen_lifetime" type="number" min="1" max="99" step="0.5" :size="size" class="inline-number w4" />
+                <ml fr=" années,"> years,</ml><br/>
+                <ml fr="soit une estimation de ">that is, an estimation of </ml>
+                <strong>{{nb_estimated_screens(current_file,'from_nb_users')}}</strong>
+                <ml fr=" écrans achetés sur la période."> purchased monitors over the period.</ml>
               </td>
             </tr>
             <tr :class="(!GES1p5) && nb_screen_method === 'none' ? 'has-background-primary-light' : ''">
@@ -55,7 +147,9 @@
                 </b-field>
               </td>
               <td>
-                Aucun écran acheté sur la période, ou bien ajoutez vous-même les écrans (nombre, type, année) via le bouton "ajouter" tout en bas du tableau de la fenêtre de saisie.
+                <ml fr="Aucun écran acheté sur la période, ou bien ajoutez vous-même les écrans (nombre, type, année) via le bouton 'ajouter' tout en bas du tableau de la fenêtre de saisie.">
+                  There is indeed zero purchased monitor for this period, or I will add them myself (quantity, type, year) via the button 'add' located at the bottom of the main table.
+                </ml>
               </td>
             </tr>
           </table>
@@ -67,7 +161,6 @@
       </div>
       </div>
     </b-modal>
-
     <div class="tile is-ancestor">
       <div class="tile is-parent is-7">
         <div v-if="filemap.length > 0" class="tile is-child">
@@ -139,7 +232,7 @@
                       </template>
                     </tr>
                     <tr v-if="method === 'flux' && current_file > 0 && get_estimated_screen_item(current_file) && colId === 1">
-                      <td>Écrans suppl. <strong>estimés</strong> :</td>
+                      <td><ml fr="Écrans suppl."></ml> <strong><ml fr="estimés">Estimated</ml></strong><ml fr=" :"> additional monitors:</ml></td>
                       <td class="has-text-right">
                         <b-button size="is-tiny" @click="show_nb_screen_modal=true">
                           <b-icon icon="pencil"/>
@@ -177,30 +270,30 @@
 
         <div class="tile is-child" v-if="!hideTools">
           <article v-if="devicelist.length > 0" class="notification">
-            <p>Outils et options</p>
+            <p><ml fr="Outils et options">Tools and options</ml></p>
             <b-field v-if="nb_outofperiod_rows > 0">
               <b-checkbox v-model="show_outofperiod">
-                Afficher les {{nb_outofperiod_rows}} lignes hors période
+                <ml fr="Afficher les">Show the</ml> {{nb_outofperiod_rows}} <ml fr="lignes hors période">out of period rows</ml>
               </b-checkbox>
             </b-field>
             <template v-if="method === 'flux' && nb_emptyyear_rows > 0">
-              Il y a {{nb_emptyyear_rows}} lignes sans année :
+              <ml fr="Il y a">There are</ml> {{nb_emptyyear_rows}} <ml fr="lignes sans année :">rows without year:</ml>
               <div class="buttons">
                 <b-button v-show="!params.includes_empty_year"
                   @click="toggle_hide_empty_year"
                   type="is-info is-light"
                   :icon-left="hide_empty_year ? 'eye-slash' : 'eye'">
-                  <span v-if="hide_empty_year">Afficher</span>
-                  <span v-else>Masquer</span>
+                  <span v-if="hide_empty_year"><ml fr="Afficher">Show</ml></span>
+                  <span v-else><ml fr="Masquer">Hide</ml></span>
                 </b-button>
                 <b-button v-show="!hide_empty_year" @click="handle_date_emptyyears" type="is-success">
-                  <span>Les dater</span>
+                  <span><ml fr="Les dater">Date them</ml></span>
                 </b-button>
               </div>
             </template>
             <b-field>
               <button @click="on_simplify_data" class="button is-primary">
-                <span>Simplifier la table</span>
+                <span><ml fr="Simplifier la table">Simplify the table</ml></span>
               </button>
             </b-field>
           </article>
@@ -345,13 +438,13 @@
           </div>
           <!-- fabrication &amp; transport -->
           <b-tooltip multilined
-            :label="'total \'fabrication + transport + fin de vie\''
+            :label="$t('tt-total-grey')
               + (normalization === 'year'
-                ? (' pour les N unités' +
+                ? ($t('tt-for-n-elements') +
                   (method === 'flux'
-                  ? (params.damping_factor === 1 ? '' : ', divisé par la période d\'amortissement de ' + params.damping_factor + ' ans')
-                  : ', divisé par la durée de vie'))
-                : ' pour une unité')"
+                  ? (params.damping_factor === 1 ? '' : $t('tt-divided-by') + params.damping_factor + ' ' + $t('words.years'))
+                  : $t('tt-divided-by-lt')))
+                : $t('tt-for1element'))"
             type="is-info">
               <b-tag rounded type="is-info is-light">
                 <b-icon icon="info" size="is-size-7"></b-icon> {{$t('words.calculation')}}
@@ -381,7 +474,7 @@
             <template v-else>
               <td></td>
               <td></td>
-              <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;Ajouté par l'utilisateur</td>
+              <td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp; {{ $t('user-added') }}</td>
             </template>
             <td v-if="method=='flux' && !params.ignore_year"></td>
             <td class="has-text-right"><span>{{props.row.item.details.length>1 ? el.nb : ''}}</span>
@@ -434,7 +527,7 @@ export default {
     'ecodiag-select-model': () => import('./model_selector.vue'),
     'locker': () => import('./locker.vue'),
     'ecodiag-select-year': () => import('./year_picker.vue'),
-    'ml': () => import('@/components/ml.vue')
+    'ml': () => import('./ml.vue')
   },
 
   props: {
@@ -585,8 +678,9 @@ export default {
     },
 
     handle_date_emptyyears: function () {
+      let self = this
       this.$buefy.dialog.prompt({
-        message: 'Fixer l\'année d\'achat des ' + this.nb_emptyyear_rows + ' lignes sans date à l\'année :',
+        message: self.$t('messages.emptyyears', {nb: this.nb_emptyyear_rows}),
         inputAttrs: {
           type: 'number',
           placeholder: '...',
@@ -596,6 +690,7 @@ export default {
           max: this.max_selectable_year
         },
         trapFocus: true,
+        cancelText: self.$t('No'),
         onConfirm: (value) => this.devicelist.filter(e => e.score >= 0 && this.is_empty_year(e.year)).forEach(
           function (item) {
             item.year = value
@@ -659,7 +754,8 @@ export default {
       if (item) {
         if (item.nb !== nb_additional_screens) {
           this.$buefy.dialog.confirm({
-            message: 'Remplacer l\'estimation précédente de ' + item.nb + ' écrans par la nouvelle estimation de ' + nb_additional_screens + ' ?',
+            message: self.$t('messages.confirmscreens', {old: item.nb, new: nb_additional_screens}),
+            cancelText: self.$t('No'),
             onConfirm: function () {
               item.nb = nb_additional_screens
               self.$emit('updated', [item])
@@ -747,7 +843,8 @@ export default {
         // delete everything !
         let self = this
         self.$buefy.dialog.confirm({
-          message: 'Êtes-vous sûr de vouloir supprimer toutes les lignes ?',
+          message: self.$t('messages.confirmdeleteall'),
+          cancelText: self.$t('No'),
           onConfirm: function () {
             self.current_file = 0
             self.filemap.splice(1, self.filemap.length - 1)
@@ -811,18 +908,14 @@ export default {
             self.show_nb_screen_modal = true
           } else {
             self.$buefy.dialog.alert({
-              message: 'Aucun écran trouvé dans le listing, pensez à les rajouter !' })
+              message: self.$t('messages.alertnoscreen') })
           }
         } else {
           let nb_PCs = self.count_items_of_file(self.filemap.length - 1, e => self.year_ok(e.year) && e.type === 'desktop')
           let nb_laptops = self.count_items_of_file(self.filemap.length - 1, e => self.year_ok(e.year) && e.type === 'laptop')
           if (self.nb_screens_in_csv < 0.5 * (nb_PCs + nb_laptops * 0.5)) {
             self.$buefy.dialog.alert({
-              message: '<div class="content"><p>Le nombre d’écrans identifiés (' +
-                self.nb_screens_in_csv +
-                ') semble faible vis à vis du nombre de PC et portables (' +
-                (nb_PCs + nb_laptops) +
-                ').</p><p>Pensez à vérifiez vos achats d’écrans et, le cas échéant, à ajouter les écrans manquants (nombre, type, année) via le bouton "ajouter" tout en bas du tableau de la fenêtre de saisie.</p></div>'
+              message: self.$t('messages.alerttoofewscreens', {nbInCSV: self.nb_screens_in_csv, nbPCs: nb_PCs + nb_laptops})
             })
           }
         }
@@ -855,8 +948,8 @@ export default {
           let max_year = self.compute_max_year()
           if (max_year > 0) {
             self.$buefy.dialog.confirm({
-              message: 'Aucune entrée trouvée pour l\'année courante (' + self.referenceYear +
-                '). Changer l\'année du bilan pour ' + max_year + ' ?',
+              message: self.$t('messages.confirmchangeyear', {oldYear: self.referenceYear, newYear: max_year}),
+              cancelText: self.$t('No'),
               onConfirm: function () {
                 self.$emit('changeReferenceYear', max_year)
                 handle_screens()
@@ -886,18 +979,18 @@ export default {
             //  - or we detected the type or model columns and the file is not empty
             // Otherwise there is really nothing to do!
             let can_continue = (nb_item_type_ok > 0) || ((Boolean(headermap.in_type) || Boolean(headermap.in_model)) && csvdata.length > 0)
-            let pb_list = (headermap.in_type ? '' : '<li>Colonne "Type" manquante ou non reconnue.</li>') +
-                          (headermap.in_model ? '' : '<li>Colonne "Modèle" manquante ou non reconnue.</li>') +
-                          (headermap.in_date || self.method === 'stock' || self.params.ignore_year ? '' : '<li>Colonne "Date d\'achat" manquante ou non reconnue.</li>') +
-                          (nb_item_type_ok > 0 ? '' : '<li>Aucune entrée n\'a été reconnue, même partiellement.</li>')
+            let pb_list = (headermap.in_type ? '' : ('<li>' + self.$t('pb-notype') + '</li>')) +
+                          (headermap.in_model ? '' : ('<li>' + self.$t('pb-nomodel')+ '</li>')) +
+                          (headermap.in_date || self.method === 'stock' || self.params.ignore_year ? '' : ('<li>' + self.$t('pb-nodate') + '</li>')) +
+                          (nb_item_type_ok > 0 ? '' : ('<li>' + self.$t('pb-noentry') + '</li>'))
             if (can_continue) {
               self.$buefy.dialog.confirm({
-                title: 'Attention',
-                message: '<div class="content">Bien que ' + nb_item_type_ok + ' éléments aient été reconnus, nous avons détecté le(s) manque(s) suivant(s) :<ul>' +
+                title: self.$t('Warning'),
+                message: '<div class="content">' + self.$t('messages.pb-intro', {nb: nb_item_type_ok}) + '<ul>' +
                          pb_list +
-                         '</ul><p>Si vous pensez qu\'il s\'agit d\'une erreur dans votre fichier, vous pouvez abandonner l\'importation et le mettre à jour. Sinon, vous pouvez continuer : l\'outil retiendra les valeurs par défaut.</p></div>',
-                cancelText: 'Abandonner l\'importation',
-                confirmText: 'Continuer',
+                         '</ul><p>' + self.$t('messages.pb-end') + '</p></div>',
+                cancelText: self.$t('Cancelimport'),
+                confirmText: self.$t('Continue'),
                 onConfirm: function () {
                   keep_going(headermap, csvdata)
                 },
@@ -906,17 +999,17 @@ export default {
               })
             } else if (error === 'bad separator') {
               self.$buefy.dialog.alert({
-                title: 'Format de fichier invalide',
+                title: self.$t('Invalidfileformat'),
                 message: this.GES1p5
-                  ? '<div class="content"><p>Les colonnes doivent être séparées par une tabulation.</p></div>'
-                  : '<div class="content"><p>Le séparateur de colonnes doit être l\'un des caractères suivants : <code>,</code>, <code>;</code>, <code>tab</code>.</p></div>'
+                  ? ('<div class="content"><p>' + self.$t('pb-tabs') + '</p></div>')
+                  : ('<div class="content"><p>' + self.$t('pb-sep') + ' <code>,</code>, <code>;</code>, <code>tab</code>.</p></div>')
               })
             } else {
               self.$buefy.dialog.alert({
-                title: 'Fichier invalide',
-                message: '<div class="content">Nous avons rencontré les problèmes suivants :<ul>' +
+                title: self.$t('Invalidfile'),
+                message: '<div class="content">' + self.$t('invalidfile-intro') + '<ul>' +
                          pb_list +
-                         '</ul><p>Cela peut venir d\'un mauvais nommage des colonnes, ou bien d\'un mauvais formattage du fichier.</p></div>'
+                         '</ul><p>' + self.$t('invalidfile-end') + '</p></div>'
               })
             }
           } else {
@@ -956,10 +1049,9 @@ export default {
     },
 
     show_lines (lines, fileid) {
-      this.$buefy.dialog.alert({
-        message: '<div class="content"><p>Cet élément apparaît dans le fichier ' +
-          this.filemap[fileid].filename +
-          ' aux lignes suivantes :</p><p>' +
+      let self = this
+      self.$buefy.dialog.alert({
+        message: '<div class="content"><p>' + self.$t('messages.showlines', {file: self.filemap[fileid].filename}) + '</p><p>' +
           lines +
           '</p></div>'
       })
@@ -968,9 +1060,9 @@ export default {
     on_simplify_data () {
       let self = this
       this.$buefy.dialog.confirm({
-        message: '<p>Cette action supprime toutes les lignes non valides, supprime les dates d\'achats, et fusionne les éléments identiques.</p>',
-        cancelText: 'Abandonner',
-        confirmText: 'Continuer',
+        message: '<p>' + self.$t('messages.confirmsimplify') + '</p>',
+        cancelText: self.$t('Cancel'),
+        confirmText: self.$t('Continue'),
         onConfirm: function () {
           self.simplify_data()
         }
