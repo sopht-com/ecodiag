@@ -278,7 +278,7 @@
                 <ml fr="Afficher les">Show the</ml> {{nb_outofperiod_rows}} <ml fr="lignes hors période">out of period rows</ml>
               </b-checkbox>
             </b-field>
-            <template v-if="method === 'flux' && nb_emptyyear_rows > 0">
+            <template v-if="method === 'flux' && nb_emptyyear_rows > 0 && !params.ignore_year">
               <ml fr="Il y a">There are</ml> {{nb_emptyyear_rows}} <ml fr="lignes sans année :">rows without year:</ml>
               <div class="buttons">
                 <b-button v-show="!params.includes_empty_year"
