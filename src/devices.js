@@ -15,7 +15,7 @@ function hypot(vals) {
 // see Referenciel_Ecodiag.ods
 export const devices = {
 
-  desktop:{
+  desktop: {
     label_fr:           "PC fixe sans écran",
     label_en:           "Desktop",
     regex:              /(pc.*fix|desktop|poste.*fix|ordinateur|computer|fixe|tour|tower|unite centrale)/i,
@@ -312,6 +312,16 @@ export const devices = {
     duration:           10, // arbitraire
     yearly_consumption: 40, // ecodiag
     usage:             365,
+  },
+
+  dockingstation: {
+    label_fr:           'Station d\'accueil',
+    label_en:           'Docking station',
+    regex:              /(docking.*station|station.*accueil)/i,
+    grey_CO2:           26,   // NumEU
+    power_consumption:   0,
+    duration:            5,   // NumEU
+    yearly_consumption:  1.3  // NumEU
   },
 
   keyboard: {
