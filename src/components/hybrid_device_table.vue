@@ -21,6 +21,7 @@
     "Continue": "Continuer",
     "Invalidfileformat": "Format de fichier invalide",
     "Invalidfile": "Fichier invalide",
+    "addElement": "ajouter un élément",
     "messages": {
       "emptyyears": "Fixer l'année d'achat des {nb} lignes sans date à l'année :",
       "confirmscreens": "Remplacer l'estimation précédente de {old} écrans par la nouvelle estimation de {new} ?",
@@ -56,6 +57,7 @@
     "Continue": "Continue",
     "Invalidfileformat": "Invalid file format",
     "Invalidfile": "Invalid file",
+    "addElement": "add an item",
     "messages": {
       "emptyyears": "Set purchase year of the {nb} rows without valid date to the year:",
       "confirmscreens": "Update the previous estimation of {old} monitors to the new estimation of {new}?",
@@ -356,7 +358,7 @@
             expanded
             :size="size"
             v-model="props.row.item.type"
-            :msg="props.row.id === 'add' ? 'ajouter un élément' : '...'"
+            :msg="props.row.id === 'add' ? $t('addElement') : '...'"
             :disabled="readOnly"
             @input="item_type_changed(props.row)">
           </ecodiag-select-type>
