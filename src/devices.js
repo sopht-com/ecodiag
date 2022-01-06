@@ -393,13 +393,15 @@ export const devices = {
     label_fr:           'GPU puissant',
     label_en:           'Powefull GPU',
     regex:              /(carte graphique|gpu)/i,
-    grey_CO2:           {mean:80,std:hypot([0.3,0.5])},
+    grey_CO2:           {mean:60,std:hypot([0.6,0.6])},
                             // It highly depends on the GPU, but assuming only powerful GPU's are counted,
                             // and provided that on average the footprint of a motherboard is about 113 kgCO2e
                             // this choice seems reasonable.
+                            // Moreover, in NumEU study, a desktop game console is estimated at 170 kgCO2e,
+                            // so assigning 35% for the GPU seems to be reasonable too.
                             // Uncertainties:
-                            //  - 30% for the LCA
-                            //  - 50% for the variation across GPUs
+                            //  - 60% for the LCA
+                            //  - 60% for the variation across GPUs
     duration:            4,
     yearly_consumption:  0,
     models: {
