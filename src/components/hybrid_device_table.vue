@@ -87,7 +87,7 @@
       <div class="modal-card"  style="max-width: 100%">
         <header class="modal-card-head">
           <p class="modal-card-title">
-            <ml fr="La liste fournie ne contient aucun écran d'ordinateur !">The input list does not contains any PC monitor!</ml></p>
+            <ml fr="La liste fournie ne contient aucun écran d'ordinateur !">The input list does not contain any PC monitor!</ml></p>
         </header>
         <section class="modal-card-body">
           <div class="block">
