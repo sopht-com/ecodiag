@@ -186,8 +186,8 @@ export const devices = {
   // old value: 350
   screen:{
     label_fr:           "Écran",
-    label_en:           "Screen",
-    regex: /(.cran|screen)/i,
+    label_en:           "Monitor",
+    regex: /(.cran|screen|monitor)/i,
     grey_CO2:           430,    // based on the average of 9 DELL's 24" monitors (24" monitors are likely the most common)
     power_consumption:  0.035,  // kW (measured on AOC Q3277PQU)
     duration:           5,      // years, ecodiag: 3

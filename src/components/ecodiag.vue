@@ -243,7 +243,7 @@
             L'outil va rechercher les informations dans les colonnes suivantes :
           </p>
           <ul>
-            <li><b>Type</b>, identifiant la catégorie de l'item parmi (avec entre parenthèses quelques alias autorisés) : PC fixe (Desktop, PC, fixe, tour, unité centrale, station de travail, workstation), PC portable (laptop, portable, notebook), Serveur, Écran (screen, display), Vidéo projecteur, Tablette (pad), Smartphone (mobile), Imprimante, Borne wifi (Wifi hub), Téléphone IP, GPU, Disque dur, Clavier, Souris.</li>
+            <li><b>Type</b>, identifiant la catégorie de l'item parmi (avec entre parenthèses quelques alias autorisés) : PC fixe (Desktop, PC, fixe, tour, unité centrale, station de travail, workstation), PC portable (laptop, portable, notebook), Serveur, Écran (screen, display, monitor), Vidéo projecteur, Tablette (pad), Smartphone (mobile), Imprimante, Borne wifi (Wifi hub), Téléphone IP, GPU, Disque dur, Clavier, Souris.</li>
             <!-- <li><b>Fabricant</b>, c'est à dire la marque de l'item, exemples : DELL, HP, Lenovo, ACER, Apple, etc.</li> -->
             <li><b>Modèle</b>, permettant d'identifier plus précisément l'item, exemples : Latitude 5280, PowerEdge T640, Precision Tower 3630, etc.</li>
             <li><b>Date d'achat</b>, où l'outil va rechercher l'année sur quatre chiffres, ex. <code>03/04/2020</code>, ou <code>3 avril 2020</code>, ou encore <code>2020</code>. <i>(optionnel)</i></li>
