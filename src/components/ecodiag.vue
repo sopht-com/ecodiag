@@ -239,7 +239,7 @@
       <tab :name="$t('title.help')">
         <div class='content'>
           <p>
-            Vous pouvez directement téléverser votre listing sous la forme d'un tableau au format <code>.csv</code> ou <code>.tsv</code>, c'est à dire dans un format texte où les colonnes sont séparées par une virgule ou une tabulation (<a class='link' href="/static/exemple.csv" download>exemple.csv</a>).
+            Vous pouvez directement téléverser votre listing sous la forme d'un tableau au format <code>.csv</code> ou <code>.tsv</code>, c'est à dire dans un format texte où les colonnes sont séparées par une virgule ou une tabulation (<a class='link' href="static/exemple.csv" download>exemple.csv</a>).
             L'outil va rechercher les informations dans les colonnes suivantes :
           </p>
           <ul>
